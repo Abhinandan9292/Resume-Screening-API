@@ -34,7 +34,7 @@
     <script>
         async function fetchStudents() {
             try {
-                const response = await fetch('http://127.0.0.1:8000/students');
+                const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
                 const students = await response.json();
                 
                 const tableBody = document.getElementById('studentTableBody');
