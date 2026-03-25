@@ -37,24 +37,17 @@
     }
 };
 
-        async function searchCandidates() {
-            const searchInput = document.getElementById('search-input').value.trim();
-            const grid = document.getElementById('results-grid');
-            grid.innerHTML = '<p class="text-center col-span-full text-slate-500">Searching database...</p>';
+        async function performSearch() {
+    const skill = document.getElementById('search-input').value;
+    // ✅ CORRECT: Call the Recruiter route
+    const url = skill 
+        ? `${API_BASE}/recruiter/candidates?skills=${skill}` 
+        : `${API_BASE}/recruiter/candidates`;
 
-            try {
-                // Build the URL depending on if there is a search term
-                const url = searchInput ? `${API_BASE}/search?skills=${encodeURIComponent(searchInput)}` : `${API_BASE}/search`;
-                
-                const response = await fetch(url);
-                const candidates = await response.json();
-
-                grid.innerHTML = ''; // Clear the loading text
-
-                if (candidates.length === 0) {
-                    grid.innerHTML = `<p class="text-center col-span-full text-slate-500 font-medium text-lg mt-10">No candidates found matching "${searchInput}".</p>`;
-                    return;
-                }
+    const response = await fetch(url);
+    const results = await response.json();
+    // ... render results
+}
 
                 // Loop through the database results and create a card for each student
                 candidates.forEach(student => {
