@@ -53,19 +53,17 @@ window.onload = () => {
 
 async function loadAllStudents() {
     const tbody = document.getElementById('admin-table-body');
-    
     try {
-        // 1. CALL THE ADMIN ENDPOINT (Sees everyone)
-        const response = await fetch(`${API_BASE}/admin/all_students`);
+        // ✅ CORRECT: Call the Admin route
+        const response = await fetch(`${API_BASE}/admin/all_students`); 
         const students = await response.json();
-
+        
         tbody.innerHTML = ''; 
-
-        if (students.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No students found in the database.</td></tr>`;
-            return;
-        }
-
+        // ... rest of your loop logic (Ensure it uses student.first_name!)
+    } catch (error) {
+        tbody.innerHTML = `<tr><td class="text-red-500">View error. Check Supabase.</td></tr>`;
+    }
+}
         students.forEach(student => {
             const tr = document.createElement('tr');
             tr.className = "hover:bg-slate-50 transition";
