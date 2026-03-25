@@ -203,7 +203,7 @@ def update_profile(data: UpdateProfileData):
             skill_id = cursor.fetchone()['ID']
             
             # Re-link in Junction Table
-            cursor.execute('INSERT INTO Student_Skills ("Student_ID", "Skill_ID") VALUES (%s, %s) ON CONFLICT DO NOTHING', (student_id, skill_id))
+            cursor.execute('INSERT INTO Student_Skills ("Student_ID", "Skill_ID") VALUES (%s, %s) ON CONFLICT DO NOTHING', (data.student_id, skill_id))
             
         conn.commit()
         return {"status": "success", "message": "Profile updated successfully"}
