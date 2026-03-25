@@ -8,9 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-from fastapi.middleware.cors import CORSMiddleware
-
-# This is the "Open Door" policy for your browser
+# --- CORS MIDDLEWARE (The Handshake Fix) ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,6 +16,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- DATABASE HELPER ---
+def get_db():
+    # This connects Python to your SQLite database file
+    conn = sqlite3.connect('recruitment.db', timeout=20)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 # --- DATABASE INITIALIZATION ---
 def init_db():
@@ -30,9 +35,10 @@ def init_db():
     conn.commit()
     conn.close()
 
+# Run the DB initialization on startup
 init_db()
 
-# --- STUDENT LOGIC (AI & AUTH) ---
+# --- DATA MODELS ---
 class StudentData(BaseModel):
     first_name: str
     last_name: str
@@ -43,12 +49,18 @@ class StudentData(BaseModel):
     skills: str
     bio: str
 
+class LoginData(BaseModel):
+    email: str
+    password: str
+
+# --- ENDPOINTS ---
+
 @app.post("/ai_parse")
 async def ai_parse(file: UploadFile = File(...)):
     contents = await file.read()
     doc = fitz.open(stream=contents, filetype="pdf")
     text = "".join([page.get_text() for page in doc])
-    # Keyword extraction logic for your DBMS Prof
+    # Keyword extraction logic
     keywords = ["python", "cpp", "java", "sql", "react", "ml", "ai", "dsa", "aiml"]
     found = [k for k in keywords if k in text.lower()]
     return {"suggested_skills": ", ".join(found), "bio_preview": text[:200]}
@@ -68,7 +80,22 @@ def register(s: StudentData):
         return {"status": "error", "message": str(e)}
     finally: conn.close()
 
-# --- RECRUITER & ADMIN LOGIC ---
+@app.post("/login")
+def login(data: LoginData):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Students WHERE Email = ?", (data.email,))
+    user = cursor.fetchone()
+    conn.close()
+
+    if user:
+        if pwd_context.verify(data.password, user['Password']):
+            user_dict = dict(user)
+            del user_dict['Password'] 
+            return {"status": "success", "user": user_dict}
+    
+    return {"status": "error", "message": "Invalid Email or Password"}
+
 @app.get("/search")
 def search(skills: str = None):
     conn = get_db()
@@ -77,7 +104,9 @@ def search(skills: str = None):
         cursor.execute("SELECT * FROM Students WHERE Is_Placed = 0 AND Skills LIKE ?", (f"%{skills}%",))
     else:
         cursor.execute("SELECT * FROM Students WHERE Is_Placed = 0")
-    return [dict(row) for row in cursor.fetchall()]
+    results = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return results
 
 @app.post("/mark_placed/{student_id}")
 def mark_placed(student_id: int):
@@ -87,27 +116,3 @@ def mark_placed(student_id: int):
     conn.commit()
     conn.close()
     return {"status": "success"}
-
-# --- LOGIN LOGIC ---
-class LoginData(BaseModel):
-    email: str
-    password: str
-
-@app.post("/login")
-def login(data: LoginData):
-    conn = get_db()
-    cursor = conn.cursor()
-    # 1. Find the user by email
-    cursor.execute("SELECT * FROM Students WHERE Email = ?", (data.email,))
-    user = cursor.fetchone()
-    conn.close()
-
-    if user:
-        # 2. Check if the password matches the hashed version in the DB
-        if pwd_context.verify(data.password, user['Password']):
-            # 3. Return the student's data (excluding the password)
-            user_dict = dict(user)
-            del user_dict['Password'] 
-            return {"status": "success", "user": user_dict}
-    
-    return {"status": "error", "message": "Invalid Email or Password"}
