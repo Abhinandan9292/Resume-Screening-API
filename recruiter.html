@@ -34,36 +34,57 @@
         </div>
     </div>
 
-    <script>
-        const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
+   <script>
+    const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
-        async function fetchData() {
-            const jobId = document.getElementById('jobSelect').value;
-            const tableBody = document.getElementById('studentTableBody');
-            tableBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center">Fetching data...</td></tr>';
+    async function fetchData() {
+        const jobId = document.getElementById('jobSelect').value;
+        const tableBody = document.getElementById('studentTableBody');
+        tableBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center animate-pulse text-blue-400">Syncing with Cloud Database...</td></tr>';
 
-            let url = (jobId == "0") ? `${API_BASE}/students` : `${API_BASE}/match/${jobId}`;
+        let url = (jobId == "0") ? `${API_BASE}/students` : `${API_BASE}/match/${jobId}`;
 
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                const students = (jobId == "0") ? data : data.candidates;
-                
-                tableBody.innerHTML = '';
-                students.forEach(s => {
-                    tableBody.innerHTML += `
-                        <tr class="border-b border-slate-700">
-                            <td class="p-4">${s.ID}</td>
-                            <td class="p-4 font-bold text-blue-300">${s.FName} ${s.LName}</td>
-                            <td class="p-4 text-slate-400">${s.Email}</td>
-                            <td class="p-4"><span class="bg-blue-900 px-3 py-1 rounded">${s.CGPA}</span></td>
-                        </tr>`;
-                });
-            } catch (e) {
-                tableBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-red-400">Error connecting to cloud.</td></tr>';
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            // Handle both the single list and the match object
+            const students = (jobId == "0") ? data : data.candidates;
+            
+            tableBody.innerHTML = '';
+
+            if (students.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-500">No candidates found for this criteria.</td></tr>';
+                return;
             }
+
+            students.forEach(s => {
+                // BULLETPROOF LOGIC: Check for all possible naming versions
+                const id = s.ID || s.Student_ID || "N/A";
+                const firstName = s.FName || s.First_Name || "User";
+                const lastName = s.LName || s.Last_Name || "";
+                const email = s.Email || s.email || "No Email";
+                const cgpa = s.CGPA || s.cgpa || "0.0";
+
+                tableBody.innerHTML += `
+                    <tr class="border-b border-slate-700 hover:bg-slate-700/30 transition">
+                        <td class="p-4 text-slate-500 font-mono text-sm">${id}</td>
+                        <td class="p-4 font-bold text-blue-300">${firstName} ${lastName}</td>
+                        <td class="p-4 text-slate-400">${email}</td>
+                        <td class="p-4">
+                            <span class="bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20 font-bold">
+                                ${cgpa}
+                            </span>
+                        </td>
+                    </tr>`;
+            });
+        } catch (e) {
+            tableBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-red-400">Server is waking up... Wait 10 seconds and refresh.</td></tr>';
+            console.error("Fetch Error:", e);
         }
-        window.onload = fetchData;
-    </script>
+    }
+    // Load data immediately on page open
+    window.onload = fetchData;
+</script>
 </body>
 </html>
