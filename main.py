@@ -1,5 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from typing import Optional
 import fitz
 from passlib.context import CryptContext
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,59 +9,59 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 app = FastAPI()
+
+# --- 🌐 1. THE CORS GATEKEEPER ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, you'd put your Vercel URL here
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# 🛑 PASTE YOUR SUPABASE URI HERE! 
+# 🛑 DATABASE CONNECTION
 DB_URL = "postgresql://postgres.htjggenkueuyhunjkksy:Abhinandan%409252@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
 
 def get_db():
-    # RealDictCursor ensures the database returns dictionaries (JSON) instead of tuples
-    conn = psycopg2.connect(DB_URL, cursor_factory=RealDictCursor)
-    return conn
+    return psycopg2.connect(DB_URL, cursor_factory=RealDictCursor)
 
-# --- 🏗️ CLOUD POSTGRESQL SCHEMA (3NF) ---
+# --- 🏗️ 2. DATABASE INITIALIZATION (Standardized Lowercase) ---
 def init_db():
     conn = get_db()
     cursor = conn.cursor()
     
-    # 1. Core Students Table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS Students (
-         "ID" SERIAL PRIMARY KEY, 
-         "FName" TEXT, "LName" TEXT, "Email" TEXT UNIQUE, 
-         "Password" TEXT, "CGPA" REAL, "Github" TEXT, 
-         "Bio" TEXT, "Is_Placed" INTEGER DEFAULT 0)''')
+    # Students Table
+    cursor.execute('''CREATE TABLE IF NOT EXISTS students (
+         id SERIAL PRIMARY KEY, 
+         first_name TEXT, 
+         middle_name TEXT,
+         last_name TEXT, 
+         email TEXT UNIQUE, 
+         password TEXT, 
+         cgpa REAL, 
+         github TEXT, 
+         bio TEXT, 
+         is_placed INTEGER DEFAULT 0)''')
          
-    # 2. Master Skills Table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS Skills (
-         "ID" SERIAL PRIMARY KEY, 
-         "Name" TEXT UNIQUE)''')
+    # Skills Table
+    cursor.execute('''CREATE TABLE IF NOT EXISTS skills (
+         id SERIAL PRIMARY KEY, 
+         name TEXT UNIQUE)''')
          
-    # 3. Junction Table (Many-to-Many)
-    cursor.execute('''CREATE TABLE IF NOT EXISTS Student_Skills (
-         "Student_ID" INTEGER REFERENCES Students("ID"), 
-         "Skill_ID" INTEGER REFERENCES Skills("ID"),
-         PRIMARY KEY ("Student_ID", "Skill_ID"))''')
+    # Junction Table
+    cursor.execute('''CREATE TABLE IF NOT EXISTS student_skills (
+         student_id INTEGER REFERENCES students(id), 
+         skill_id INTEGER REFERENCES skills(id),
+         PRIMARY KEY (student_id, skill_id))''')
          
     conn.commit()
     conn.close()
 
 init_db()
 
+# --- 📝 3. DATA MODELS ---
 class StudentData(BaseModel):
     first_name: str
     middle_name: Optional[str] = None
@@ -75,18 +77,19 @@ class LoginData(BaseModel):
     email: str
     password: str
 
-# 1. Add this Model near your other BaseModel classes
 class UpdateProfileData(BaseModel):
     student_id: int
     new_cgpa: float
     new_skills: str
+
+# --- 🚀 4. ROUTES ---
 
 @app.post("/ai_parse")
 async def ai_parse(file: UploadFile = File(...)):
     contents = await file.read()
     doc = fitz.open(stream=contents, filetype="pdf")
     text = "".join([page.get_text() for page in doc])
-    keywords = ["python", "cpp", "java", "sql", "react", "ml", "ai", "dsa", "aiml", "javascript"]
+    keywords = ["python", "cpp", "java", "sql", "react", "ml", "ai", "dsa", "javascript"]
     found = [k for k in keywords if k in text.lower()]
     return {"suggested_skills": ", ".join(found), "bio_preview": text[:300]}
 
@@ -96,8 +99,6 @@ def register(s: StudentData):
     hashed_pw = pwd_context.hash(s.password)
     try:
         cursor = conn.cursor()
-        
-        # Ensure the column names here match your "Nuclear Reset" exactly (lowercase)
         cursor.execute("""
             INSERT INTO students (
                 first_name, middle_name, last_name, email, password, cgpa, github, bio
@@ -106,7 +107,6 @@ def register(s: StudentData):
         
         student_id = cursor.fetchone()['id']
         
-        # Normalize and Link Skills
         skill_list = [skill.strip().lower() for skill in s.skills.split(',') if skill.strip()]
         for skill_name in skill_list:
             cursor.execute('INSERT INTO skills (name) VALUES (%s) ON CONFLICT (name) DO NOTHING', (skill_name,))
@@ -118,8 +118,6 @@ def register(s: StudentData):
         return {"status": "success"}
     except Exception as e:
         conn.rollback()
-        # This will send the ACTUAL error back to your console so we can see it
-        print(f"CRITICAL ERROR: {str(e)}") 
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
     finally:
         conn.close()
@@ -128,21 +126,22 @@ def register(s: StudentData):
 def login(data: LoginData):
     conn = get_db()
     cursor = conn.cursor()
+    # Fixed: Now using lowercase names and views
     cursor.execute("""
-        SELECT Students.*, STRING_AGG(Skills."Name", ', ') as "Skills" 
-        FROM Students 
-        LEFT JOIN Student_Skills ON Students."ID" = Student_Skills."Student_ID" 
-        LEFT JOIN Skills ON Student_Skills."Skill_ID" = Skills."ID" 
-        WHERE Students."Email" = %s
-        GROUP BY Students."ID"
+        SELECT s.*, STRING_AGG(sk.name, ', ') as skills 
+        FROM students s
+        LEFT JOIN student_skills ss ON s.id = ss.student_id 
+        LEFT JOIN skills sk ON ss.skill_id = sk.id 
+        WHERE s.email = %s
+        GROUP BY s.id
     """, (data.email,))
     user = cursor.fetchone()
     conn.close()
     
     if user:
-        if pwd_context.verify(data.password, user['Password']):
+        if pwd_context.verify(data.password, user['password']):
             user_dict = dict(user)
-            del user_dict['Password'] 
+            del user_dict['password'] 
             return {"status": "success", "user": user_dict}
     return {"status": "error", "message": "Invalid Email or Password"}
 
@@ -151,7 +150,6 @@ def update_profile(data: UpdateProfileData):
     conn = get_db()
     try:
         cursor = conn.cursor()
-        # All column names are now lowercase!
         cursor.execute('UPDATE students SET cgpa = %s WHERE id = %s', (data.new_cgpa, data.student_id))
         cursor.execute('DELETE FROM student_skills WHERE student_id = %s', (data.student_id,))
         
@@ -174,7 +172,7 @@ def update_profile(data: UpdateProfileData):
 def search(skills: str = None):
     conn = get_db()
     cursor = conn.cursor()
-    # Querying the VIEW we created in Step 1
+    # Fixed: Ensure query uses lowercase column from view
     if skills:
         cursor.execute('SELECT * FROM active_candidates WHERE skills ILIKE %s', (f"%{skills.lower()}%",))
     else:
@@ -182,14 +180,13 @@ def search(skills: str = None):
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
+
 @app.post("/mark_placed/{student_id}")
 def mark_placed(student_id: int):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('UPDATE Students SET "Is_Placed" = 1 WHERE "ID" = %s', (student_id,))
+    # Fixed: Using lowercase names
+    cursor.execute('UPDATE students SET is_placed = 1 WHERE id = %s', (student_id,))
     conn.commit()
     conn.close()
     return {"status": "success"}
-
-
-
