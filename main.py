@@ -89,30 +89,30 @@ def register(s: StudentData):
     try:
         cursor = conn.cursor()
         
-        # Insert Student & use RETURNING "ID" (Postgres equivalent of lastrowid)
-        cursor.execute("""INSERT INTO Students ("FName", "LName", "Email", "Password", "CGPA", "Github", "Bio") 
-                          VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING "ID" """, 
-                       (s.first_name, s.last_name, s.email, hashed_pw, s.cgpa, s.github_link, s.bio))
-        student_id = cursor.fetchone()['ID']
+        # 1. UPDATED: Using lowercase first_name and last_name
+        cursor.execute("""
+            INSERT INTO students (
+                first_name, middle_name, last_name, email, password, cgpa, github, bio
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
+        """, (s.first_name, s.middle_name, s.last_name, s.email, hashed_pw, s.cgpa, s.github_link, s.bio))
         
-        # Process Skills
+        student_id = cursor.fetchone()['id']
+        
+        # 2. UPDATED: Mapping Skills
         skill_list = [skill.strip().lower() for skill in s.skills.split(',')]
         for skill_name in skill_list:
             if not skill_name: continue
-            
-            # ON CONFLICT DO NOTHING is Postgres for INSERT OR IGNORE
-            cursor.execute('INSERT INTO Skills ("Name") VALUES (%s) ON CONFLICT ("Name") DO NOTHING', (skill_name,))
-            cursor.execute('SELECT "ID" FROM Skills WHERE "Name" = %s', (skill_name,))
-            skill_id = cursor.fetchone()['ID']
-            
-            cursor.execute('INSERT INTO Student_Skills ("Student_ID", "Skill_ID") VALUES (%s,%s) ON CONFLICT DO NOTHING', (student_id, skill_id))
+            cursor.execute('INSERT INTO skills (name) VALUES (%s) ON CONFLICT (name) DO NOTHING', (skill_name,))
+            cursor.execute('SELECT id FROM skills WHERE name = %s', (skill_name,))
+            skill_id = cursor.fetchone()['id']
+            cursor.execute('INSERT INTO student_skills (student_id, skill_id) VALUES (%s, %s) ON CONFLICT DO NOTHING', (student_id, skill_id))
             
         conn.commit()
         return {"status": "success"}
     except Exception as e:
-        conn.rollback() # Critical for Postgres error recovery
+        conn.rollback()
         return {"status": "error", "message": str(e)}
-    finally: 
+    finally:
         conn.close()
 
 @app.post("/login")
