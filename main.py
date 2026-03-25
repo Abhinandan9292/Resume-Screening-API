@@ -8,12 +8,16 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+from fastapi.middleware.cors import CORSMiddleware
 
-def get_db():
-    conn = sqlite3.connect('recruitment.db', timeout=20)
-    conn.row_factory = sqlite3.Row
-    return conn
+# This is the "Open Door" policy for your browser
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- DATABASE INITIALIZATION ---
 def init_db():
@@ -83,3 +87,27 @@ def mark_placed(student_id: int):
     conn.commit()
     conn.close()
     return {"status": "success"}
+
+# --- LOGIN LOGIC ---
+class LoginData(BaseModel):
+    email: str
+    password: str
+
+@app.post("/login")
+def login(data: LoginData):
+    conn = get_db()
+    cursor = conn.cursor()
+    # 1. Find the user by email
+    cursor.execute("SELECT * FROM Students WHERE Email = ?", (data.email,))
+    user = cursor.fetchone()
+    conn.close()
+
+    if user:
+        # 2. Check if the password matches the hashed version in the DB
+        if pwd_context.verify(data.password, user['Password']):
+            # 3. Return the student's data (excluding the password)
+            user_dict = dict(user)
+            del user_dict['Password'] 
+            return {"status": "success", "user": user_dict}
+    
+    return {"status": "error", "message": "Invalid Email or Password"}

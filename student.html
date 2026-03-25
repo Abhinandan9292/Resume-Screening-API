@@ -40,64 +40,73 @@
     </div>
 
     <script>
-        const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
+    const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
-        // AI PARSING LOGIC
-        document.getElementById('resumeUpload').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            const status = document.getElementById('aiStatus');
-            status.innerText = "AI is reading your resume... 🧠";
-            
-            const formData = new FormData();
-            formData.append('file', file);
+    // 1. AI PARSING LOGIC
+    document.getElementById('resumeUpload').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        const status = document.getElementById('aiStatus');
+        status.innerText = "AI is reading your resume... 🧠";
+        
+        const formData = new FormData();
+        formData.append('file', file);
 
-            try {
-                const response = await fetch(`${API_BASE}/ai_parse`, { method: 'POST', body: formData });
-                const data = await response.json();
-                document.getElementById('skills').value = data.suggested_skills;
-                document.getElementById('bio').value = data.bio_preview;
-                status.innerText = "Success! Data extracted. Check the fields below. ✅";
-            } catch (error) {
-                status.innerText = "Error. Is the Render server awake? ❌";
+        try {
+            const response = await fetch(`${API_BASE}/ai_parse`, { method: 'POST', body: formData });
+            const data = await response.json();
+            document.getElementById('skills').value = data.suggested_skills;
+            document.getElementById('bio').value = data.bio_preview;
+            status.innerText = "Success! Data extracted. ✅";
+        } catch (error) {
+            status.innerText = "Connection lost. Try again.";
+        }
+    });
+
+    // 2. FORM SUBMISSION (FIXED)
+    document.getElementById('studentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const submitBtn = e.target.querySelector('button');
+        submitBtn.innerText = "Saving to Database...";
+
+        const studentData = {
+            first_name: document.getElementById('first_name').value,
+            last_name: document.getElementById('last_name').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            cgpa: parseFloat(document.getElementById('cgpa').value),
+            github_link: document.getElementById('github').value,
+            skills: document.getElementById('skills').value,
+            bio: document.getElementById('bio').value
+        };
+
+        try {
+            const res = await fetch(`${API_BASE}/register_student`, {
+                method: 'POST',
+                mode: 'cors', // Explicitly allow cross-origin
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(studentData)
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                alert("Database Error: " + (errorData.detail || "Check fields"));
+                return;
             }
-        });
 
-        // FORM SUBMISSION
-        document.getElementById('studentForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const submitBtn = e.target.querySelector('button');
-            submitBtn.innerText = "Saving to Database...";
-
-            const studentData = {
-                first_name: document.getElementById('first_name').value,
-                last_name: document.getElementById('last_name').value,
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value,
-                cgpa: parseFloat(document.getElementById('cgpa').value),
-                github_link: document.getElementById('github').value,
-                skills: document.getElementById('skills').value,
-                bio: document.getElementById('bio').value
-            };
-
-            try {
-                const res = await fetch(`${API_BASE}/register_student`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(studentData)
-                });
-                const result = await res.json();
-                if(result.status === 'success') {
-                    alert("Profile Registered Successfully!");
-                    window.location.href = 'index.html';
-                } else {
-                    alert("Error: " + result.message);
-                }
-            } catch (err) {
-                alert("Server Error. Check your connection.");
-            } finally {
-                submitBtn.innerText = "Register Profile";
+            const result = await res.json();
+            if(result.status === 'success') {
+                alert("Profile Registered Successfully! 🎉");
+                window.location.href = 'index.html';
+            } else {
+                alert("Error: " + result.message);
             }
-        });
-    </script>
+        } catch (err) {
+            console.error(err);
+            alert("Handshake Failed. Is the Render server Live?");
+        } finally {
+            submitBtn.innerText = "Register Profile";
+        }
+    });
+</script>
 </body>
 </html>
