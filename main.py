@@ -77,8 +77,10 @@ def register(s: StudentData):
         conn.commit()
         return {"status": "success"}
     except Exception as e:
+        # If the email already exists, it will show this error!
         return {"status": "error", "message": str(e)}
-    finally: conn.close()
+    finally: 
+        conn.close()
 
 @app.post("/login")
 def login(data: LoginData):
