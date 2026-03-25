@@ -1,90 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Recruiter Gateway | Talent Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 min-h-screen p-8 font-sans">
 
-    <div class="max-w-6xl mx-auto mb-10 text-center">
-        <h1 class="text-4xl font-extrabold text-slate-800 mb-4">Talent Search</h1>
-        <p class="text-slate-500 mb-8">Find the perfect candidate for your next role.</p>
-        
-        <div class="flex max-w-2xl mx-auto shadow-lg rounded-2xl overflow-hidden border border-slate-200">
-            <input type="text" id="search-input" placeholder="Search by skills (e.g., Python, React, C++)..." 
-                   class="w-full p-4 outline-none text-slate-700 font-medium">
-            <button onclick="searchCandidates()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 transition">
-                Search
-            </button>
-        </div>
-    </div>
+// Ensure your script block in recruiter.html looks like this:
+const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
-    <div id="results-grid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        </div>
-
-    <script>
-        const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
-
-        // Load all available candidates when the page first opens
-       window.onload = () => {
-    const pass = prompt("Recruiter Gateway\n\nEnter Recruiter Access Code:");
-    if (pass === "9292") {
-        searchCandidates();
-    } else {
-        alert("Access Denied: Incorrect Access Code.");
-        window.location.href = 'index.html';
-    }
-};
-
-        async function performSearch() {
+async function searchCandidates() {
+    const grid = document.getElementById('results-grid');
     const skill = document.getElementById('search-input').value;
-    // ✅ CORRECT: Call the Recruiter route
-    const url = skill 
-        ? `${API_BASE}/recruiter/candidates?skills=${skill}` 
-        : `${API_BASE}/recruiter/candidates`;
+    grid.innerHTML = '<p class="text-center col-span-full">Searching...</p>';
 
-    const response = await fetch(url);
-    const results = await response.json();
-    // ... render results
+    try {
+        const url = skill 
+            ? `${API_BASE}/recruiter/candidates?skills=${encodeURIComponent(skill)}` 
+            : `${API_BASE}/recruiter/candidates`;
+
+        const response = await fetch(url);
+        const candidates = await response.json();
+        grid.innerHTML = '';
+
+        candidates.forEach(student => {
+            const card = document.createElement('div');
+            card.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition";
+            card.innerHTML = `
+                <h3 class="text-xl font-bold">${student.first_name} ${student.last_name}</h3>
+                <p class="text-blue-600 font-semibold">${student.email}</p>
+                <div class="mt-2 flex flex-wrap gap-1">
+                    ${(student.skills || '').split(',').map(s => `<span class="bg-slate-100 px-2 py-1 rounded text-xs">${s.trim()}</span>`).join('')}
+                </div>
+                <a href="${student.github || '#'}" target="_blank" class="block mt-4 bg-slate-900 text-white text-center py-2 rounded">View GitHub</a>
+            `;
+            grid.appendChild(card);
+        });
+    } catch (e) { grid.innerHTML = '<p class="text-red-500">Search Failed.</p>'; }
 }
-
-                // Loop through the database results and create a card for each student
-                candidates.forEach(student => {
-                    const card = document.createElement('div');
-                    card.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition";
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold text-slate-800">${student.FName} ${student.LName}</h3>
-                                <p class="text-sm text-blue-600 font-semibold">${student.Email}</p>
-                            </div>
-                            <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">CGPA: ${student.CGPA}</span>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Top Skills</p>
-                            <div class="flex flex-wrap gap-2">
-                                ${student.Skills.split(',').map(skill => `<span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-md">${skill.trim()}</span>`).join('')}
-                            </div>
-                        </div>
-
-                        <div class="mb-6">
-                            <p class="text-sm text-slate-600 line-clamp-3">${student.Bio || "No bio provided."}</p>
-                        </div>
-
-                        <a href="${student.Github}" target="_blank" class="block w-full text-center bg-slate-900 hover:bg-black text-white font-bold py-2 rounded-lg transition">
-                            View GitHub
-                        </a>
-                    `;
-                    grid.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error("Search failed:", error);
-                grid.innerHTML = '<p class="text-center col-span-full text-red-500 font-bold">Failed to connect to the database.</p>';
-            }
-        }
-    </script>
-</body>
-</html>
