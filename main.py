@@ -7,6 +7,13 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # In production, you'd put your Vercel URL here
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 app.add_middleware(
@@ -90,7 +97,7 @@ def register(s: StudentData):
     try:
         cursor = conn.cursor()
         
-        # 1. UPDATED: Using lowercase first_name and last_name
+        # Ensure the column names here match your "Nuclear Reset" exactly (lowercase)
         cursor.execute("""
             INSERT INTO students (
                 first_name, middle_name, last_name, email, password, cgpa, github, bio
@@ -99,10 +106,9 @@ def register(s: StudentData):
         
         student_id = cursor.fetchone()['id']
         
-        # 2. UPDATED: Mapping Skills
-        skill_list = [skill.strip().lower() for skill in s.skills.split(',')]
+        # Normalize and Link Skills
+        skill_list = [skill.strip().lower() for skill in s.skills.split(',') if skill.strip()]
         for skill_name in skill_list:
-            if not skill_name: continue
             cursor.execute('INSERT INTO skills (name) VALUES (%s) ON CONFLICT (name) DO NOTHING', (skill_name,))
             cursor.execute('SELECT id FROM skills WHERE name = %s', (skill_name,))
             skill_id = cursor.fetchone()['id']
@@ -112,7 +118,9 @@ def register(s: StudentData):
         return {"status": "success"}
     except Exception as e:
         conn.rollback()
-        return {"status": "error", "message": str(e)}
+        # This will send the ACTUAL error back to your console so we can see it
+        print(f"CRITICAL ERROR: {str(e)}") 
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
     finally:
         conn.close()
 
