@@ -27,12 +27,10 @@ DB_URL = "postgresql://postgres.htjggenkueuyhunjkksy:Abhinandan%409252@aws-1-ap-
 def get_db():
     return psycopg2.connect(DB_URL, cursor_factory=RealDictCursor)
 
-# --- 🏗️ 2. DATABASE INITIALIZATION (Standardized Lowercase) ---
+# --- 🏗️ 2. DATABASE INITIALIZATION ---
 def init_db():
     conn = get_db()
     cursor = conn.cursor()
-    
-    # Students Table
     cursor.execute('''CREATE TABLE IF NOT EXISTS students (
          id SERIAL PRIMARY KEY, 
          first_name TEXT, 
@@ -44,18 +42,13 @@ def init_db():
          github TEXT, 
          bio TEXT, 
          is_placed INTEGER DEFAULT 0)''')
-         
-    # Skills Table
     cursor.execute('''CREATE TABLE IF NOT EXISTS skills (
          id SERIAL PRIMARY KEY, 
          name TEXT UNIQUE)''')
-         
-    # Junction Table
     cursor.execute('''CREATE TABLE IF NOT EXISTS student_skills (
          student_id INTEGER REFERENCES students(id), 
          skill_id INTEGER REFERENCES skills(id),
          PRIMARY KEY (student_id, skill_id))''')
-         
     conn.commit()
     conn.close()
 
@@ -100,20 +93,16 @@ def register(s: StudentData):
     try:
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO students (
-                first_name, middle_name, last_name, email, password, cgpa, github, bio
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
+            INSERT INTO students (first_name, middle_name, last_name, email, password, cgpa, github, bio)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
         """, (s.first_name, s.middle_name, s.last_name, s.email, hashed_pw, s.cgpa, s.github_link, s.bio))
-        
         student_id = cursor.fetchone()['id']
-        
         skill_list = [skill.strip().lower() for skill in s.skills.split(',') if skill.strip()]
         for skill_name in skill_list:
             cursor.execute('INSERT INTO skills (name) VALUES (%s) ON CONFLICT (name) DO NOTHING', (skill_name,))
             cursor.execute('SELECT id FROM skills WHERE name = %s', (skill_name,))
             skill_id = cursor.fetchone()['id']
             cursor.execute('INSERT INTO student_skills (student_id, skill_id) VALUES (%s, %s) ON CONFLICT DO NOTHING', (student_id, skill_id))
-            
         conn.commit()
         return {"status": "success"}
     except Exception as e:
@@ -126,7 +115,6 @@ def register(s: StudentData):
 def login(data: LoginData):
     conn = get_db()
     cursor = conn.cursor()
-    # Fixed: Now using lowercase names and views
     cursor.execute("""
         SELECT s.*, STRING_AGG(sk.name, ', ') as skills 
         FROM students s
@@ -137,7 +125,6 @@ def login(data: LoginData):
     """, (data.email,))
     user = cursor.fetchone()
     conn.close()
-    
     if user:
         if pwd_context.verify(data.password, user['password']):
             user_dict = dict(user)
@@ -152,19 +139,17 @@ def update_profile(data: UpdateProfileData):
         cursor = conn.cursor()
         cursor.execute('UPDATE students SET cgpa = %s WHERE id = %s', (data.new_cgpa, data.student_id))
         cursor.execute('DELETE FROM student_skills WHERE student_id = %s', (data.student_id,))
-        
         skill_list = [skill.strip().lower() for skill in data.new_skills.split(',') if skill.strip()]
         for skill_name in skill_list:
             cursor.execute('INSERT INTO skills (name) VALUES (%s) ON CONFLICT (name) DO NOTHING', (skill_name,))
             cursor.execute('SELECT id FROM skills WHERE name = %s', (skill_name,))
             skill_id = cursor.fetchone()['id']
             cursor.execute('INSERT INTO student_skills (student_id, skill_id) VALUES (%s, %s) ON CONFLICT DO NOTHING', (data.student_id, skill_id))
-            
         conn.commit()
         return {"status": "success"}
     except Exception as e:
         conn.rollback()
-        return {"status": "error", "message": str(e)}
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
     finally:
         conn.close()
 
@@ -172,7 +157,6 @@ def update_profile(data: UpdateProfileData):
 def search(skills: str = None):
     conn = get_db()
     cursor = conn.cursor()
-    # Fixed: Ensure query uses lowercase column from view
     if skills:
         cursor.execute('SELECT * FROM active_candidates WHERE skills ILIKE %s', (f"%{skills.lower()}%",))
     else:
@@ -185,7 +169,6 @@ def search(skills: str = None):
 def mark_placed(student_id: int):
     conn = get_db()
     cursor = conn.cursor()
-    # Fixed: Using lowercase names
     cursor.execute('UPDATE students SET is_placed = 1 WHERE id = %s', (student_id,))
     conn.commit()
     conn.close()
