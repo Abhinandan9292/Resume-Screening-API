@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard | Talent Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen p-8 font-sans">
+
+    <nav class="max-w-4xl mx-auto flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm mb-8">
+        <h1 class="text-xl font-bold text-blue-900">Talent Engine Vault</h1>
+        <button onclick="logout()" class="text-red-500 font-bold hover:text-red-700 px-4 py-2 rounded-lg hover:bg-red-50 transition">
+            Secure Logout
+        </button>
+    </nav>
+
+    <div class="max-w-4xl mx-auto bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+        
+        <div class="border-b pb-6 mb-6">
+            <h2 class="text-3xl font-extrabold text-slate-800">Welcome, <span id="display-name" class="text-blue-600">Student</span>!</h2>
+            <p class="text-slate-500 mt-2">Here is your live database profile.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div class="bg-blue-50 p-6 rounded-2xl">
+                <p class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-1">Registered Email</p>
+                <p id="display-email" class="text-lg font-semibold text-slate-700">Loading...</p>
+            </div>
+
+            <div class="bg-blue-50 p-6 rounded-2xl">
+                <p class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-1">Academic CGPA</p>
+                <p id="display-cgpa" class="text-lg font-semibold text-slate-700">Loading...</p>
+            </div>
+
+            <div class="bg-blue-50 p-6 rounded-2xl">
+                <p class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-1">Placement Status</p>
+                <p id="display-status" class="text-lg font-semibold text-slate-700">Loading...</p>
+            </div>
+
+            <div class="bg-blue-50 p-6 rounded-2xl">
+                <p class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-1">GitHub Portfolio</p>
+                <a id="display-github" href="#" target="_blank" class="text-lg font-semibold text-blue-600 hover:underline">View Profile &rarr;</a>
+            </div>
+
+        </div>
+
+        <div class="mt-6 space-y-6">
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                <p class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Technical Skills</p>
+                <p id="display-skills" class="text-slate-700 font-medium">Loading...</p>
+            </div>
+
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                <p class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Professional Bio</p>
+                <p id="display-bio" class="text-slate-700 leading-relaxed">Loading...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. THE SECURITY GATEKEEPER ---
+        // Check if the user is actually logged in. If not, kick them out!
+        const sessionData = localStorage.getItem('studentSession');
+        
+        if (!sessionData) {
+            alert("Security Alert: You must log in to view this page.");
+            window.location.href = 'login.html';
+        } else {
+            // --- 2. THE DATA RENDERER ---
+            // If they are logged in, turn the text back into a JavaScript Object
+            const user = JSON.parse(sessionData);
+
+            // Inject the database values into the HTML
+            document.getElementById('display-name').innerText = user.FName + " " + user.LName;
+            document.getElementById('display-email').innerText = user.Email;
+            document.getElementById('display-cgpa').innerText = user.CGPA;
+            document.getElementById('display-github').href = user.Github;
+            document.getElementById('display-skills').innerText = user.Skills;
+            document.getElementById('display-bio').innerText = user.Bio;
+
+            // Make the Placement Status look nice
+            const statusElement = document.getElementById('display-status');
+            if (user.Is_Placed === 1) {
+                statusElement.innerText = "Placed ✅";
+                statusElement.classList.add("text-green-600");
+            } else {
+                statusElement.innerText = "Actively Seeking 🔍";
+                statusElement.classList.add("text-yellow-600");
+            }
+        }
+
+        // --- 3. THE LOGOUT LOGIC ---
+        function logout() {
+            // Destroy the session token in the browser
+            localStorage.removeItem('studentSession');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
