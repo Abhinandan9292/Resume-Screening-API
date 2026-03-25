@@ -39,101 +39,97 @@
     </div>
 
     <script>
-        const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
+      const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
-        // Add a tiny layer of "security" flavor for the presentation
-        window.onload = () => {
+window.onload = () => {
     const pass = prompt("Secure Placement Cell Portal\n\nEnter Admin PIN:");
     if (pass === "92") {
-        loadUnplacedStudents();
+        loadAllStudents(); // Updated function name
     } else {
         alert("Access Denied: Incorrect PIN.");
         window.location.href = 'index.html';
     }
 };
 
-        async function loadUnplacedStudents() {
-            const tbody = document.getElementById('admin-table-body');
+async function loadAllStudents() {
+    const tbody = document.getElementById('admin-table-body');
+    
+    try {
+        // 1. CALL THE ADMIN ENDPOINT (Sees everyone)
+        const response = await fetch(`${API_BASE}/admin/all_students`);
+        const students = await response.json();
+
+        tbody.innerHTML = ''; 
+
+        if (students.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No students found in the database.</td></tr>`;
+            return;
+        }
+
+        students.forEach(student => {
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 transition";
             
-            try {
-                // Fetching all unplaced students (our search endpoint does this by default if no skill is provided)
-                const response = await fetch(`${API_BASE}/search`);
-                const students = await response.json();
+            // 2. USE LOWERCASE KEYS (first_name, last_name, etc.)
+            // 3. LOGIC: If is_placed is 1, show a checkmark instead of a button
+            const actionContent = student.is_placed === 1 
+                ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">PLACED ✅</span>`
+                : `<button onclick="markAsPlaced(${student.id}, this)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-lg transition shadow-md shadow-indigo-200">
+                    Mark as Placed
+                   </button>`;
 
-                tbody.innerHTML = ''; // Clear loading text
+            tr.innerHTML = `
+                <td class="p-4 font-bold text-slate-800">${student.first_name || ''} ${student.last_name || ''}</td>
+                <td class="p-4 text-slate-600">${student.email}</td>
+                <td class="p-4 font-semibold text-teal-600">${student.cgpa}</td>
+                <td class="p-4">
+                    <div class="flex flex-wrap gap-1">
+                        ${(student.skills || '').split(',').slice(0, 3).map(skill => 
+                            `<span class="bg-slate-200 text-slate-700 text-[10px] px-2 py-1 rounded-md uppercase font-bold">${skill.trim()}</span>`
+                        ).join('')}
+                    </div>
+                </td>
+                <td class="p-4 text-center">
+                    ${actionContent}
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
 
-                if (students.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No unplaced students in the database. Great job!</td></tr>`;
-                    return;
-                }
+    } catch (error) {
+        console.error(error);
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold">Database connection failed. Check Render server logs.</td></tr>`;
+    }
+}
 
-                students.forEach(student => {
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition";
-                    tr.innerHTML = `
-                        <td class="p-4 font-bold text-slate-800">${student.FName} ${student.LName}</td>
-                        <td class="p-4 text-slate-600">${student.Email}</td>
-                        <td class="p-4 font-semibold text-teal-600">${student.CGPA}</td>
-                        <td class="p-4">
-                            <div class="flex flex-wrap gap-1">
-                                ${student.Skills.split(',').slice(0, 3).map(skill => `<span class="bg-slate-200 text-slate-700 text-[10px] px-2 py-1 rounded-md uppercase font-bold">${skill.trim()}</span>`).join('')}
-                                ${student.Skills.split(',').length > 3 ? '<span class="text-xs text-slate-400">...</span>' : ''}
-                            </div>
-                        </td>
-                        <td class="p-4 text-center">
-                            <button onclick="markAsPlaced(${student.ID}, this)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-lg transition shadow-md shadow-indigo-200">
-                                Mark as Placed
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+async function markAsPlaced(studentId, btnElement) {
+    if (!confirm("Are you sure you want to mark this student as placed? They will be moved to the 'Placed' category.")) return;
 
-            } catch (error) {
-                console.error(error);
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold">Database connection failed. Check Render server.</td></tr>`;
-            }
+    btnElement.innerText = "Updating...";
+    btnElement.disabled = true;
+
+    try {
+        // Calling our updated admin POST route
+        const response = await fetch(`${API_BASE}/admin/mark_placed/${studentId}`, {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            alert("Student Hired!");
+            loadAllStudents(); // Refresh the list to show the new "Placed" badge
+        } else {
+            alert("Database Error: " + (result.message || "Could not update record."));
+            btnElement.innerText = "Mark as Placed";
+            btnElement.disabled = false;
         }
-
-        async function markAsPlaced(studentId, btnElement) {
-            // Confirm with the admin before making a database change
-            if (!confirm("Are you sure you want to mark this student as placed? They will be removed from the recruiter search.")) return;
-
-            const originalText = btnElement.innerText;
-            btnElement.innerText = "Updating...";
-            btnElement.disabled = true;
-
-            try {
-                const response = await fetch(`${API_BASE}/mark_placed/${studentId}`, {
-                    method: 'POST'
-                });
-                
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    // Success! Remove the row from the table with a nice fade effect
-                    const row = btnElement.closest('tr');
-                    row.style.opacity = '0';
-                    setTimeout(() => row.remove(), 300);
-                    
-                    // Optional: Check if table is empty now
-                    setTimeout(() => {
-                        const tbody = document.getElementById('admin-table-body');
-                        if (tbody.children.length === 0) {
-                            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No unplaced students in the database. Great job!</td></tr>`;
-                        }
-                    }, 350);
-                } else {
-                    alert("Database Error: Could not update record.");
-                    btnElement.innerText = originalText;
-                    btnElement.disabled = false;
-                }
-            } catch (error) {
-                alert("Connection failed.");
-                btnElement.innerText = originalText;
-                btnElement.disabled = false;
-            }
-        }
+    } catch (error) {
+        alert("Connection failed.");
+        btnElement.innerText = "Mark as Placed";
+        btnElement.disabled = false;
+    }
+}
     </script>
 </body>
 </html>
