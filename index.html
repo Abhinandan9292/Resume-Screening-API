@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Abhinandan Talent Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center">
+    <div class="max-w-4xl text-center px-6">
+        <h1 class="text-6xl font-extrabold mb-4 bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent pb-2">
+            Talent Engine
+        </h1>
+        <p class="text-slate-400 text-lg mb-12">The Ultimate Bridge: Students. Recruiters. Placement Cell.</p>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div onclick="window.location.href='student.html'" class="group bg-slate-800 p-8 rounded-3xl border border-slate-700 hover:border-blue-500 hover:bg-slate-800/50 transition-all cursor-pointer">
+                <div class="text-5xl mb-4 group-hover:scale-110 transition">🎓</div>
+                <h2 class="text-xl font-bold mb-2">Student Vault</h2>
+                <p class="text-sm text-slate-400">Build your profile and use AI to parse your resume.</p>
+            </div>
+
+            <div onclick="window.location.href='recruiter.html'" class="group bg-slate-800 p-8 rounded-3xl border border-slate-700 hover:border-emerald-500 hover:bg-slate-800/50 transition-all cursor-pointer">
+                <div class="text-5xl mb-4 group-hover:scale-110 transition">💼</div>
+                <h2 class="text-xl font-bold mb-2">Recruiter Gateway</h2>
+                <p class="text-sm text-slate-400">Search by skills and find the top candidates instantly.</p>
+            </div>
+
+            <div onclick="window.location.href='admin.html'" class="group bg-slate-800 p-8 rounded-3xl border border-slate-700 hover:border-purple-500 hover:bg-slate-800/50 transition-all cursor-pointer">
+                <div class="text-5xl mb-4 group-hover:scale-110 transition">🔑</div>
+                <h2 class="text-xl font-bold mb-2">Placement Cell</h2>
+                <p class="text-sm text-slate-400">Manage placements and mark students as placed.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
