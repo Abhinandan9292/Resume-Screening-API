@@ -18,7 +18,7 @@ app.add_middleware(
 )
 
 # 🛑 PASTE YOUR SUPABASE URI HERE! 
-DB_URL = "DB_URL = "postgresql://postgres.htjggenkueuyhunjkksy:Abhinandan%409252@aws-1-ap-south-1.pooler.supabase.com:6543/postgres""
+DB_URL = "postgresql://postgres.htjggenkueuyhunjkksy:Abhinandan%409252@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
 
 def get_db():
     # RealDictCursor ensures the database returns dictionaries (JSON) instead of tuples
