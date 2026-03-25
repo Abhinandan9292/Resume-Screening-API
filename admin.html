@@ -2,31 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Placement Cell | Admin Dashboard</title>
+    <title>Placement Cell Admin | Talent Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-8">
-    <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-center mb-10">
-            <div>
-                <h1 class="text-4xl font-black text-white">Placement Cell <span class="text-purple-500">HQ</span></h1>
-                <p class="text-slate-400">Master Control: Manage student status and placement records.</p>
-            </div>
-            <button onclick="window.location.href='index.html'" class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 hover:bg-slate-700">Back to Portal</button>
-        </div>
+<body class="bg-slate-50 min-h-screen p-8 font-sans">
 
-        <div class="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-2xl">
-            <table class="w-full text-left">
-                <thead class="bg-slate-700/50 text-slate-400 text-sm uppercase">
-                    <tr>
-                        <th class="p-6">Student Name</th>
-                        <th class="p-6">CGPA</th>
-                        <th class="p-6">Status</th>
-                        <th class="p-6 text-right">Action</th>
+    <div class="max-w-6xl mx-auto mb-8 flex justify-between items-center bg-slate-900 p-6 rounded-2xl shadow-lg">
+        <div>
+            <h1 class="text-3xl font-bold text-white tracking-tight">Placement Cell Control</h1>
+            <p class="text-slate-400 mt-1">Manage active student profiles and update placement status.</p>
+        </div>
+        <div class="bg-slate-800 text-teal-400 px-4 py-2 rounded-lg font-bold border border-slate-700">
+            Secure Admin Session
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
+                        <th class="p-4 font-bold">Student Name</th>
+                        <th class="p-4 font-bold">Email</th>
+                        <th class="p-4 font-bold">CGPA</th>
+                        <th class="p-4 font-bold">Core Skills</th>
+                        <th class="p-4 font-bold text-center">Action</th>
                     </tr>
                 </thead>
-                <tbody id="adminTableBody">
-                    </tbody>
+                <tbody id="admin-table-body" class="divide-y divide-slate-100">
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-slate-500 font-medium">Loading database records...</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -34,45 +41,95 @@
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
-        async function loadAdminData() {
-            const res = await fetch(`${API_BASE}/search`);
-            const students = await res.json();
-            const tableBody = document.getElementById('adminTableBody');
-            tableBody.innerHTML = '';
+        // Add a tiny layer of "security" flavor for the presentation
+        window.onload = () => {
+            const pass = prompt("Enter Admin PIN to access the Database (Hint: just press OK for the demo):");
+            // You can hardcode a pin check here if you want, but letting it slide for the demo
+            loadUnplacedStudents();
+        };
 
-            students.forEach(s => {
-                tableBody.innerHTML += `
-                    <tr class="border-b border-slate-700 hover:bg-slate-700/30 transition">
-                        <td class="p-6">
-                            <div class="font-bold text-white text-lg">${s.FName} ${s.LName}</div>
-                            <div class="text-sm text-slate-500 font-mono">${s.Email}</div>
+        async function loadUnplacedStudents() {
+            const tbody = document.getElementById('admin-table-body');
+            
+            try {
+                // Fetching all unplaced students (our search endpoint does this by default if no skill is provided)
+                const response = await fetch(`${API_BASE}/search`);
+                const students = await response.json();
+
+                tbody.innerHTML = ''; // Clear loading text
+
+                if (students.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No unplaced students in the database. Great job!</td></tr>`;
+                    return;
+                }
+
+                students.forEach(student => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition";
+                    tr.innerHTML = `
+                        <td class="p-4 font-bold text-slate-800">${student.FName} ${student.LName}</td>
+                        <td class="p-4 text-slate-600">${student.Email}</td>
+                        <td class="p-4 font-semibold text-teal-600">${student.CGPA}</td>
+                        <td class="p-4">
+                            <div class="flex flex-wrap gap-1">
+                                ${student.Skills.split(',').slice(0, 3).map(skill => `<span class="bg-slate-200 text-slate-700 text-[10px] px-2 py-1 rounded-md uppercase font-bold">${skill.trim()}</span>`).join('')}
+                                ${student.Skills.split(',').length > 3 ? '<span class="text-xs text-slate-400">...</span>' : ''}
+                            </div>
                         </td>
-                        <td class="p-6 font-mono text-blue-400 text-xl font-bold">${s.CGPA}</td>
-                        <td class="p-6">
-                            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-bold">
-                                AVAILABLE
-                            </span>
-                        </td>
-                        <td class="p-6 text-right">
-                            <button onclick="markPlaced(${s.ID})" class="bg-purple-600 hover:bg-purple-500 text-white px-5 py-2 rounded-xl font-bold transition shadow-lg shadow-purple-900/20">
+                        <td class="p-4 text-center">
+                            <button onclick="markAsPlaced(${student.ID}, this)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-lg transition shadow-md shadow-indigo-200">
                                 Mark as Placed
                             </button>
                         </td>
-                    </tr>`;
-            });
-        }
+                    `;
+                    tbody.appendChild(tr);
+                });
 
-        async function markPlaced(id) {
-            if(!confirm("Are you sure? This will remove the student from the Recruiter's view.")) return;
-            
-            const res = await fetch(`${API_BASE}/mark_placed/${id}`, { method: 'POST' });
-            if(res.ok) {
-                alert("Student moved to Placed Archive! ✅");
-                loadAdminData();
+            } catch (error) {
+                console.error(error);
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold">Database connection failed. Check Render server.</td></tr>`;
             }
         }
 
-        window.onload = loadAdminData;
+        async function markAsPlaced(studentId, btnElement) {
+            // Confirm with the admin before making a database change
+            if (!confirm("Are you sure you want to mark this student as placed? They will be removed from the recruiter search.")) return;
+
+            const originalText = btnElement.innerText;
+            btnElement.innerText = "Updating...";
+            btnElement.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/mark_placed/${studentId}`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Success! Remove the row from the table with a nice fade effect
+                    const row = btnElement.closest('tr');
+                    row.style.opacity = '0';
+                    setTimeout(() => row.remove(), 300);
+                    
+                    // Optional: Check if table is empty now
+                    setTimeout(() => {
+                        const tbody = document.getElementById('admin-table-body');
+                        if (tbody.children.length === 0) {
+                            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No unplaced students in the database. Great job!</td></tr>`;
+                        }
+                    }, 350);
+                } else {
+                    alert("Database Error: Could not update record.");
+                    btnElement.innerText = originalText;
+                    btnElement.disabled = false;
+                }
+            } catch (error) {
+                alert("Connection failed.");
+                btnElement.innerText = originalText;
+                btnElement.disabled = false;
+            }
+        }
     </script>
 </body>
 </html>
