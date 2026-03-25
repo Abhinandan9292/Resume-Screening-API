@@ -11,6 +11,7 @@ from psycopg2.extras import RealDictCursor
 app = FastAPI()
 
 # --- 🌐 1. THE CORS GATEKEEPER ---
+# This allows your Vercel frontend to communicate with this Render backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,16 +22,18 @@ app.add_middleware(
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# 🛑 DATABASE CONNECTION
+# 🛑 DATABASE CONNECTION (Supabase)
 DB_URL = "postgresql://postgres.htjggenkueuyhunjkksy:Abhinandan%409252@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
 
 def get_db():
     return psycopg2.connect(DB_URL, cursor_factory=RealDictCursor)
 
-# --- 🏗️ 2. DATABASE INITIALIZATION ---
+# --- 🏗️ 2. DATABASE INITIALIZATION (Standardized Lowercase) ---
 def init_db():
     conn = get_db()
     cursor = conn.cursor()
+    
+    # Students Table
     cursor.execute('''CREATE TABLE IF NOT EXISTS students (
          id SERIAL PRIMARY KEY, 
          first_name TEXT, 
@@ -42,19 +45,24 @@ def init_db():
          github TEXT, 
          bio TEXT, 
          is_placed INTEGER DEFAULT 0)''')
+         
+    # Skills Table
     cursor.execute('''CREATE TABLE IF NOT EXISTS skills (
          id SERIAL PRIMARY KEY, 
          name TEXT UNIQUE)''')
+         
+    # Junction Table
     cursor.execute('''CREATE TABLE IF NOT EXISTS student_skills (
          student_id INTEGER REFERENCES students(id), 
          skill_id INTEGER REFERENCES skills(id),
          PRIMARY KEY (student_id, skill_id))''')
+         
     conn.commit()
     conn.close()
 
 init_db()
 
-# --- 📝 3. DATA MODELS ---
+# --- 📝 3. DATA MODELS (Pydantic) ---
 class StudentData(BaseModel):
     first_name: str
     middle_name: Optional[str] = None
@@ -96,13 +104,16 @@ def register(s: StudentData):
             INSERT INTO students (first_name, middle_name, last_name, email, password, cgpa, github, bio)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
         """, (s.first_name, s.middle_name, s.last_name, s.email, hashed_pw, s.cgpa, s.github_link, s.bio))
+        
         student_id = cursor.fetchone()['id']
+        
         skill_list = [skill.strip().lower() for skill in s.skills.split(',') if skill.strip()]
         for skill_name in skill_list:
             cursor.execute('INSERT INTO skills (name) VALUES (%s) ON CONFLICT (name) DO NOTHING', (skill_name,))
             cursor.execute('SELECT id FROM skills WHERE name = %s', (skill_name,))
             skill_id = cursor.fetchone()['id']
             cursor.execute('INSERT INTO student_skills (student_id, skill_id) VALUES (%s, %s) ON CONFLICT DO NOTHING', (student_id, skill_id))
+            
         conn.commit()
         return {"status": "success"}
     except Exception as e:
@@ -125,6 +136,7 @@ def login(data: LoginData):
     """, (data.email,))
     user = cursor.fetchone()
     conn.close()
+    
     if user:
         if pwd_context.verify(data.password, user['password']):
             user_dict = dict(user)
@@ -139,12 +151,14 @@ def update_profile(data: UpdateProfileData):
         cursor = conn.cursor()
         cursor.execute('UPDATE students SET cgpa = %s WHERE id = %s', (data.new_cgpa, data.student_id))
         cursor.execute('DELETE FROM student_skills WHERE student_id = %s', (data.student_id,))
+        
         skill_list = [skill.strip().lower() for skill in data.new_skills.split(',') if skill.strip()]
         for skill_name in skill_list:
             cursor.execute('INSERT INTO skills (name) VALUES (%s) ON CONFLICT (name) DO NOTHING', (skill_name,))
             cursor.execute('SELECT id FROM skills WHERE name = %s', (skill_name,))
             skill_id = cursor.fetchone()['id']
             cursor.execute('INSERT INTO student_skills (student_id, skill_id) VALUES (%s, %s) ON CONFLICT DO NOTHING', (data.student_id, skill_id))
+            
         conn.commit()
         return {"status": "success"}
     except Exception as e:
@@ -153,19 +167,33 @@ def update_profile(data: UpdateProfileData):
     finally:
         conn.close()
 
-@app.get("/search")
-def search(skills: str = None):
+# --- 🔍 MULTI-ROLE VIEWS ---
+
+# 1. For Recruiters (Only Active/Unplaced)
+@app.get("/recruiter/candidates")
+def get_recruiter_candidates(skills: str = None):
     conn = get_db()
     cursor = conn.cursor()
     if skills:
-        cursor.execute('SELECT * FROM active_candidates WHERE skills ILIKE %s', (f"%{skills.lower()}%",))
+        cursor.execute('SELECT * FROM recruiter_candidates WHERE skills ILIKE %s', (f"%{skills.lower()}%",))
     else:
-        cursor.execute('SELECT * FROM active_candidates')
+        cursor.execute('SELECT * FROM recruiter_candidates')
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
 
-@app.post("/mark_placed/{student_id}")
+# 2. For Admin/Placement Cell (See All Students)
+@app.get("/admin/all_students")
+def get_admin_students():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM admin_master_list ORDER BY is_placed ASC, id DESC')
+    results = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return results
+
+# 3. Action: Mark as Placed
+@app.post("/admin/mark_placed/{student_id}")
 def mark_placed(student_id: int):
     conn = get_db()
     cursor = conn.cursor()
