@@ -83,11 +83,13 @@
             const user = JSON.parse(sessionData);
 
             // Inject the database values (using PostgreSQL column names)
-            document.getElementById('display-name').innerText = (user.First_Name || "User") + " " + (user.Last_Name || "");
-            document.getElementById('display-email').innerText = user.Email || "N/A";
-            document.getElementById('display-cgpa').innerText = user.CGPA || "0.0";
-            document.getElementById('display-github').href = user.Github || "#";
-            document.getElementById('display-bio').innerText = user.Bio || "No bio available.";
+          // Change from user.First_Name to user.first_name
+document.getElementById('display-name').innerText = user.first_name + " " + user.last_name;
+document.getElementById('display-email').innerText = user.email;
+document.getElementById('display-cgpa').innerText = user.cgpa;
+document.getElementById('display-github').href = user.github;
+document.getElementById('display-skills').innerText = user.skills;
+document.getElementById('display-bio').innerText = user.bio;
 
             // Format Skills as badges
             const skillsContainer = document.getElementById('display-skills');
