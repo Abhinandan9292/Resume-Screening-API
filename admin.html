@@ -43,10 +43,14 @@
 
         // Add a tiny layer of "security" flavor for the presentation
         window.onload = () => {
-            const pass = prompt("Enter Admin PIN to access the Database (Hint: just press OK for the demo):");
-            // You can hardcode a pin check here if you want, but letting it slide for the demo
-            loadUnplacedStudents();
-        };
+    const pass = prompt("Secure Placement Cell Portal\n\nEnter Admin PIN:");
+    if (pass === "92") {
+        loadUnplacedStudents();
+    } else {
+        alert("Access Denied: Incorrect PIN.");
+        window.location.href = 'index.html';
+    }
+};
 
         async function loadUnplacedStudents() {
             const tbody = document.getElementById('admin-table-body');

@@ -27,7 +27,15 @@
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
         // Load all available candidates when the page first opens
-        window.onload = () => searchCandidates();
+       window.onload = () => {
+    const pass = prompt("Recruiter Gateway\n\nEnter Recruiter Access Code:");
+    if (pass === "9292") {
+        searchCandidates();
+    } else {
+        alert("Access Denied: Incorrect Access Code.");
+        window.location.href = 'index.html';
+    }
+};
 
         async function searchCandidates() {
             const searchInput = document.getElementById('search-input').value.trim();
