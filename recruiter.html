@@ -2,89 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Recruiter Dashboard</title>
+    <title>Recruiter Gateway</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 min-h-screen p-8 text-white">
+<body class="bg-slate-900 text-white min-h-screen p-8">
     <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-center mb-10">
-            <h1 class="text-3xl font-bold text-blue-400">Recruiter Leaderboard</h1>
-            <div class="flex gap-4">
-                <select id="jobSelect" class="bg-slate-800 border border-slate-600 rounded px-4 py-2 text-white">
-                    <option value="0">All Students</option>
-                    <option value="1">Data Scientist (8.0+)</option>
-                    <option value="2">Frontend Dev (7.0+)</option>
-                </select>
-                <button onclick="fetchData()" class="bg-emerald-500 px-6 py-2 rounded font-bold">Filter</button>
-            </div>
+        <h1 class="text-4xl font-bold mb-2">Recruiter <span class="text-emerald-400">Gateway</span></h1>
+        <p class="text-slate-400 mb-8">Search our elite talent database by skill or tech stack.</p>
+
+        <div class="mb-10">
+            <input type="text" id="skillSearch" onkeyup="searchSkills()" placeholder="Search by skills (e.g. 'cpp', 'python', 'aiml')..." 
+                   class="w-full bg-slate-800 border-2 border-slate-700 p-5 rounded-2xl text-xl text-emerald-300 focus:outline-none focus:border-emerald-500 shadow-xl transition-all">
         </div>
 
-        <div class="bg-slate-800 rounded-lg overflow-hidden border border-slate-700">
-            <table class="w-full text-left">
-                <thead class="bg-slate-700">
-                    <tr>
-                        <th class="p-4">ID</th>
-                        <th class="p-4">Candidate</th>
-                        <th class="p-4">Email</th>
-                        <th class="p-4">CGPA</th>
-                    </tr>
-                </thead>
-                <tbody id="studentTableBody"></tbody>
-            </table>
-        </div>
+        <div id="resultsGrid" class="grid md:grid-cols-2 gap-6">
+            </div>
     </div>
 
-   <script>
-    const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
+    <script>
+        const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
-    async function fetchData() {
-        const jobId = document.getElementById('jobSelect').value;
-        const tableBody = document.getElementById('studentTableBody');
-        tableBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center animate-pulse text-blue-400">Syncing with Cloud Database...</td></tr>';
-
-        let url = (jobId == "0") ? `${API_BASE}/students` : `${API_BASE}/match/${jobId}`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            // Handle both the single list and the match object
-            const students = (jobId == "0") ? data : data.candidates;
-            
-            tableBody.innerHTML = '';
-
-            if (students.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-500">No candidates found for this criteria.</td></tr>';
-                return;
-            }
+        async function searchSkills() {
+            const query = document.getElementById('skillSearch').value;
+            const res = await fetch(`${API_BASE}/search?skills=${query}`);
+            const students = await res.json();
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = '';
 
             students.forEach(s => {
-                // BULLETPROOF LOGIC: Check for all possible naming versions
-                const id = s.ID || s.Student_ID || "N/A";
-                const firstName = s.FName || s.First_Name || "User";
-                const lastName = s.LName || s.Last_Name || "";
-                const email = s.Email || s.email || "No Email";
-                const cgpa = s.CGPA || s.cgpa || "0.0";
-
-                tableBody.innerHTML += `
-                    <tr class="border-b border-slate-700 hover:bg-slate-700/30 transition">
-                        <td class="p-4 text-slate-500 font-mono text-sm">${id}</td>
-                        <td class="p-4 font-bold text-blue-300">${firstName} ${lastName}</td>
-                        <td class="p-4 text-slate-400">${email}</td>
-                        <td class="p-4">
-                            <span class="bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20 font-bold">
-                                ${cgpa}
-                            </span>
-                        </td>
-                    </tr>`;
+                grid.innerHTML += `
+                    <div class="bg-slate-800 p-6 rounded-3xl border border-slate-700 hover:border-emerald-500/50 transition">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-2xl font-bold text-white">${s.FName} ${s.LName}</h3>
+                                <p class="text-slate-500 text-sm font-mono">${s.Email}</p>
+                            </div>
+                            <div class="text-3xl font-black text-emerald-400">${s.CGPA}</div>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-2">Technical Stack</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${s.Skills.split(',').map(skill => `<span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-lg border border-emerald-500/20 text-xs">${skill.trim()}</span>`).join('')}
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm italic mb-6">"${s.Bio.substring(0, 100)}..."</p>
+                        <a href="${s.Github}" target="_blank" class="block text-center bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition">View Portfolio</a>
+                    </div>`;
             });
-        } catch (e) {
-            tableBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-red-400">Server is waking up... Wait 10 seconds and refresh.</td></tr>';
-            console.error("Fetch Error:", e);
         }
-    }
-    // Load data immediately on page open
-    window.onload = fetchData;
-</script>
+        window.onload = searchSkills;
+    </script>
 </body>
 </html>

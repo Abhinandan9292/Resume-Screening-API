@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Placement Cell | Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-10">
+            <div>
+                <h1 class="text-4xl font-black text-white">Placement Cell <span class="text-purple-500">HQ</span></h1>
+                <p class="text-slate-400">Master Control: Manage student status and placement records.</p>
+            </div>
+            <button onclick="window.location.href='index.html'" class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 hover:bg-slate-700">Back to Portal</button>
+        </div>
+
+        <div class="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-2xl">
+            <table class="w-full text-left">
+                <thead class="bg-slate-700/50 text-slate-400 text-sm uppercase">
+                    <tr>
+                        <th class="p-6">Student Name</th>
+                        <th class="p-6">CGPA</th>
+                        <th class="p-6">Status</th>
+                        <th class="p-6 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
+
+        async function loadAdminData() {
+            const res = await fetch(`${API_BASE}/search`);
+            const students = await res.json();
+            const tableBody = document.getElementById('adminTableBody');
+            tableBody.innerHTML = '';
+
+            students.forEach(s => {
+                tableBody.innerHTML += `
+                    <tr class="border-b border-slate-700 hover:bg-slate-700/30 transition">
+                        <td class="p-6">
+                            <div class="font-bold text-white text-lg">${s.FName} ${s.LName}</div>
+                            <div class="text-sm text-slate-500 font-mono">${s.Email}</div>
+                        </td>
+                        <td class="p-6 font-mono text-blue-400 text-xl font-bold">${s.CGPA}</td>
+                        <td class="p-6">
+                            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-bold">
+                                AVAILABLE
+                            </span>
+                        </td>
+                        <td class="p-6 text-right">
+                            <button onclick="markPlaced(${s.ID})" class="bg-purple-600 hover:bg-purple-500 text-white px-5 py-2 rounded-xl font-bold transition shadow-lg shadow-purple-900/20">
+                                Mark as Placed
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        async function markPlaced(id) {
+            if(!confirm("Are you sure? This will remove the student from the Recruiter's view.")) return;
+            
+            const res = await fetch(`${API_BASE}/mark_placed/${id}`, { method: 'POST' });
+            if(res.ok) {
+                alert("Student moved to Placed Archive! ✅");
+                loadAdminData();
+            }
+        }
+
+        window.onload = loadAdminData;
+    </script>
+</body>
+</html>
