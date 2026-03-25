@@ -55,6 +55,7 @@ init_db()
 
 class StudentData(BaseModel):
     first_name: str
+    middle_name: Optional[str] = None
     last_name: str
     email: str
     password: str
