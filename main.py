@@ -137,38 +137,42 @@ def login(data: LoginData):
             return {"status": "success", "user": user_dict}
     return {"status": "error", "message": "Invalid Email or Password"}
 
+@app.post("/update_profile")
+def update_profile(data: UpdateProfileData):
+    conn = get_db()
+    try:
+        cursor = conn.cursor()
+        # All column names are now lowercase!
+        cursor.execute('UPDATE students SET cgpa = %s WHERE id = %s', (data.new_cgpa, data.student_id))
+        cursor.execute('DELETE FROM student_skills WHERE student_id = %s', (data.student_id,))
+        
+        skill_list = [skill.strip().lower() for skill in data.new_skills.split(',') if skill.strip()]
+        for skill_name in skill_list:
+            cursor.execute('INSERT INTO skills (name) VALUES (%s) ON CONFLICT (name) DO NOTHING', (skill_name,))
+            cursor.execute('SELECT id FROM skills WHERE name = %s', (skill_name,))
+            skill_id = cursor.fetchone()['id']
+            cursor.execute('INSERT INTO student_skills (student_id, skill_id) VALUES (%s, %s) ON CONFLICT DO NOTHING', (data.student_id, skill_id))
+            
+        conn.commit()
+        return {"status": "success"}
+    except Exception as e:
+        conn.rollback()
+        return {"status": "error", "message": str(e)}
+    finally:
+        conn.close()
+
 @app.get("/search")
 def search(skills: str = None):
     conn = get_db()
     cursor = conn.cursor()
-    
+    # Querying the VIEW we created in Step 1
     if skills:
-        cursor.execute("""
-            SELECT Students.*, STRING_AGG(Skills."Name", ', ') as "Skills" 
-            FROM Students 
-            LEFT JOIN Student_Skills ON Students."ID" = Student_Skills."Student_ID" 
-            LEFT JOIN Skills ON Student_Skills."Skill_ID" = Skills."ID" 
-            WHERE Students."Is_Placed" = 0 AND Students."ID" IN (
-                SELECT "Student_ID" FROM Student_Skills 
-                JOIN Skills ON Student_Skills."Skill_ID" = Skills."ID" 
-                WHERE Skills."Name" ILIKE %s
-            )
-            GROUP BY Students."ID"
-        """, (f"%{skills.lower()}%",)) # ILIKE is Postgres for case-insensitive LIKE
+        cursor.execute('SELECT * FROM active_candidates WHERE skills ILIKE %s', (f"%{skills.lower()}%",))
     else:
-        cursor.execute("""
-            SELECT Students.*, STRING_AGG(Skills."Name", ', ') as "Skills" 
-            FROM Students 
-            LEFT JOIN Student_Skills ON Students."ID" = Student_Skills."Student_ID" 
-            LEFT JOIN Skills ON Student_Skills."Skill_ID" = Skills."ID" 
-            WHERE Students."Is_Placed" = 0
-            GROUP BY Students."ID"
-        """)
-        
+        cursor.execute('SELECT * FROM active_candidates')
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
-
 @app.post("/mark_placed/{student_id}")
 def mark_placed(student_id: int):
     conn = get_db()
