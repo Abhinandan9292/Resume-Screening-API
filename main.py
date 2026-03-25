@@ -184,35 +184,3 @@ def mark_placed(student_id: int):
 
 
 
-# 2. Add this Route at the bottom of the file
-@app.post("/update_profile")
-def update_profile(data: UpdateProfileData):
-    conn = get_db()
-    try:
-        cursor = conn.cursor()
-        
-        # Phase 1: Update the main Student record (CGPA)
-        cursor.execute('UPDATE Students SET "CGPA" = %s WHERE "ID" = %s', (data.new_cgpa, data.student_id))
-        
-        # Phase 2: Wipe old skill associations (Junction Table Cleanup)
-        # This prevents "orphan" data and ensures the new list is the only truth.
-        cursor.execute('DELETE FROM Student_Skills WHERE "Student_ID" = %s', (data.student_id,))
-        
-        # Phase 3: Re-insert new skills
-        skill_list = [skill.strip().lower() for skill in data.new_skills.split(',') if skill.strip()]
-        for skill_name in skill_list:
-            # Ensure skill exists in master list (Lookup Table)
-            cursor.execute('INSERT INTO Skills ("Name") VALUES (%s) ON CONFLICT ("Name") DO NOTHING', (skill_name,))
-            cursor.execute('SELECT "ID" FROM Skills WHERE "Name" = %s', (skill_name,))
-            skill_id = cursor.fetchone()['ID']
-            
-            # Re-link in Junction Table
-            cursor.execute('INSERT INTO Student_Skills ("Student_ID", "Skill_ID") VALUES (%s, %s) ON CONFLICT DO NOTHING', (data.student_id, skill_id))
-            
-        conn.commit()
-        return {"status": "success", "message": "Profile updated successfully"}
-    except Exception as e:
-        conn.rollback() # If any step fails, undo everything to keep data safe
-        return {"status": "error", "message": str(e)}
-    finally:
-        conn.close()
