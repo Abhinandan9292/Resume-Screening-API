@@ -1,32 +1,115 @@
-// Replace your script in placement.html with this:
-async function loadAllStudents() {
-    const tbody = document.getElementById('admin-table-body');
-    try {
-        const response = await fetch(`${API_BASE}/admin/all_students`);
-        const students = await response.json();
-        tbody.innerHTML = '';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Placement Cell Admin | Talent Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen p-8 font-sans">
+    <div class="max-w-6xl mx-auto mb-8 flex justify-between items-center bg-slate-900 p-6 rounded-2xl shadow-lg">
+        <div>
+            <h1 class="text-3xl font-bold text-white tracking-tight">Placement Cell Control</h1>
+            <p class="text-slate-400 mt-1">Manage active student profiles and update placement status.</p>
+        </div>
+        <div class="bg-slate-800 text-teal-400 px-4 py-2 rounded-lg font-bold border border-slate-700">
+            Secure Admin Session
+        </div>
+    </div>
 
-        students.forEach(student => {
-            const statusBadge = student.is_placed === 1 
-                ? '<span class="text-green-600 font-bold">PLACED ✅</span>' 
-                : `<button onclick="markAsPlaced(${student.id}, this)" class="bg-indigo-600 text-white px-4 py-2 rounded">Mark Placed</button>`;
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
+                        <th class="p-4 font-bold">Student Name</th>
+                        <th class="p-4 font-bold">Email</th>
+                        <th class="p-4 font-bold">CGPA</th>
+                        <th class="p-4 font-bold">Core Skills</th>
+                        <th class="p-4 font-bold text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-table-body" class="divide-y divide-slate-100">
+                    <tr><td colspan="5" class="p-8 text-center text-slate-500 font-medium">Loading database records...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-            tbody.innerHTML += `
-                <tr>
-                    <td class="p-4 font-bold">${student.first_name} ${student.last_name}</td>
-                    <td class="p-4">${student.email}</td>
-                    <td class="p-4 font-semibold text-teal-600">${student.cgpa}</td>
-                    <td class="p-4">${student.skills || 'None'}</td>
-                    <td class="p-4 text-center">${statusBadge}</td>
-                </tr>
-            `;
-        });
-    } catch (e) { tbody.innerHTML = '<tr><td class="text-red-500">Connection Failed.</td></tr>'; }
-}
+    <script>
+        const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
-async function markAsPlaced(id, btn) {
-    if(!confirm("Hiring this student?")) return;
-    const resp = await fetch(`${API_BASE}/admin/mark_placed/${id}`, { method: 'POST' });
-    const res = await resp.json();
-    if(res.status === 'success') { alert("Success!"); loadAllStudents(); }
-}
+        window.onload = () => {
+            const pass = prompt("Secure Placement Cell Portal\n\nEnter Admin PIN:");
+            if (pass === "92") {
+                loadAllStudents();
+            } else {
+                alert("Access Denied: Incorrect PIN.");
+                window.location.href = 'index.html';
+            }
+        };
+
+        async function loadAllStudents() {
+            const tbody = document.getElementById('admin-table-body');
+            try {
+                const response = await fetch(`${API_BASE}/admin/all_students`);
+                const students = await response.json();
+                tbody.innerHTML = ''; 
+
+                if (students.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No students found in the database.</td></tr>`;
+                    return;
+                }
+
+                students.forEach(student => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition";
+                    
+                    const actionContent = student.is_placed === 1 
+                        ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">PLACED ✅</span>`
+                        : `<button onclick="markAsPlaced(${student.id}, this)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-lg transition shadow-md shadow-indigo-200">Mark as Placed</button>`;
+
+                    tr.innerHTML = `
+                        <td class="p-4 font-bold text-slate-800">${student.first_name || ''} ${student.last_name || ''}</td>
+                        <td class="p-4 text-slate-600">${student.email}</td>
+                        <td class="p-4 font-semibold text-teal-600">${student.cgpa}</td>
+                        <td class="p-4">
+                            <div class="flex flex-wrap gap-1">
+                                ${(student.skills || '').split(',').slice(0, 3).map(skill => 
+                                    `<span class="bg-slate-200 text-slate-700 text-[10px] px-2 py-1 rounded-md uppercase font-bold">${skill.trim()}</span>`
+                                ).join('')}
+                            </div>
+                        </td>
+                        <td class="p-4 text-center">${actionContent}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold">Database connection failed. Check Render server logs.</td></tr>`;
+            }
+        }
+
+        async function markAsPlaced(studentId, btnElement) {
+            if (!confirm("Are you sure you want to mark this student as placed?")) return;
+            btnElement.innerText = "Updating...";
+            btnElement.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/mark_placed/${studentId}`, { method: 'POST' });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    loadAllStudents(); 
+                } else {
+                    alert("Database Error: " + (result.message || "Could not update record."));
+                    btnElement.innerText = "Mark as Placed";
+                    btnElement.disabled = false;
+                }
+            } catch (error) {
+                alert("Connection failed.");
+                btnElement.innerText = "Mark as Placed";
+                btnElement.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
