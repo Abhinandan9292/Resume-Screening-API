@@ -82,25 +82,23 @@
         } else {
             const user = JSON.parse(sessionData);
 
-            // Inject the database values (using PostgreSQL column names)
-          // Change from user.First_Name to user.first_name
-document.getElementById('display-name').innerText = user.first_name + " " + user.last_name;
-document.getElementById('display-email').innerText = user.email;
-document.getElementById('display-cgpa').innerText = user.cgpa;
-document.getElementById('display-github').href = user.github;
-document.getElementById('display-skills').innerText = user.skills;
-document.getElementById('display-bio').innerText = user.bio;
+            // 🛑 ALL KEYS MUST BE LOWERCASE NOW!
+            document.getElementById('display-name').innerText = (user.first_name || '') + " " + (user.last_name || '');
+            document.getElementById('display-email').innerText = user.email || 'No email provided';
+            document.getElementById('display-cgpa').innerText = user.cgpa || '0.0';
+            document.getElementById('display-github').href = user.github || '#';
+            document.getElementById('display-bio').innerText = user.bio || 'No bio provided.';
 
-            // Format Skills as badges
+            // Format Skills as badges (using lowercase user.skills)
             const skillsContainer = document.getElementById('display-skills');
-            const skillsArray = user.Skills ? user.Skills.split(',') : [];
+            const skillsArray = user.skills ? user.skills.split(',') : [];
             skillsContainer.innerHTML = skillsArray.map(s => 
                 `<span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">${s.trim()}</span>`
             ).join('') || "No skills listed.";
 
-            // Placement Status Styling
+            // Placement Status Styling (using lowercase user.is_placed)
             const statusElement = document.getElementById('display-status');
-            if (user.Is_Placed === 1) {
+            if (user.is_placed === 1) {
                 statusElement.innerText = "Placed ✅";
                 statusElement.className = "text-lg font-bold text-green-600";
             } else {
@@ -110,14 +108,15 @@ document.getElementById('display-bio').innerText = user.bio;
 
             // --- 2. DYNAMIC DATABASE UPDATE LOGIC ---
             window.openEditModal = async function() {
+                // Fetch the freshest data from local storage
                 const currentUser = JSON.parse(localStorage.getItem('studentSession'));
                 
-                const newCGPA = prompt("Update Academic CGPA:", currentUser.CGPA);
-                const newSkills = prompt("Update Skills (Comma Separated):", currentUser.Skills);
+                // Prompt using LOWERCASE keys
+                const newCGPA = prompt("Update Academic CGPA:", currentUser.cgpa);
+                const newSkills = prompt("Update Skills (Comma Separated):", currentUser.skills);
 
                 if (newCGPA === null || newSkills === null) return;
 
-                // YOUR RENDER BACKEND URL
                 const API_BASE = "https://resume-screening-api-vqq8.onrender.com"; 
 
                 try {
@@ -125,18 +124,24 @@ document.getElementById('display-bio').innerText = user.bio;
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            student_id: currentUser.ID,
+                            student_id: currentUser.id, // LOWERCASE ID!
                             new_cgpa: parseFloat(newCGPA),
                             new_skills: newSkills
                         })
                     });
 
                     const result = await response.json();
+                    
                     if (result.status === 'success') {
-                        alert("✅ SUCCESS: Database Synchronized. Please re-login to update your session token.");
-                        logout();
+                        // Update local storage so the page reflects the changes without needing a re-login
+                        currentUser.cgpa = parseFloat(newCGPA);
+                        currentUser.skills = newSkills;
+                        localStorage.setItem('studentSession', JSON.stringify(currentUser));
+                        
+                        alert("✅ SUCCESS: Profile Updated.");
+                        location.reload(); // Refresh the page to show the new data immediately
                     } else {
-                        alert("❌ ERROR: " + result.message);
+                        alert("❌ ERROR: " + (result.message || "Unknown Server Error"));
                     }
                 } catch (err) {
                     alert("❌ NETWORK ERROR: Backend unreachable.");
