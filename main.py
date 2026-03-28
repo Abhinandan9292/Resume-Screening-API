@@ -287,3 +287,32 @@ def apply_for_job(job_id: int):
         return {"status": "error", "message": str(e)}
     finally:
         conn.close()
+
+
+# 9. Recruiter: View Applicants for their jobs
+@app.get("/recruiter/applicants")
+def get_applicants():
+    conn = get_db()
+    cursor = conn.cursor()
+    recruiter_id = 1  # MVP: Hardcoded to our test recruiter
+    
+    # The 3-Table Relational JOIN
+    cursor.execute('''
+        SELECT 
+            j.job_title,
+            s.first_name,
+            s.last_name,
+            s.email,
+            s.cgpa,
+            s.skills,
+            TO_CHAR(a.applied_on AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata', 'Mon DD, HH12:MI AM') as apply_date
+        FROM job_applications a
+        JOIN jobs j ON a.job_id = j.job_id
+        JOIN students s ON a.student_id = s.id
+        WHERE j.recruiter_id = %s
+        ORDER BY a.applied_on DESC
+    ''', (recruiter_id,))
+    
+    results = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return results
