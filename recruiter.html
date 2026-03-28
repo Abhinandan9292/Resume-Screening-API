@@ -5,93 +5,171 @@
     <title>Recruiter Gateway | Talent Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 min-h-screen p-8 font-sans">
+<body class="bg-slate-50 min-h-screen font-sans">
     
-    <div class="max-w-6xl mx-auto mb-6 flex justify-between items-center">
-        <div class="bg-slate-800 text-purple-400 px-4 py-2 rounded-lg font-bold border border-slate-700 shadow-sm">
-            Corporate Partner Access
-        </div>
-        <button onclick="toggleJobForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition flex items-center gap-2">
-            <span>➕</span> Post a New Job
-        </button>
-    </div>
-
-    <div id="job-form-section" class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-xl border border-slate-200 mb-10 hidden transition-all">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Create Job Requisition</h2>
-            <button onclick="toggleJobForm()" class="text-slate-400 hover:text-red-500 font-bold text-xl">&times;</button>
-        </div>
-        <form id="post-job-form" onsubmit="submitJobPosting(event)" class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Job Title</label><input type="text" id="job-title" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
-                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Company Name</label><input type="text" id="job-company" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
+    <div id="login-screen" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
+            <h2 class="text-3xl font-black text-slate-800 mb-2">Corporate Portal</h2>
+            <p class="text-slate-500 mb-6">Log in to post jobs and view your candidate inbox.</p>
+            <form id="recruiter-login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Corporate Email</label>
+                    <input type="email" id="login-email" required placeholder="hr@company.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Access Code</label>
+                    <input type="password" id="login-pass" required placeholder="••••••••" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500">
+                </div>
+                <button type="submit" id="login-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg mt-4 shadow-lg transition">Authenticate</button>
+            </form>
+            <div class="mt-4 text-xs text-slate-400 text-center">
+                Test Accounts: hr@voyageai.com (voyage123) | campus@google.com (google123)
             </div>
-            <div class="grid grid-cols-3 gap-4">
-                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Salary / CTC</label><input type="text" id="job-salary" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
-                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Req. Exp (Yrs)</label><input type="number" step="0.5" id="job-exp" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
-                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Location</label><input type="text" id="job-location" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
+        </div>
+    </div>
+
+    <div id="dashboard-screen" class="hidden p-8">
+        
+        <div class="max-w-6xl mx-auto mb-6 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="bg-slate-800 text-purple-400 px-4 py-2 rounded-lg font-bold shadow-sm">
+                    Corporate Partner Access
+                </div>
+                <span id="company-display" class="font-black text-slate-700 text-xl tracking-tight">Company Name</span>
             </div>
-            <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Job Description</label><textarea id="job-desc" required rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></textarea></div>
-            <button type="submit" id="submit-job-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg mt-4 shadow-lg">Publish Job</button>
-        </form>
-    </div>
-
-    <div class="max-w-6xl mx-auto mb-10 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="bg-indigo-50 p-4 border-b border-indigo-100 flex justify-between items-center">
-            <h2 class="text-sm font-bold text-indigo-800 uppercase tracking-wider">📥 Applicant Inbox</h2>
+            <div class="flex gap-3">
+                <button onclick="toggleJobForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition flex items-center gap-2">
+                    <span>➕</span> Post a New Job
+                </button>
+                <button onclick="logoutRecruiter()" class="bg-red-100 text-red-600 hover:bg-red-200 font-bold py-2 px-4 rounded-lg transition">Logout</button>
+            </div>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-200">
-                        <th class="p-4 font-bold">Applied On</th>
-                        <th class="p-4 font-bold">Role</th>
-                        <th class="p-4 font-bold">Candidate</th>
-                        <th class="p-4 font-bold">CGPA</th>
-                        <th class="p-4 font-bold">Top Skills</th>
-                    </tr>
-                </thead>
-                <tbody id="inbox-table-body" class="divide-y divide-slate-100">
-                    <tr><td colspan="5" class="p-8 text-center text-slate-500 font-medium">Loading inbox...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
 
-    <div class="max-w-6xl mx-auto mb-10 text-center pt-8 border-t border-slate-200">
-        <h1 class="text-3xl font-extrabold text-slate-800 mb-2">Proactive Talent Search</h1>
-        <p class="text-slate-500 mb-6">Don't wait for applicants. Find exact matches using our PL/SQL algorithm.</p>
-        <div class="flex max-w-2xl mx-auto shadow-md rounded-xl overflow-hidden border border-slate-200">
-            <input type="text" id="search-input" placeholder="Search skills (e.g., Python, React)..." class="w-full p-3 outline-none text-slate-700 font-medium">
-            <button onclick="searchCandidates()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 transition">Search</button>
+        <div id="job-form-section" class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-xl border border-slate-200 mb-10 hidden transition-all">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-black text-slate-800 tracking-tight">Create Job Requisition</h2>
+                <button onclick="toggleJobForm()" class="text-slate-400 hover:text-red-500 font-bold text-xl">&times;</button>
+            </div>
+            <form id="post-job-form" onsubmit="submitJobPosting(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Job Title</label><input type="text" id="job-title" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Company Name</label><input type="text" id="job-company" readonly class="w-full p-3 bg-slate-200 text-slate-500 border border-slate-200 rounded-lg cursor-not-allowed"></div>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Salary / CTC</label><input type="text" id="job-salary" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Req. Exp (Yrs)</label><input type="number" step="0.5" id="job-exp" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Location</label><input type="text" id="job-location" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
+                </div>
+                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Job Description</label><textarea id="job-desc" required rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></textarea></div>
+                <button type="submit" id="submit-job-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg mt-4 shadow-lg">Publish Job</button>
+            </form>
         </div>
-    </div>
 
-    <div id="results-grid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        <div class="max-w-6xl mx-auto mb-10 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-indigo-50 p-4 border-b border-indigo-100 flex justify-between items-center">
+                <h2 class="text-sm font-bold text-indigo-800 uppercase tracking-wider">📥 Applicant Inbox (Your Jobs)</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-200">
+                            <th class="p-4 font-bold">Applied On</th>
+                            <th class="p-4 font-bold">Role</th>
+                            <th class="p-4 font-bold">Candidate</th>
+                            <th class="p-4 font-bold">CGPA</th>
+                            <th class="p-4 font-bold">Top Skills</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inbox-table-body" class="divide-y divide-slate-100">
+                        <tr><td colspan="5" class="p-8 text-center text-slate-500 font-medium">Loading inbox...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mb-10 text-center pt-8 border-t border-slate-200">
+            <h1 class="text-3xl font-extrabold text-slate-800 mb-2">Proactive Talent Search</h1>
+            <p class="text-slate-500 mb-6">Don't wait for applicants. Find exact matches using our PL/SQL algorithm.</p>
+            <div class="flex max-w-2xl mx-auto shadow-md rounded-xl overflow-hidden border border-slate-200">
+                <input type="text" id="search-input" placeholder="Search skills (e.g., Python, React)..." class="w-full p-3 outline-none text-slate-700 font-medium">
+                <button onclick="searchCandidates()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 transition">Search</button>
+            </div>
+        </div>
+        <div id="results-grid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
 
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
+        let currentRecruiter = null;
 
         window.onload = () => {
-            const pass = prompt("Recruiter Gateway\n\nEnter Recruiter Access Code:");
-            if (pass === "9292") {
-                searchCandidates(); 
-                loadInbox(); // Load the applicants!
-            } else {
-                alert("Access Denied.");
-                window.location.href = 'index.html';
+            const session = localStorage.getItem('recruiterSession');
+            if (session) {
+                currentRecruiter = JSON.parse(session);
+                showDashboard();
             }
         };
+
+        // --- AUTHENTICATION ---
+        async function handleLogin(event) {
+            event.preventDefault();
+            const btn = document.getElementById('login-btn');
+            btn.innerText = "Authenticating...";
+            btn.disabled = true;
+
+            const email = document.getElementById('login-email').value;
+            const code = document.getElementById('login-pass').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/recruiter/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, access_code: code })
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    currentRecruiter = result.recruiter;
+                    localStorage.setItem('recruiterSession', JSON.stringify(currentRecruiter));
+                    showDashboard();
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert("Connection failed.");
+            } finally {
+                btn.innerText = "Authenticate";
+                btn.disabled = false;
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('dashboard-screen').classList.remove('hidden');
+            
+            // Auto-fill company details
+            document.getElementById('company-display').innerText = currentRecruiter.company_name;
+            document.getElementById('job-company').value = currentRecruiter.company_name;
+
+            loadInbox();
+            searchCandidates();
+        }
+
+        function logoutRecruiter() {
+            localStorage.removeItem('recruiterSession');
+            location.reload();
+        }
 
         function toggleJobForm() {
             document.getElementById('job-form-section').classList.toggle('hidden');
         }
 
-        // --- NEW: Load Applicant Inbox ---
+        // --- MULTI-TENANT INBOX LOAD ---
         async function loadInbox() {
             const tbody = document.getElementById('inbox-table-body');
             try {
-                const response = await fetch(`${API_BASE}/recruiter/applicants`);
+                // Fetch ONLY jobs belonging to this recruiter ID
+                const response = await fetch(`${API_BASE}/recruiter/applicants?recruiter_id=${currentRecruiter.recruiter_id}`);
                 const applicants = await response.json();
                 tbody.innerHTML = ''; 
 
@@ -105,16 +183,11 @@
                         <tr class="hover:bg-indigo-50/50 transition">
                             <td class="p-4 text-xs font-bold text-slate-400 whitespace-nowrap">${app.apply_date}</td>
                             <td class="p-4 font-bold text-indigo-700">${app.job_title}</td>
-                            <td class="p-4">
-                                <p class="font-bold text-slate-800">${app.first_name} ${app.last_name || ''}</p>
-                                <p class="text-xs text-slate-500">${app.email}</p>
-                            </td>
+                            <td class="p-4"><p class="font-bold text-slate-800">${app.first_name} ${app.last_name || ''}</p><p class="text-xs text-slate-500">${app.email}</p></td>
                             <td class="p-4 font-semibold text-teal-600">${app.cgpa}</td>
                             <td class="p-4">
                                 <div class="flex flex-wrap gap-1">
-                                    ${(app.skills || '').split(',').slice(0, 2).map(s => 
-                                        s.trim() ? `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-1 rounded uppercase font-bold border border-slate-200">${s.trim()}</span>` : ''
-                                    ).join('')}
+                                    ${(app.skills || '').split(',').slice(0, 2).map(s => s.trim() ? `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-1 rounded uppercase font-bold border border-slate-200">${s.trim()}</span>` : '').join('')}
                                 </div>
                             </td>
                         </tr>
@@ -125,6 +198,7 @@
             }
         }
 
+        // --- SUBMIT JOB WITH CORRECT ID ---
         async function submitJobPosting(event) {
             event.preventDefault(); 
             const btn = document.getElementById('submit-job-btn');
@@ -133,12 +207,12 @@
 
             const jobData = {
                 job_title: document.getElementById('job-title').value,
-                company_name: document.getElementById('job-company').value, 
+                company_name: currentRecruiter.company_name, // Pulled securely from session
                 salary: document.getElementById('job-salary').value,       
                 required_exp: parseFloat(document.getElementById('job-exp').value),
                 location: document.getElementById('job-location').value,
                 job_description: document.getElementById('job-desc').value,
-                recruiter_id: 1
+                recruiter_id: currentRecruiter.recruiter_id // Pulled securely from session!
             };
 
             try {
@@ -152,6 +226,7 @@
                 if (result.status === 'success') {
                     alert("✅ Job successfully published to the portal!");
                     document.getElementById('post-job-form').reset();
+                    document.getElementById('job-company').value = currentRecruiter.company_name; // reset read-only field
                     toggleJobForm(); 
                 } else {
                     alert("Database Error: " + result.message);
@@ -165,6 +240,7 @@
         }
 
         async function searchCandidates() {
+            // (Same exact logic as before, omitted here for brevity, but fully functional in the HTML block)
             const grid = document.getElementById('results-grid');
             const skill = document.getElementById('search-input').value;
             grid.innerHTML = '<p class="text-center col-span-full text-slate-400 font-bold animate-pulse">Searching...</p>';
@@ -188,10 +264,7 @@
                     card.innerHTML = `
                         ${scoreBadge}
                         <div class="flex justify-between items-start mb-4 mt-2">
-                            <div>
-                                <h3 class="text-xl font-bold text-slate-800">${student.first_name || ''} ${student.last_name || ''}</h3>
-                                <p class="text-sm text-blue-600 font-semibold">${student.email}</p>
-                            </div>
+                            <div><h3 class="text-xl font-bold text-slate-800">${student.first_name || ''} ${student.last_name || ''}</h3><p class="text-sm text-blue-600 font-semibold">${student.email}</p></div>
                             <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full border border-green-200">CGPA: ${student.cgpa}</span>
                         </div>
                         <div class="mb-4">
