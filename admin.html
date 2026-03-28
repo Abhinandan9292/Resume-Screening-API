@@ -31,11 +31,14 @@
         </div>
     </div>
 
-    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <div class="max-w-6xl mx-auto mb-8 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-slate-100 p-4 border-b border-slate-200">
+            <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Candidate Master List</h2>
+        </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-slate-100 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
+                    <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-200">
                         <th class="p-4 font-bold">Student Name</th>
                         <th class="p-4 font-bold">Email</th>
                         <th class="p-4 font-bold">CGPA</th>
@@ -50,6 +53,20 @@
         </div>
     </div>
 
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-slate-900 p-4 border-b border-slate-800 flex justify-between items-center">
+            <h2 class="text-sm font-bold text-teal-400 uppercase tracking-wider">System Security & Audit Log</h2>
+            <span class="text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded">Live DB Triggers</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <tbody id="audit-table-body" class="divide-y divide-slate-100">
+                    <tr><td class="p-6 text-center text-slate-500">Loading secure logs...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
@@ -57,60 +74,69 @@
             const pass = prompt("Secure Placement Cell Portal\n\nEnter Admin PIN:");
             if (pass === "92") {
                 loadAllStudents();
-                loadStatistics(); // Load the stats banner
+                loadStatistics(); 
+                loadAuditLogs(); // <-- New function call!
             } else {
                 alert("Access Denied: Incorrect PIN.");
                 window.location.href = 'index.html';
             }
         };
 
-        // --- 1. LOAD STATISTICS VIEW ---
+        // --- 1. LOAD STATISTICS ---
         async function loadStatistics() {
             try {
                 const response = await fetch(`${API_BASE}/admin/stats`);
                 const stats = await response.json();
-                
-                let hired = 0;
-                let seeking = 0;
-                let avgCgpa = 0.0;
-
-                // The database view groups by status, so we loop through the rows
+                let hired = 0, seeking = 0, avgCgpa = 0.0;
                 stats.forEach(row => {
-                    if (row.status === 'Placed') {
-                        hired = row.total_candidates;
-                        avgCgpa = row.average_cgpa;
-                    } else {
-                        seeking = row.total_candidates;
-                    }
+                    if (row.status === 'Placed') { hired = row.total_candidates; avgCgpa = row.average_cgpa; } 
+                    else { seeking = row.total_candidates; }
                 });
-
-                // Update the UI
                 document.getElementById('stat-hired').innerText = hired;
                 document.getElementById('stat-seeking').innerText = seeking;
                 document.getElementById('stat-cgpa').innerText = avgCgpa || '0.0';
-
-            } catch (error) {
-                console.error("Failed to load analytics", error);
-            }
+            } catch (error) { console.error("Stats failed", error); }
         }
 
-        // --- 2. LOAD ALL STUDENTS (Base Table) ---
+        // --- 2. LOAD AUDIT LOGS (TRIGGER DATA) ---
+        async function loadAuditLogs() {
+            const tbody = document.getElementById('audit-table-body');
+            try {
+                const response = await fetch(`${API_BASE}/admin/audit_logs`);
+                const logs = await response.json();
+                tbody.innerHTML = '';
+                
+                if (logs.length === 0) {
+                    tbody.innerHTML = `<tr><td class="p-6 text-center text-slate-500">No recent automated activity detected.</td></tr>`;
+                    return;
+                }
+
+                logs.forEach(log => {
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-4 text-xs font-bold text-slate-400 whitespace-nowrap w-48">${log.timestamp}</td>
+                            <td class="p-4 font-bold text-slate-800 w-64">${log.first_name} ${log.last_name}</td>
+                            <td class="p-4 text-sm font-semibold text-indigo-600">${log.action}</td>
+                        </tr>
+                    `;
+                });
+            } catch (error) { console.error("Logs failed", error); }
+        }
+
+        // --- 3. LOAD ALL STUDENTS ---
         async function loadAllStudents() {
             const tbody = document.getElementById('admin-table-body');
             try {
                 const response = await fetch(`${API_BASE}/admin/all_students`);
                 const students = await response.json();
                 tbody.innerHTML = ''; 
-
                 if (students.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No students found in the database.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No students found.</td></tr>`;
                     return;
                 }
-
                 students.forEach(student => {
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition";
-                    
                     const actionContent = student.is_placed === 1 
                         ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">PLACED ✅</span>`
                         : `<button onclick="markAsPlaced(${student.id}, this)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-lg transition shadow-md shadow-indigo-200">Mark as Placed</button>`;
@@ -130,12 +156,10 @@
                     `;
                     tbody.appendChild(tr);
                 });
-            } catch (error) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold">Database connection failed. Check Render server logs.</td></tr>`;
-            }
+            } catch (error) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Database connection failed.</td></tr>`; }
         }
 
-        // --- 3. MARK STUDENT AS PLACED ---
+        // --- 4. MARK STUDENT AS PLACED ---
         async function markAsPlaced(studentId, btnElement) {
             if (!confirm("Are you sure you want to mark this student as placed?")) return;
             btnElement.innerText = "Updating...";
@@ -144,12 +168,12 @@
             try {
                 const response = await fetch(`${API_BASE}/admin/mark_placed/${studentId}`, { method: 'POST' });
                 const result = await response.json();
-
                 if (result.status === 'success') {
                     loadAllStudents();  // Refresh the table
                     loadStatistics();   // Refresh the analytics numbers!
+                    loadAuditLogs();    // Refresh the Trigger Logs!
                 } else {
-                    alert("Database Error: " + (result.message || "Could not update record."));
+                    alert("Database Error: " + (result.message || "Could not update."));
                     btnElement.innerText = "Mark as Placed";
                     btnElement.disabled = false;
                 }
