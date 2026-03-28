@@ -263,3 +263,27 @@ def get_jobs():
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
+
+
+
+# 8. Student: Apply for a Job
+@app.post("/student/apply/{job_id}")
+def apply_for_job(job_id: int):
+    conn = get_db()
+    cursor = conn.cursor()
+    student_id = 1  # MVP: Hardcoded to Student #1 (Abhinandan)
+    try:
+        cursor.execute('''
+            INSERT INTO job_applications (job_id, student_id, application_status)
+            VALUES (%s, %s, 'Applied')
+        ''', (job_id, student_id))
+        conn.commit()
+        return {"status": "success", "message": "Application submitted successfully!"}
+    except Exception as e:
+        conn.rollback()
+        # If the database UNIQUE constraint blocks it, they already applied!
+        if "unique constraint" in str(e).lower() or "duplicate key" in str(e).lower():
+            return {"status": "error", "message": "You have already applied for this job."}
+        return {"status": "error", "message": str(e)}
+    finally:
+        conn.close()
