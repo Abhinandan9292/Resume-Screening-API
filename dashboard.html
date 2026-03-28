@@ -68,11 +68,23 @@
         </div>
     </div>
 
-    <footer class="mt-12 text-center text-slate-400 text-sm font-medium">
+    <div class="max-w-4xl mx-auto mt-12 mb-4">
+        <h2 class="text-2xl font-black text-slate-800 tracking-tight">Open Job Requisitions</h2>
+        <p class="text-slate-500">Apply to these roles directly from your portal.</p>
+    </div>
+    
+    <div id="jobs-grid" class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <p class="text-slate-500 font-bold col-span-full text-center py-10 animate-pulse">Loading open positions...</p>
+    </div>
+
+    <footer class="mt-12 mb-8 text-center text-slate-400 text-sm font-medium">
         &copy; 2026 Talent Engine | Powered by PostgreSQL 3NF Architecture
     </footer>
 
     <script>
+        // Global API Base URL
+        const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
+
         // --- 1. THE SECURITY GATEKEEPER ---
         const sessionData = localStorage.getItem('studentSession');
         
@@ -82,21 +94,20 @@
         } else {
             const user = JSON.parse(sessionData);
 
-            // 🛑 ALL KEYS MUST BE LOWERCASE NOW!
             document.getElementById('display-name').innerText = (user.first_name || '') + " " + (user.last_name || '');
             document.getElementById('display-email').innerText = user.email || 'No email provided';
             document.getElementById('display-cgpa').innerText = user.cgpa || '0.0';
             document.getElementById('display-github').href = user.github || '#';
             document.getElementById('display-bio').innerText = user.bio || 'No bio provided.';
 
-            // Format Skills as badges (using lowercase user.skills)
+            // Format Skills as badges
             const skillsContainer = document.getElementById('display-skills');
             const skillsArray = user.skills ? user.skills.split(',') : [];
             skillsContainer.innerHTML = skillsArray.map(s => 
                 `<span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">${s.trim()}</span>`
             ).join('') || "No skills listed.";
 
-            // Placement Status Styling (using lowercase user.is_placed)
+            // Placement Status Styling
             const statusElement = document.getElementById('display-status');
             if (user.is_placed === 1) {
                 statusElement.innerText = "Placed ✅";
@@ -106,25 +117,24 @@
                 statusElement.className = "text-lg font-bold text-orange-500";
             }
 
+            // LOAD JOBS AUTOMATICALLY
+            loadJobs();
+
             // --- 2. DYNAMIC DATABASE UPDATE LOGIC ---
             window.openEditModal = async function() {
-                // Fetch the freshest data from local storage
                 const currentUser = JSON.parse(localStorage.getItem('studentSession'));
                 
-                // Prompt using LOWERCASE keys
                 const newCGPA = prompt("Update Academic CGPA:", currentUser.cgpa);
                 const newSkills = prompt("Update Skills (Comma Separated):", currentUser.skills);
 
                 if (newCGPA === null || newSkills === null) return;
-
-                const API_BASE = "https://resume-screening-api-vqq8.onrender.com"; 
 
                 try {
                     const response = await fetch(`${API_BASE}/update_profile`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            student_id: currentUser.id, // LOWERCASE ID!
+                            student_id: currentUser.id, 
                             new_cgpa: parseFloat(newCGPA),
                             new_skills: newSkills
                         })
@@ -133,13 +143,12 @@
                     const result = await response.json();
                     
                     if (result.status === 'success') {
-                        // Update local storage so the page reflects the changes without needing a re-login
                         currentUser.cgpa = parseFloat(newCGPA);
                         currentUser.skills = newSkills;
                         localStorage.setItem('studentSession', JSON.stringify(currentUser));
                         
                         alert("✅ SUCCESS: Profile Updated.");
-                        location.reload(); // Refresh the page to show the new data immediately
+                        location.reload(); 
                     } else {
                         alert("❌ ERROR: " + (result.message || "Unknown Server Error"));
                     }
@@ -149,7 +158,78 @@
             }
         }
 
-        // --- 3. SECURE LOGOUT ---
+        // --- 3. LOAD JOBS FROM DATABASE ---
+        async function loadJobs() {
+            const grid = document.getElementById('jobs-grid');
+            try {
+                const response = await fetch(`${API_BASE}/jobs`);
+                const jobs = await response.json();
+                grid.innerHTML = '';
+
+                if (jobs.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full bg-white p-10 rounded-2xl text-center border border-slate-200 shadow-sm">
+                        <p class="text-xl font-bold text-slate-500">No jobs posted yet.</p>
+                        <p class="text-slate-400 mt-2">Check back later when recruiters have published new roles.</p>
+                    </div>`;
+                    return;
+                }
+
+                jobs.forEach(job => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-blue-200 transition flex flex-col justify-between";
+                    
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <h2 class="text-xl font-black text-slate-800 tracking-tight">${job.job_title}</h2>
+                                <span class="bg-green-100 text-green-700 font-bold px-3 py-1 rounded-full text-xs border border-green-200 whitespace-nowrap">
+                                    ${job.salary || 'Not Disclosed'}
+                                </span>
+                            </div>
+                            <p class="text-blue-600 font-bold text-sm uppercase tracking-wide mb-4">🏢 ${job.company_name || 'Confidential Company'}</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-semibold">📍 ${job.location}</span>
+                                <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-semibold">⏳ ${job.required_exp} Yrs Exp</span>
+                            </div>
+                            <p class="text-slate-600 text-sm mb-6 line-clamp-3">${job.job_description}</p>
+                        </div>
+                        <button onclick="applyForJob(${job.job_id}, this)" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition shadow-md">
+                            Apply for Role
+                        </button>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                grid.innerHTML = '<p class="text-center col-span-full text-red-500 font-bold">Failed to load jobs.</p>';
+            }
+        }
+
+        // --- 4. APPLY FOR JOB ---
+        async function applyForJob(jobId, btnElement) {
+            btnElement.innerText = "Submitting...";
+            btnElement.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/student/apply/${jobId}`, { method: 'POST' });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    btnElement.innerText = "✅ Applied Successfully";
+                    btnElement.classList.replace('bg-slate-900', 'bg-green-600');
+                    btnElement.classList.replace('hover:bg-slate-800', 'hover:bg-green-700');
+                } else {
+                    alert("Notice: " + result.message);
+                    btnElement.innerText = "Apply for Role";
+                    btnElement.disabled = false;
+                }
+            } catch (error) {
+                alert("Connection failed.");
+                btnElement.innerText = "Apply for Role";
+                btnElement.disabled = false;
+            }
+        }
+
+        // --- 5. SECURE LOGOUT ---
         function logout() {
             localStorage.removeItem('studentSession');
             window.location.href = 'login.html';
