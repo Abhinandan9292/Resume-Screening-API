@@ -195,24 +195,22 @@ def get_recruitment_stats():
 def get_audit_logs():
     conn = get_db()
     cursor = conn.cursor()
-    # Join with students table and convert UTC server time to IST (Indian Standard Time)
+    # Using action_timestamp to match your Supabase table perfectly
     cursor.execute('''
         SELECT 
-            l.log_id, 
-            s.first_name, 
-            s.last_name, 
-            l.action, 
-            TO_CHAR(l.action_timestamp AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata', 'DD Mon YYYY, HH12:MI AM') || ' IST' as timestamp 
+            COALESCE(s.first_name, 'System') as first_name,
+            COALESCE(s.last_name, 'Admin') as last_name,
+            l.action,
+            TO_CHAR(l.action_timestamp AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata', 'Mon DD, HH12:MI AM') as timestamp
         FROM placement_audit_logs l
-        JOIN students s ON l.student_id = s.id
-        ORDER BY l.action_timestamp DESC 
+        LEFT JOIN students s ON l.student_id = s.id
+        ORDER BY l.action_timestamp DESC
         LIMIT 10
     ''')
+    
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
-
-
 # 1. For Recruiters (Only Active/Unplaced, with Match Scoring)
 @app.get("/recruiter/candidates")
 def get_recruiter_candidates(skills: str = None):
@@ -394,7 +392,23 @@ def get_recruiter_stats():
 @app.post("/admin/login")
 def admin_login(payload: dict = Body(...)):
     pin = payload.get("pin")
-    # The server checks the PIN, not the browser!
+    
     if pin == "92": 
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            # We insert a log with a NULL student_id for the admin
+            cursor.execute('''
+                INSERT INTO placement_audit_logs (student_id, action) 
+                VALUES (NULL, 'Placement Cell Admin Authenticated')
+            ''')
+            conn.commit()
+        except Exception as e:
+            print("Audit Log Warning:", e)
+            conn.rollback()
+        finally:
+            conn.close()
+            
         return {"status": "success", "message": "Admin authenticated"}
+        
     return {"status": "error", "message": "Invalid PIN"}
