@@ -301,21 +301,22 @@ def apply_for_job(job_id: int, student_id: int):
 # 9. Recruiter: View Applicants for their jobs
 # --- 9. Recruiter: Get Applicants (CRASH FIXED) ---
 # --- 9. Recruiter: Get Applicants (WITH SKILLS FIXED) ---
+# --- 9. Recruiter: Get Applicants (EXACT SCHEMA ALIGNED) ---
 @app.get("/recruiter/applicants")
 def get_applicants(recruiter_id: int):
     conn = get_db()
     cursor = conn.cursor()
-    # We use string_agg to combine multiple skills into one comma-separated line
+    
     cursor.execute('''
         SELECT 
             j.job_title, s.first_name, s.last_name, s.email, s.cgpa, 
-            COALESCE(string_agg(sk.skill_name, ', '), '') AS skills,
+            COALESCE(string_agg(sk.name, ', '), '') AS skills, 
             TO_CHAR(a.applied_on AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata', 'Mon DD, HH12:MI AM') as apply_date
         FROM job_applications a
         JOIN jobs j ON a.job_id = j.job_id
         JOIN students s ON a.student_id = s.id
         LEFT JOIN student_skills ss ON s.id = ss.student_id
-        LEFT JOIN skills sk ON ss.skill_id = sk.skill_id
+        LEFT JOIN skills sk ON ss.skill_id = sk.id
         WHERE j.recruiter_id = %s
         GROUP BY j.job_title, s.first_name, s.last_name, s.email, s.cgpa, a.applied_on
         ORDER BY a.applied_on DESC
@@ -324,7 +325,6 @@ def get_applicants(recruiter_id: int):
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
-
 
 # 11. Admin: Onboard a New Corporate Recruiter
 @app.post("/admin/add_recruiter")
