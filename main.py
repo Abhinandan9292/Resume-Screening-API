@@ -84,6 +84,11 @@ class RecruiterLogin(BaseModel):
     email: str
     access_code: str
 
+class RecruiterCreate(BaseModel):
+    company_name: str
+    email: str
+    access_code: str
+
 
 
 @app.post("/ai_parse")
@@ -313,4 +318,25 @@ def get_applicants(recruiter_id: int):
     conn.close()
     return results
 
+
+# 11. Admin: Onboard a New Corporate Recruiter
+@app.post("/admin/add_recruiter")
+def add_recruiter(recruiter: RecruiterCreate):
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('''
+            INSERT INTO recruiters (company_name, email, access_code)
+            VALUES (%s, %s, %s) RETURNING recruiter_id
+        ''', (recruiter.company_name, recruiter.email, recruiter.access_code))
+        conn.commit()
+        return {"status": "success", "message": f"Successfully onboarded {recruiter.company_name}!"}
+    except Exception as e:
+        conn.rollback()
+        # Prevent duplicate accounts
+        if "unique constraint" in str(e).lower() or "duplicate key" in str(e).lower():
+            return {"status": "error", "message": "A recruiter with this email already exists."}
+        return {"status": "error", "message": str(e)}
+    finally:
+        conn.close()
 
