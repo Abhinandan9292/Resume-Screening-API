@@ -340,3 +340,17 @@ def add_recruiter(recruiter: RecruiterCreate):
     finally:
         conn.close()
 
+
+
+# --- Recruiter Secure Login ---
+@app.post("/recruiter/login")
+def login_recruiter(login_data: RecruiterLogin):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM recruiters WHERE email = %s AND access_code = %s", (login_data.email, login_data.access_code))
+    recruiter = cursor.fetchone()
+    conn.close()
+    if recruiter:
+        return {"status": "success", "recruiter": dict(recruiter)}
+    return {"status": "error", "message": "Invalid email or access code."}
+
