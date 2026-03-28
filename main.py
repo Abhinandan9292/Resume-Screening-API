@@ -70,6 +70,14 @@ class UpdateProfileData(BaseModel):
     new_cgpa: float
     new_skills: str
 
+
+class JobCreate(BaseModel):
+    job_title: str
+    job_description: str
+    required_exp: float
+    location: str
+    recruiter_id: int = 1  # Hardcoded to 1 for the MVP
+
 @app.post("/ai_parse")
 async def ai_parse(file: UploadFile = File(...)):
     contents = await file.read()
@@ -222,3 +230,34 @@ def mark_placed(student_id: int):
     conn.commit()
     conn.close()
     return {"status": "success"}
+
+
+# 6. Recruiter: Post a New Job
+@app.post("/recruiter/jobs")
+def create_job(job: JobCreate):
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        # Utilizing ACID transactions for safe insertion
+        cursor.execute('''
+            INSERT INTO jobs (job_title, job_description, required_exp, location, recruiter_id)
+            VALUES (%s, %s, %s, %s, %s) RETURNING job_id
+        ''', (job.job_title, job.job_description, job.required_exp, job.location, job.recruiter_id))
+        new_job_id = cursor.fetchone()['job_id']
+        conn.commit()
+        return {"status": "success", "job_id": new_job_id, "message": "Job posted successfully"}
+    except Exception as e:
+        conn.rollback()
+        return {"status": "error", "message": str(e)}
+    finally:
+        conn.close()
+
+# 7. Student/Public: Get All Active Jobs
+@app.get("/jobs")
+def get_jobs():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM jobs ORDER BY job_id DESC')
+    results = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return results
