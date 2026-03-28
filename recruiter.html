@@ -65,7 +65,7 @@
             </form>
         </div>
 
-        <div class="max-w-6xl mx-auto mb-10 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div id="inbox-container" class="hidden max-w-6xl mx-auto mb-10 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="bg-indigo-50 p-4 border-b border-indigo-100 flex justify-between items-center">
                 <h2 class="text-sm font-bold text-indigo-800 uppercase tracking-wider">📥 Applicant Inbox (Your Jobs)</h2>
             </div>
@@ -81,7 +81,6 @@
                         </tr>
                     </thead>
                     <tbody id="inbox-table-body" class="divide-y divide-slate-100">
-                        <tr><td colspan="5" class="p-8 text-center text-slate-500 font-medium">Loading inbox...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -110,7 +109,6 @@
             }
         };
 
-        // --- AUTHENTICATION ---
         async function handleLogin(event) {
             event.preventDefault();
             const btn = document.getElementById('login-btn');
@@ -147,7 +145,6 @@
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('dashboard-screen').classList.remove('hidden');
             
-            // Auto-fill company details
             document.getElementById('company-display').innerText = currentRecruiter.company_name;
             document.getElementById('job-company').value = currentRecruiter.company_name;
 
@@ -164,19 +161,25 @@
             document.getElementById('job-form-section').classList.toggle('hidden');
         }
 
-        // --- MULTI-TENANT INBOX LOAD ---
         async function loadInbox() {
+            const container = document.getElementById('inbox-container');
             const tbody = document.getElementById('inbox-table-body');
+            
+            if (!currentRecruiter || !currentRecruiter.recruiter_id) return;
+
             try {
-                // Fetch ONLY jobs belonging to this recruiter ID
                 const response = await fetch(`${API_BASE}/recruiter/applicants?recruiter_id=${currentRecruiter.recruiter_id}`);
                 const applicants = await response.json();
-                tbody.innerHTML = ''; 
+
+                if (!Array.isArray(applicants)) throw new Error("Backend error");
 
                 if (applicants.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No applications received yet.</td></tr>`;
+                    container.classList.add('hidden');
                     return;
                 }
+
+                container.classList.remove('hidden');
+                tbody.innerHTML = ''; 
 
                 applicants.forEach(app => {
                     tbody.innerHTML += `
@@ -194,11 +197,11 @@
                     `;
                 });
             } catch (error) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Failed to load inbox.</td></tr>`;
+                container.classList.add('hidden');
+                console.error(error);
             }
         }
 
-        // --- SUBMIT JOB WITH CORRECT ID ---
         async function submitJobPosting(event) {
             event.preventDefault(); 
             const btn = document.getElementById('submit-job-btn');
@@ -207,12 +210,12 @@
 
             const jobData = {
                 job_title: document.getElementById('job-title').value,
-                company_name: currentRecruiter.company_name, // Pulled securely from session
+                company_name: currentRecruiter.company_name,
                 salary: document.getElementById('job-salary').value,       
                 required_exp: parseFloat(document.getElementById('job-exp').value),
                 location: document.getElementById('job-location').value,
                 job_description: document.getElementById('job-desc').value,
-                recruiter_id: currentRecruiter.recruiter_id // Pulled securely from session!
+                recruiter_id: currentRecruiter.recruiter_id
             };
 
             try {
@@ -226,7 +229,7 @@
                 if (result.status === 'success') {
                     alert("✅ Job successfully published to the portal!");
                     document.getElementById('post-job-form').reset();
-                    document.getElementById('job-company').value = currentRecruiter.company_name; // reset read-only field
+                    document.getElementById('job-company').value = currentRecruiter.company_name;
                     toggleJobForm(); 
                 } else {
                     alert("Database Error: " + result.message);
@@ -240,7 +243,6 @@
         }
 
         async function searchCandidates() {
-            // (Same exact logic as before, omitted here for brevity, but fully functional in the HTML block)
             const grid = document.getElementById('results-grid');
             const skill = document.getElementById('search-input').value;
             grid.innerHTML = '<p class="text-center col-span-full text-slate-400 font-bold animate-pulse">Searching...</p>';
