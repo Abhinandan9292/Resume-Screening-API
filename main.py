@@ -80,6 +80,12 @@ class JobCreate(BaseModel):
     location: str
     recruiter_id: int = 1# Hardcoded to 1 for the MVP
 
+class RecruiterLogin(BaseModel):
+    email: str
+    access_code: str
+
+
+
 @app.post("/ai_parse")
 async def ai_parse(file: UploadFile = File(...)):
     contents = await file.read()
@@ -234,13 +240,12 @@ def mark_placed(student_id: int):
     return {"status": "success"}
 
 
-# 6. Recruiter: Post a New Job
-# 6. Recruiter: Post a New Job
 @app.post("/recruiter/jobs")
 def create_job(job: JobCreate):
     conn = get_db()
     cursor = conn.cursor()
     try:
+        # Now it uses job.recruiter_id from the frontend, not 1!
         cursor.execute('''
             INSERT INTO jobs (job_title, company_name, salary, job_description, required_exp, location, recruiter_id)
             VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING job_id
@@ -291,28 +296,21 @@ def apply_for_job(job_id: int):
 
 # 9. Recruiter: View Applicants for their jobs
 @app.get("/recruiter/applicants")
-def get_applicants():
+def get_applicants(recruiter_id: int):
     conn = get_db()
     cursor = conn.cursor()
-    recruiter_id = 1  # MVP: Hardcoded to our test recruiter
-    
-    # The 3-Table Relational JOIN
     cursor.execute('''
         SELECT 
-            j.job_title,
-            s.first_name,
-            s.last_name,
-            s.email,
-            s.cgpa,
-            s.skills,
+            j.job_title, s.first_name, s.last_name, s.email, s.cgpa, s.skills,
             TO_CHAR(a.applied_on AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata', 'Mon DD, HH12:MI AM') as apply_date
         FROM job_applications a
         JOIN jobs j ON a.job_id = j.job_id
         JOIN students s ON a.student_id = s.id
         WHERE j.recruiter_id = %s
         ORDER BY a.applied_on DESC
-    ''', (recruiter_id,))
-    
+    ''', (recruiter_id,)) # Now strictly filters by the logged-in recruiter
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
+
+
