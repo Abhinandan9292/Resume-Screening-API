@@ -56,6 +56,27 @@
         </form>
     </div>
 
+    <div class="max-w-6xl mx-auto mb-8 bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <h2 class="text-xl font-black text-slate-800 tracking-tight mb-2">Corporate Partner Analytics</h2>
+        <p class="text-slate-500 mb-6 text-sm">Real-time overview of company activity, job postings, and candidate engagement.</p>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-200">
+                        <th class="p-4 font-bold">Company Name</th>
+                        <th class="p-4 font-bold">HR Email</th>
+                        <th class="p-4 font-bold text-center">Jobs Posted</th>
+                        <th class="p-4 font-bold text-center">Total Applicants</th>
+                    </tr>
+                </thead>
+                <tbody id="partner-stats-body" class="divide-y divide-slate-100">
+                    <tr><td colspan="4" class="p-8 text-center text-slate-400 font-medium animate-pulse">Loading analytics...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="max-w-6xl mx-auto mb-8 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="bg-slate-100 p-4 border-b border-slate-200">
             <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Candidate Master List</h2>
@@ -101,13 +122,13 @@
                 loadAllStudents();
                 loadStatistics(); 
                 loadAuditLogs(); 
+                loadPartnerStats();
             } else {
                 alert("Access Denied.");
                 window.location.href = 'index.html';
             }
         };
 
-        // --- NEW: ADD CORPORATE PARTNER ---
         async function addRecruiter(event) {
             event.preventDefault();
             const btn = document.getElementById('add-rec-btn');
@@ -131,6 +152,7 @@
                 if (result.status === 'success') {
                     alert("✅ " + result.message);
                     document.getElementById('add-recruiter-form').reset();
+                    loadPartnerStats();
                 } else {
                     alert("Database Error: " + result.message);
                 }
@@ -142,7 +164,40 @@
             }
         }
 
-        // --- EXISTING ADMIN FUNCTIONS ---
+        async function loadPartnerStats() {
+            const tbody = document.getElementById('partner-stats-body');
+            try {
+                const response = await fetch(`${API_BASE}/admin/recruiters/stats`);
+                const stats = await response.json();
+                
+                tbody.innerHTML = '';
+                
+                if (stats.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-500 font-bold">No corporate partners onboarded yet.</td></tr>`;
+                    return;
+                }
+
+                stats.forEach(stat => {
+                    const activityBadge = stat.jobs_posted > 0 
+                        ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold ml-2">Active</span>` 
+                        : `<span class="bg-slate-100 text-slate-500 px-2 py-1 rounded text-xs font-bold ml-2">Idle</span>`;
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                            <td class="p-4 font-bold text-slate-800 flex items-center">
+                                ${stat.company_name} ${activityBadge}
+                            </td>
+                            <td class="p-4 text-sm text-slate-500 font-medium">${stat.email}</td>
+                            <td class="p-4 text-center font-black text-indigo-600 text-lg">${stat.jobs_posted}</td>
+                            <td class="p-4 text-center font-black text-teal-600 text-lg">${stat.total_applicants}</td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-red-500 font-bold">Failed to load analytics.</td></tr>`;
+            }
+        }
+
         async function loadStatistics() {
             try {
                 const response = await fetch(`${API_BASE}/admin/stats`);
@@ -192,7 +247,7 @@
                 }
                 students.forEach(student => {
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition";
+                    tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
                     const actionContent = student.is_placed === 1 
                         ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">PLACED ✅</span>`
                         : `<button onclick="markAsPlaced(${student.id}, this)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-lg transition shadow-md shadow-indigo-200">Mark as Placed</button>`;
