@@ -155,6 +155,19 @@ def get_admin_students():
     conn.close()
     return results
 
+
+
+# 4. Analytics: Get Recruitment Statistics
+@app.get("/admin/stats")
+def get_recruitment_stats():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM recruitment_statistics')
+    results = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return results
+
+
 @app.get("/recruiter/candidates")
 def get_recruiter_candidates(skills: str = None):
     conn = get_db()
