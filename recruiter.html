@@ -21,52 +21,49 @@
             <h2 class="text-2xl font-black text-slate-800 tracking-tight">Create Job Requisition</h2>
             <button onclick="toggleJobForm()" class="text-slate-400 hover:text-red-500 font-bold text-xl">&times;</button>
         </div>
-        
         <form id="post-job-form" onsubmit="submitJobPosting(event)" class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Job Title</label>
-                    <input type="text" id="job-title" required placeholder="e.g. Software Engineer" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Company Name</label>
-                    <input type="text" id="job-company" required placeholder="e.g. Google, Voyage AI" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
-                </div>
+                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Job Title</label><input type="text" id="job-title" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
+                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Company Name</label><input type="text" id="job-company" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
             </div>
-            
             <div class="grid grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Salary / CTC</label>
-                    <input type="text" id="job-salary" required placeholder="e.g. 12 LPA" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Required Exp (Yrs)</label>
-                    <input type="number" step="0.5" id="job-exp" required placeholder="e.g. 0.5" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Location</label>
-                    <input type="text" id="job-location" required placeholder="e.g. Remote, Bangalore" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
-                </div>
+                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Salary / CTC</label><input type="text" id="job-salary" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
+                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Req. Exp (Yrs)</label><input type="number" step="0.5" id="job-exp" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
+                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Location</label><input type="text" id="job-location" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
             </div>
-            
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Job Description</label>
-                <textarea id="job-desc" required rows="3" placeholder="Describe the role and requirements..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition"></textarea>
-            </div>
-            
-            <button type="submit" id="submit-job-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg mt-4 transition shadow-lg shadow-slate-300">
-                Publish Job to Portal
-            </button>
+            <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Job Description</label><textarea id="job-desc" required rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></textarea></div>
+            <button type="submit" id="submit-job-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg mt-4 shadow-lg">Publish Job</button>
         </form>
     </div>
 
-    <div class="max-w-6xl mx-auto mb-10 text-center">
-        <h1 class="text-4xl font-extrabold text-slate-800 mb-4">Talent Search Engine</h1>
-        <p class="text-slate-500 mb-8">Find the perfect candidate using our PL/SQL matching algorithm.</p>
-        
-        <div class="flex max-w-2xl mx-auto shadow-lg rounded-2xl overflow-hidden border border-slate-200">
-            <input type="text" id="search-input" placeholder="Search skills (e.g., Python, React, C++)..." class="w-full p-4 outline-none text-slate-700 font-medium">
-            <button onclick="searchCandidates()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 transition">Search</button>
+    <div class="max-w-6xl mx-auto mb-10 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-indigo-50 p-4 border-b border-indigo-100 flex justify-between items-center">
+            <h2 class="text-sm font-bold text-indigo-800 uppercase tracking-wider">📥 Applicant Inbox</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-200">
+                        <th class="p-4 font-bold">Applied On</th>
+                        <th class="p-4 font-bold">Role</th>
+                        <th class="p-4 font-bold">Candidate</th>
+                        <th class="p-4 font-bold">CGPA</th>
+                        <th class="p-4 font-bold">Top Skills</th>
+                    </tr>
+                </thead>
+                <tbody id="inbox-table-body" class="divide-y divide-slate-100">
+                    <tr><td colspan="5" class="p-8 text-center text-slate-500 font-medium">Loading inbox...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto mb-10 text-center pt-8 border-t border-slate-200">
+        <h1 class="text-3xl font-extrabold text-slate-800 mb-2">Proactive Talent Search</h1>
+        <p class="text-slate-500 mb-6">Don't wait for applicants. Find exact matches using our PL/SQL algorithm.</p>
+        <div class="flex max-w-2xl mx-auto shadow-md rounded-xl overflow-hidden border border-slate-200">
+            <input type="text" id="search-input" placeholder="Search skills (e.g., Python, React)..." class="w-full p-3 outline-none text-slate-700 font-medium">
+            <button onclick="searchCandidates()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 transition">Search</button>
         </div>
     </div>
 
@@ -79,19 +76,55 @@
             const pass = prompt("Recruiter Gateway\n\nEnter Recruiter Access Code:");
             if (pass === "9292") {
                 searchCandidates(); 
+                loadInbox(); // Load the applicants!
             } else {
-                alert("Access Denied: Incorrect Access Code.");
+                alert("Access Denied.");
                 window.location.href = 'index.html';
             }
         };
 
-        // --- Toggle Job Form Visibility ---
         function toggleJobForm() {
-            const formSection = document.getElementById('job-form-section');
-            formSection.classList.toggle('hidden');
+            document.getElementById('job-form-section').classList.toggle('hidden');
         }
 
-        // --- Submit New Job to Database ---
+        // --- NEW: Load Applicant Inbox ---
+        async function loadInbox() {
+            const tbody = document.getElementById('inbox-table-body');
+            try {
+                const response = await fetch(`${API_BASE}/recruiter/applicants`);
+                const applicants = await response.json();
+                tbody.innerHTML = ''; 
+
+                if (applicants.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No applications received yet.</td></tr>`;
+                    return;
+                }
+
+                applicants.forEach(app => {
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-indigo-50/50 transition">
+                            <td class="p-4 text-xs font-bold text-slate-400 whitespace-nowrap">${app.apply_date}</td>
+                            <td class="p-4 font-bold text-indigo-700">${app.job_title}</td>
+                            <td class="p-4">
+                                <p class="font-bold text-slate-800">${app.first_name} ${app.last_name || ''}</p>
+                                <p class="text-xs text-slate-500">${app.email}</p>
+                            </td>
+                            <td class="p-4 font-semibold text-teal-600">${app.cgpa}</td>
+                            <td class="p-4">
+                                <div class="flex flex-wrap gap-1">
+                                    ${(app.skills || '').split(',').slice(0, 2).map(s => 
+                                        s.trim() ? `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-1 rounded uppercase font-bold border border-slate-200">${s.trim()}</span>` : ''
+                                    ).join('')}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Failed to load inbox.</td></tr>`;
+            }
+        }
+
         async function submitJobPosting(event) {
             event.preventDefault(); 
             const btn = document.getElementById('submit-job-btn');
@@ -105,7 +138,7 @@
                 required_exp: parseFloat(document.getElementById('job-exp').value),
                 location: document.getElementById('job-location').value,
                 job_description: document.getElementById('job-desc').value,
-                recruiter_id: 1 // Hardcoded MVP ID
+                recruiter_id: 1
             };
 
             try {
@@ -124,40 +157,33 @@
                     alert("Database Error: " + result.message);
                 }
             } catch (error) {
-                alert("Connection failed. Check if API is running.");
+                alert("Connection failed.");
             } finally {
-                btn.innerText = "Publish Job to Portal";
+                btn.innerText = "Publish Job";
                 btn.disabled = false;
             }
         }
 
-        // --- Execute PL/SQL Match Search ---
         async function searchCandidates() {
             const grid = document.getElementById('results-grid');
             const skill = document.getElementById('search-input').value;
-            grid.innerHTML = '<p class="text-center col-span-full text-slate-400 font-bold animate-pulse">Running algorithmic match via PostgreSQL...</p>';
+            grid.innerHTML = '<p class="text-center col-span-full text-slate-400 font-bold animate-pulse">Searching...</p>';
 
             try {
-                const url = skill 
-                    ? `${API_BASE}/recruiter/candidates?skills=${encodeURIComponent(skill)}` 
-                    : `${API_BASE}/recruiter/candidates`;
-
+                const url = skill ? `${API_BASE}/recruiter/candidates?skills=${encodeURIComponent(skill)}` : `${API_BASE}/recruiter/candidates`;
                 const response = await fetch(url);
                 const candidates = await response.json();
                 grid.innerHTML = ''; 
 
                 if (candidates.length === 0) {
-                    grid.innerHTML = '<p class="text-center col-span-full text-slate-500 font-bold">No candidates found matching those exact requirements.</p>';
+                    grid.innerHTML = '<p class="text-center col-span-full text-slate-500 font-bold">No candidates found.</p>';
                     return;
                 }
 
                 candidates.forEach(student => {
                     const card = document.createElement('div');
                     card.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition relative overflow-hidden";
-                    
-                    const scoreBadge = student.match_score > 0 
-                        ? `<div class="absolute top-0 right-0 bg-purple-600 text-white text-[10px] font-black px-3 py-1 rounded-bl-lg shadow-sm">🔥 MATCH SCORE: ${student.match_score}</div>`
-                        : '';
+                    const scoreBadge = student.match_score > 0 ? `<div class="absolute top-0 right-0 bg-purple-600 text-white text-[10px] font-black px-3 py-1 rounded-bl-lg shadow-sm">🔥 MATCH SCORE: ${student.match_score}</div>` : '';
 
                     card.innerHTML = `
                         ${scoreBadge}
@@ -168,28 +194,18 @@
                             </div>
                             <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full border border-green-200">CGPA: ${student.cgpa}</span>
                         </div>
-                        
                         <div class="mb-4">
                             <p class="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Technical Stack</p>
                             <div class="flex flex-wrap gap-2">
-                                ${(student.skills || '').split(',').map(s => 
-                                    s.trim() ? `<span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-md uppercase font-bold border border-slate-200">${s.trim()}</span>` : ''
-                                ).join('')}
+                                ${(student.skills || '').split(',').map(s => s.trim() ? `<span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-md uppercase font-bold border border-slate-200">${s.trim()}</span>` : '').join('')}
                             </div>
                         </div>
-
-                        <div class="mb-6">
-                            <p class="text-sm text-slate-600 line-clamp-3 italic">${student.bio || "Candidate has not provided a bio yet."}</p>
-                        </div>
-
-                        <a href="${student.github || '#'}" target="_blank" class="block w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-lg transition shadow-md shadow-slate-300">
-                            View GitHub Portfolio
-                        </a>
+                        <a href="${student.github || '#'}" target="_blank" class="block w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-lg transition shadow-md shadow-slate-300">View GitHub Portfolio</a>
                     `;
                     grid.appendChild(card);
                 });
             } catch (error) {
-                grid.innerHTML = '<p class="text-center col-span-full text-red-500 font-bold">Failed to connect to the database.</p>';
+                grid.innerHTML = '<p class="text-center col-span-full text-red-500 font-bold">Connection failed.</p>';
             }
         }
     </script>
