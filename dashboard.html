@@ -205,12 +205,21 @@
         }
 
         // --- 4. APPLY FOR JOB ---
+       // --- 4. APPLY FOR JOB (Dynamically uses logged-in Student ID) ---
         async function applyForJob(jobId, btnElement) {
             btnElement.innerText = "Submitting...";
             btnElement.disabled = true;
 
+            // Grab the real student ID from the active session
+            const currentUser = JSON.parse(localStorage.getItem('studentSession'));
+            if (!currentUser || !currentUser.id) {
+                alert("Session error. Please log in again.");
+                return;
+            }
+
             try {
-                const response = await fetch(`${API_BASE}/student/apply/${jobId}`, { method: 'POST' });
+                // Notice the new ?student_id= parameter in the URL
+                const response = await fetch(`${API_BASE}/student/apply/${jobId}?student_id=${currentUser.id}`, { method: 'POST' });
                 const result = await response.json();
 
                 if (result.status === 'success') {
@@ -228,7 +237,6 @@
                 btnElement.disabled = false;
             }
         }
-
         // --- 5. SECURE LOGOUT ---
         function logout() {
             localStorage.removeItem('studentSession');
