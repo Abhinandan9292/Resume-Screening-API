@@ -168,6 +168,29 @@ def get_recruitment_stats():
     return results
 
 
+# 5. Security: Get Audit Logs
+@app.get("/admin/audit_logs")
+def get_audit_logs():
+    conn = get_db()
+    cursor = conn.cursor()
+    # Join with students table to get the name, format the timestamp
+    cursor.execute('''
+        SELECT 
+            l.log_id, 
+            s.first_name, 
+            s.last_name, 
+            l.action, 
+            TO_CHAR(l.action_timestamp, 'DD Mon YYYY, HH24:MI:SS') as timestamp 
+        FROM placement_audit_logs l
+        JOIN students s ON l.student_id = s.id
+        ORDER BY l.action_timestamp DESC 
+        LIMIT 10
+    ''')
+    results = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return results
+
+
 @app.get("/recruiter/candidates")
 def get_recruiter_candidates(skills: str = None):
     conn = get_db()
