@@ -235,16 +235,16 @@ def mark_placed(student_id: int):
 
 
 # 6. Recruiter: Post a New Job
+# 6. Recruiter: Post a New Job
 @app.post("/recruiter/jobs")
 def create_job(job: JobCreate):
     conn = get_db()
     cursor = conn.cursor()
     try:
-        # Utilizing ACID transactions for safe insertion
         cursor.execute('''
-            INSERT INTO jobs (job_title, job_description, required_exp, location, recruiter_id)
-            VALUES (%s, %s, %s, %s, %s) RETURNING job_id
-        ''', (job.job_title, job.job_description, job.required_exp, job.location, job.recruiter_id))
+            INSERT INTO jobs (job_title, company_name, salary, job_description, required_exp, location, recruiter_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING job_id
+        ''', (job.job_title, job.company_name, job.salary, job.job_description, job.required_exp, job.location, job.recruiter_id))
         new_job_id = cursor.fetchone()['job_id']
         conn.commit()
         return {"status": "success", "job_id": new_job_id, "message": "Job posted successfully"}
