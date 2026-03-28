@@ -2,114 +2,104 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Student Portal | Talent Engine</title>
+    <title>Student Registration</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 min-h-screen p-8 font-sans">
-    
-    <div class="max-w-6xl mx-auto mb-10 flex justify-between items-center bg-slate-900 p-6 rounded-2xl shadow-lg">
-        <div>
-            <h1 class="text-3xl font-bold text-white tracking-tight">Student Job Board</h1>
-            <p class="text-slate-400 mt-1">Discover and apply for your next career opportunity.</p>
-        </div>
-        <div class="bg-slate-800 text-green-400 px-4 py-2 rounded-lg font-bold border border-slate-700 shadow-sm">
-            Candidate Session
-        </div>
-    </div>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
+        <h2 class="text-3xl font-bold mb-2 text-gray-800">Student Profile</h2>
+        <p class="text-gray-500 mb-8 text-sm">Fill in your details or use the AI parser to auto-fill from your PDF resume.</p>
 
-    <div id="jobs-grid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-        <p class="text-slate-500 font-bold col-span-full text-center py-10 animate-pulse">Loading open positions from database...</p>
+        <div class="mb-8 p-6 bg-blue-50 border-2 border-dashed border-blue-200 rounded-xl text-center">
+            <label class="block text-blue-800 font-bold mb-2">🚀 AI Auto-Fill (Upload PDF)</label>
+            <input type="file" id="resumeUpload" accept=".pdf" class="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+            <p id="aiStatus" class="mt-2 text-xs text-blue-600 font-medium"></p>
+        </div>
+
+        <form id="studentForm" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" id="first_name" placeholder="First Name" required class="border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 outline-none">
+                <input type="text" id="last_name" placeholder="Last Name" required class="border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 outline-none">
+            </div>
+            <input type="email" id="email" placeholder="Email Address" required class="border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 outline-none">
+            <input type="password" id="password" placeholder="Create Password" required class="border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 outline-none">
+            
+            <div class="grid grid-cols-2 gap-4">
+                <input type="number" step="0.01" id="cgpa" placeholder="CGPA" required class="border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 outline-none">
+                <input type="text" id="github" placeholder="GitHub Link" required class="border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 outline-none">
+            </div>
+
+            <label class="block font-bold text-gray-700">Skills</label>
+            <textarea id="skills" placeholder="e.g. C++, Python, AI/ML, SQL..." required class="border p-3 rounded-lg w-full h-24 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+
+            <label class="block font-bold text-gray-700">Professional Bio</label>
+            <textarea id="bio" placeholder="Tell recruiters about yourself..." required class="border p-3 rounded-lg w-full h-32 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-200">Register Profile</button>
+        </form>
     </div>
 
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
-        window.onload = () => {
-            loadJobs();
-        };
-
-        // --- Fetch all jobs from the database ---
-        async function loadJobs() {
-            const grid = document.getElementById('jobs-grid');
+        document.getElementById('resumeUpload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            const status = document.getElementById('aiStatus');
+            status.innerText = "AI is reading... 🧠";
+            const formData = new FormData();
+            formData.append('file', file);
             try {
-                const response = await fetch(`${API_BASE}/jobs`);
-                const jobs = await response.json();
-                grid.innerHTML = '';
+                const response = await fetch(`${API_BASE}/ai_parse`, { method: 'POST', body: formData });
+                const data = await response.json();
+                document.getElementById('skills').value = data.suggested_skills;
+                document.getElementById('bio').value = data.bio_preview;
+                status.innerText = "Success! ✅";
+            } catch (error) {
+                status.innerText = "Connection lost.";
+            }
+        });
 
-                if (jobs.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full bg-white p-10 rounded-2xl text-center border border-slate-200">
-                        <p class="text-xl font-bold text-slate-500">No jobs posted yet.</p>
-                        <p class="text-slate-400 mt-2">Check back later when recruiters have published new roles.</p>
-                    </div>`;
-                    return;
-                }
+        document.getElementById('studentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button');
+            submitBtn.innerText = "Saving...";
 
-                jobs.forEach(job => {
-                    const card = document.createElement('div');
-                    card.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg transition flex flex-col justify-between";
-                    
-                    card.innerHTML = `
-                        <div>
-                            <div class="flex justify-between items-start mb-2">
-                                <h2 class="text-2xl font-black text-slate-800 tracking-tight">${job.job_title}</h2>
-                                <span class="bg-green-100 text-green-700 font-bold px-3 py-1 rounded-full text-xs border border-green-200 whitespace-nowrap">
-                                    ${job.salary || 'Not Disclosed'}
-                                </span>
-                            </div>
-                            
-                            <p class="text-indigo-600 font-bold text-sm uppercase tracking-wide mb-4">
-                                🏢 ${job.company_name || 'Confidential Company'}
-                            </p>
-                            
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-semibold flex items-center gap-1">
-                                    📍 ${job.location}
-                                </span>
-                                <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-semibold flex items-center gap-1">
-                                    ⏳ ${job.required_exp} Yrs Exp
-                                </span>
-                            </div>
-                            
-                            <p class="text-slate-600 text-sm mb-6 line-clamp-3 leading-relaxed">
-                                ${job.job_description}
-                            </p>
-                        </div>
-                        
-                        <button onclick="applyForJob(${job.job_id}, this)" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition shadow-md shadow-slate-300">
-                            Apply for Role
-                        </button>
-                    `;
-                    grid.appendChild(card);
+            const studentData = {
+                first_name: document.getElementById('first_name').value,
+                last_name: document.getElementById('last_name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                cgpa: parseFloat(document.getElementById('cgpa').value) || 0,
+                github_link: document.getElementById('github').value,
+                skills: document.getElementById('skills').value,
+                bio: document.getElementById('bio').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/register_student`, {
+                    method: 'POST',
+                    headers: { 
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(studentData)
                 });
-            } catch (error) {
-                grid.innerHTML = '<p class="text-center col-span-full text-red-500 font-bold">Failed to load jobs. Is the API running?</p>';
-            }
-        }
 
-        // --- Apply for a specific job ---
-        async function applyForJob(jobId, btnElement) {
-            btnElement.innerText = "Submitting...";
-            btnElement.disabled = true;
-
-            try {
-                const response = await fetch(`${API_BASE}/student/apply/${jobId}`, { method: 'POST' });
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    btnElement.innerText = "✅ Applied Successfully";
-                    btnElement.classList.replace('bg-slate-900', 'bg-green-600');
-                    btnElement.classList.replace('hover:bg-slate-800', 'hover:bg-green-700');
+                const result = await res.json();
+                
+                if (res.ok && result.status === 'success') {
+                    alert("Profile Registered Successfully! 🎉");
+                    window.location.href = 'index.html';
                 } else {
-                    alert("Notice: " + result.message);
-                    btnElement.innerText = "Apply for Role";
-                    btnElement.disabled = false;
+                    alert("Database Rejected Entry: " + (result.message || "Invalid Input"));
                 }
-            } catch (error) {
-                alert("Connection failed.");
-                btnElement.innerText = "Apply for Role";
-                btnElement.disabled = false;
+            } catch (err) {
+                alert("HANDSHAKE FAILED: The browser blocked the connection. Check the console.");
+                console.error(err);
+            } finally {
+                submitBtn.innerText = "Register Profile";
             }
-        }
+        });
     </script>
 </body>
 </html>
