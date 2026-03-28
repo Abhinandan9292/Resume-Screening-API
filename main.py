@@ -277,12 +277,13 @@ def get_jobs():
 
 
 # 8. Student: Apply for a Job
+# 8. Student: Apply for a Job (No more hardcoded ID!)
 @app.post("/student/apply/{job_id}")
-def apply_for_job(job_id: int):
+def apply_for_job(job_id: int, student_id: int):
     conn = get_db()
     cursor = conn.cursor()
-    student_id = 1  # MVP: Hardcoded to Student #1 (Abhinandan)
     try:
+        # Now it strictly uses the ID passed from the frontend
         cursor.execute('''
             INSERT INTO job_applications (job_id, student_id, application_status)
             VALUES (%s, %s, 'Applied')
@@ -291,14 +292,12 @@ def apply_for_job(job_id: int):
         return {"status": "success", "message": "Application submitted successfully!"}
     except Exception as e:
         conn.rollback()
-        # If the database UNIQUE constraint blocks it, they already applied!
+        # Blocks them from applying twice
         if "unique constraint" in str(e).lower() or "duplicate key" in str(e).lower():
             return {"status": "error", "message": "You have already applied for this job."}
         return {"status": "error", "message": str(e)}
     finally:
         conn.close()
-
-
 # 9. Recruiter: View Applicants for their jobs
 @app.get("/recruiter/applicants")
 def get_applicants(recruiter_id: int):
