@@ -364,21 +364,23 @@ def login_recruiter(login_data: RecruiterLogin):
 
 
 # --- 10. Admin: Corporate Partner Analytics ---
+# --- 10. Admin: Corporate Partner Analytics (ACTIVE PIPELINE ONLY) ---
 @app.get("/admin/recruiters/stats")
 def get_recruiter_stats():
     conn = get_db()
     cursor = conn.cursor()
-    # Using LEFT JOIN so we see companies even if they haven't posted jobs yet
-    # Using COUNT(DISTINCT) to prevent duplicate counting
+    # We added a JOIN to the students table.
+    # We use a CASE statement to only count the application IF the student is still looking for a job (is_placed = 0)
     cursor.execute('''
         SELECT 
             r.company_name, 
             r.email, 
             COUNT(DISTINCT j.job_id) as jobs_posted,
-            COUNT(DISTINCT a.application_id) as total_applicants
+            COUNT(DISTINCT CASE WHEN s.is_placed = 0 THEN a.application_id END) as total_applicants
         FROM recruiters r
         LEFT JOIN jobs j ON r.recruiter_id = j.recruiter_id
         LEFT JOIN job_applications a ON j.job_id = a.job_id
+        LEFT JOIN students s ON a.student_id = s.id
         GROUP BY r.recruiter_id, r.company_name, r.email
         ORDER BY jobs_posted DESC, total_applicants DESC
     ''')
