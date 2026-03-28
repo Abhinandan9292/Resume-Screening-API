@@ -21,25 +21,39 @@
             <h2 class="text-2xl font-black text-slate-800 tracking-tight">Create Job Requisition</h2>
             <button onclick="toggleJobForm()" class="text-slate-400 hover:text-red-500 font-bold text-xl">&times;</button>
         </div>
+        
         <form id="post-job-form" onsubmit="submitJobPosting(event)" class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Job Title</label>
-                <input type="text" id="job-title" required placeholder="e.g. Junior Data Scientist" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
-            </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Required Exp (Years)</label>
-                    <input type="number" step="0.5" id="job-exp" required placeholder="e.g. 0.5" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Job Title</label>
+                    <input type="text" id="job-title" required placeholder="e.g. Software Engineer" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Company Name</label>
+                    <input type="text" id="job-company" required placeholder="e.g. Google, Voyage AI" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Salary / CTC</label>
+                    <input type="text" id="job-salary" required placeholder="e.g. 12 LPA" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Required Exp (Yrs)</label>
+                    <input type="number" step="0.5" id="job-exp" required placeholder="e.g. 0.5" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Location</label>
-                    <input type="text" id="job-location" required placeholder="e.g. Remote, Bangalore" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+                    <input type="text" id="job-location" required placeholder="e.g. Remote, Bangalore" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
                 </div>
             </div>
+            
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Job Description</label>
-                <textarea id="job-desc" required rows="3" placeholder="Describe the role and requirements..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"></textarea>
+                <textarea id="job-desc" required rows="3" placeholder="Describe the role and requirements..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition"></textarea>
             </div>
+            
             <button type="submit" id="submit-job-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg mt-4 transition shadow-lg shadow-slate-300">
                 Publish Job to Portal
             </button>
@@ -71,25 +85,27 @@
             }
         };
 
-        // --- NEW: Toggle Job Form UI ---
+        // --- Toggle Job Form Visibility ---
         function toggleJobForm() {
             const formSection = document.getElementById('job-form-section');
             formSection.classList.toggle('hidden');
         }
 
-        // --- NEW: Submit Job to Database ---
+        // --- Submit New Job to Database ---
         async function submitJobPosting(event) {
-            event.preventDefault(); // Stop page reload
+            event.preventDefault(); 
             const btn = document.getElementById('submit-job-btn');
             btn.innerText = "Publishing...";
             btn.disabled = true;
 
             const jobData = {
                 job_title: document.getElementById('job-title').value,
+                company_name: document.getElementById('job-company').value, 
+                salary: document.getElementById('job-salary').value,       
                 required_exp: parseFloat(document.getElementById('job-exp').value),
                 location: document.getElementById('job-location').value,
                 job_description: document.getElementById('job-desc').value,
-                recruiter_id: 1 // Hardcoded for MVP
+                recruiter_id: 1 // Hardcoded MVP ID
             };
 
             try {
@@ -103,7 +119,7 @@
                 if (result.status === 'success') {
                     alert("✅ Job successfully published to the portal!");
                     document.getElementById('post-job-form').reset();
-                    toggleJobForm(); // Hide the form again
+                    toggleJobForm(); 
                 } else {
                     alert("Database Error: " + result.message);
                 }
@@ -115,7 +131,7 @@
             }
         }
 
-        // --- EXISTING: PL/SQL Match Search ---
+        // --- Execute PL/SQL Match Search ---
         async function searchCandidates() {
             const grid = document.getElementById('results-grid');
             const skill = document.getElementById('search-input').value;
