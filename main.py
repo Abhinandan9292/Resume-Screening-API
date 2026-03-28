@@ -192,14 +192,24 @@ def get_audit_logs():
     return results
 
 
+# 1. For Recruiters (Only Active/Unplaced, with Match Scoring)
 @app.get("/recruiter/candidates")
 def get_recruiter_candidates(skills: str = None):
     conn = get_db()
     cursor = conn.cursor()
+    
     if skills:
-        cursor.execute('SELECT * FROM recruiter_candidates WHERE skills ILIKE %s', (f"%{skills.lower()}%",))
+        # Pass the skills string twice: once for the SELECT, once for the WHERE
+        cursor.execute('''
+            SELECT *, calculate_skill_match(skills, %s) as match_score 
+            FROM recruiter_candidates 
+            WHERE calculate_skill_match(skills, %s) > 0
+            ORDER BY match_score DESC, cgpa DESC
+        ''', (skills, skills))
     else:
-        cursor.execute('SELECT * FROM recruiter_candidates')
+        # Default view when no search is active
+        cursor.execute('SELECT *, 0 as match_score FROM recruiter_candidates ORDER BY cgpa DESC')
+        
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
