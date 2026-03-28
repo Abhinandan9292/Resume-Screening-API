@@ -73,10 +73,12 @@ class UpdateProfileData(BaseModel):
 
 class JobCreate(BaseModel):
     job_title: str
+    company_name: str  # <-- ADDED
+    salary: str        # <-- ADDED
     job_description: str
     required_exp: float
     location: str
-    recruiter_id: int = 1  # Hardcoded to 1 for the MVP
+    recruiter_id: int = 1# Hardcoded to 1 for the MVP
 
 @app.post("/ai_parse")
 async def ai_parse(file: UploadFile = File(...)):
