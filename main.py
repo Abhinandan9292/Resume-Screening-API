@@ -299,20 +299,25 @@ def apply_for_job(job_id: int, student_id: int):
     finally:
         conn.close()
 # 9. Recruiter: View Applicants for their jobs
+# --- 9. Recruiter: Get Applicants (CRASH FIXED) ---
 @app.get("/recruiter/applicants")
 def get_applicants(recruiter_id: int):
     conn = get_db()
     cursor = conn.cursor()
+    
+    # Removed s.skills to prevent the UndefinedColumn crash
     cursor.execute('''
         SELECT 
-            j.job_title, s.first_name, s.last_name, s.email, s.cgpa, s.skills,
+            j.job_title, s.first_name, s.last_name, s.email, s.cgpa, 
+            '' AS skills, 
             TO_CHAR(a.applied_on AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata', 'Mon DD, HH12:MI AM') as apply_date
         FROM job_applications a
         JOIN jobs j ON a.job_id = j.job_id
         JOIN students s ON a.student_id = s.id
         WHERE j.recruiter_id = %s
         ORDER BY a.applied_on DESC
-    ''', (recruiter_id,)) # Now strictly filters by the logged-in recruiter
+    ''', (recruiter_id,)) 
+    
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
