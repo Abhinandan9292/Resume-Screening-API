@@ -361,3 +361,28 @@ def login_recruiter(login_data: RecruiterLogin):
         return {"status": "success", "recruiter": dict(recruiter)}
     return {"status": "error", "message": "Invalid email or access code."}
 
+
+
+# --- 10. Admin: Corporate Partner Analytics ---
+@app.get("/admin/recruiters/stats")
+def get_recruiter_stats():
+    conn = get_db()
+    cursor = conn.cursor()
+    # Using LEFT JOIN so we see companies even if they haven't posted jobs yet
+    # Using COUNT(DISTINCT) to prevent duplicate counting
+    cursor.execute('''
+        SELECT 
+            r.company_name, 
+            r.email, 
+            COUNT(DISTINCT j.job_id) as jobs_posted,
+            COUNT(DISTINCT a.application_id) as total_applicants
+        FROM recruiters r
+        LEFT JOIN jobs j ON r.recruiter_id = j.recruiter_id
+        LEFT JOIN job_applications a ON j.job_id = a.job_id
+        GROUP BY r.recruiter_id, r.company_name, r.email
+        ORDER BY jobs_posted DESC, total_applicants DESC
+    ''')
+    
+    results = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return results
