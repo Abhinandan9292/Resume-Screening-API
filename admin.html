@@ -116,15 +116,34 @@
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
-        window.onload = () => {
+        window.onload = async () => {
             const pass = prompt("Secure Placement Cell Portal\n\nEnter Admin PIN:");
-            if (pass === "92") {
-                loadAllStudents();
-                loadStatistics(); 
-                loadAuditLogs(); 
-                loadPartnerStats();
-            } else {
-                alert("Access Denied.");
+            
+            if (!pass) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin: pass })
+                });
+                
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    loadAllStudents();
+                    loadStatistics(); 
+                    loadAuditLogs(); 
+                    loadPartnerStats();
+                } else {
+                    alert("Security Alert: Invalid PIN.");
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                alert("Auth server unreachable.");
                 window.location.href = 'index.html';
             }
         };
@@ -282,6 +301,7 @@
                     loadAllStudents();  
                     loadStatistics();   
                     loadAuditLogs();    
+                    loadPartnerStats(); 
                 } else {
                     alert("Database Error: " + (result.message || "Could not update."));
                     btnElement.innerText = "Mark as Placed";
