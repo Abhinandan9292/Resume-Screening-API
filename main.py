@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException,Body
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional
@@ -388,3 +388,13 @@ def get_recruiter_stats():
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
+
+
+# --- SECURE ADMIN LOGIN (Hides PIN from the browser) ---
+@app.post("/admin/login")
+def admin_login(payload: dict = Body(...)):
+    pin = payload.get("pin")
+    # The server checks the PIN, not the browser!
+    if pin == "92": 
+        return {"status": "success", "message": "Admin authenticated"}
+    return {"status": "error", "message": "Invalid PIN"}
