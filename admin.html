@@ -16,6 +16,21 @@
         </div>
     </div>
 
+    <div class="max-w-6xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-orange-500">
+            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Total Candidates Seeking</p>
+            <p id="stat-seeking" class="text-3xl font-black text-slate-800">...</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-green-500">
+            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Successfully Placed</p>
+            <p id="stat-hired" class="text-3xl font-black text-green-600">...</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-teal-500">
+            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Avg CGPA of Placed</p>
+            <p id="stat-cgpa" class="text-3xl font-black text-teal-600">...</p>
+        </div>
+    </div>
+
     <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
@@ -42,12 +57,44 @@
             const pass = prompt("Secure Placement Cell Portal\n\nEnter Admin PIN:");
             if (pass === "92") {
                 loadAllStudents();
+                loadStatistics(); // Load the stats banner
             } else {
                 alert("Access Denied: Incorrect PIN.");
                 window.location.href = 'index.html';
             }
         };
 
+        // --- 1. LOAD STATISTICS VIEW ---
+        async function loadStatistics() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/stats`);
+                const stats = await response.json();
+                
+                let hired = 0;
+                let seeking = 0;
+                let avgCgpa = 0.0;
+
+                // The database view groups by status, so we loop through the rows
+                stats.forEach(row => {
+                    if (row.status === 'Placed') {
+                        hired = row.total_candidates;
+                        avgCgpa = row.average_cgpa;
+                    } else {
+                        seeking = row.total_candidates;
+                    }
+                });
+
+                // Update the UI
+                document.getElementById('stat-hired').innerText = hired;
+                document.getElementById('stat-seeking').innerText = seeking;
+                document.getElementById('stat-cgpa').innerText = avgCgpa || '0.0';
+
+            } catch (error) {
+                console.error("Failed to load analytics", error);
+            }
+        }
+
+        // --- 2. LOAD ALL STUDENTS (Base Table) ---
         async function loadAllStudents() {
             const tbody = document.getElementById('admin-table-body');
             try {
@@ -88,6 +135,7 @@
             }
         }
 
+        // --- 3. MARK STUDENT AS PLACED ---
         async function markAsPlaced(studentId, btnElement) {
             if (!confirm("Are you sure you want to mark this student as placed?")) return;
             btnElement.innerText = "Updating...";
@@ -98,7 +146,8 @@
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    loadAllStudents(); 
+                    loadAllStudents();  // Refresh the table
+                    loadStatistics();   // Refresh the analytics numbers!
                 } else {
                     alert("Database Error: " + (result.message || "Could not update record."));
                     btnElement.innerText = "Mark as Placed";
