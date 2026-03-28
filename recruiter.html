@@ -68,6 +68,9 @@
         <div id="inbox-container" class="hidden max-w-6xl mx-auto mb-10 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="bg-indigo-50 p-4 border-b border-indigo-100 flex justify-between items-center">
                 <h2 class="text-sm font-bold text-indigo-800 uppercase tracking-wider">📥 Applicant Inbox (Your Jobs)</h2>
+                <button onclick="downloadCSV()" class="bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-1 px-3 rounded shadow transition flex items-center gap-1">
+                    <span>📊</span> Export to Excel/CSV
+                </button>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -78,6 +81,7 @@
                             <th class="p-4 font-bold">Candidate</th>
                             <th class="p-4 font-bold">CGPA</th>
                             <th class="p-4 font-bold">Top Skills</th>
+                            <th class="p-4 font-bold text-right">Action</th>
                         </tr>
                     </thead>
                     <tbody id="inbox-table-body" class="divide-y divide-slate-100">
@@ -100,6 +104,7 @@
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
         let currentRecruiter = null;
+        let currentApplicantsList = []; // Array to store applicants for CSV export
 
         window.onload = () => {
             const session = localStorage.getItem('recruiterSession');
@@ -178,20 +183,30 @@
                     return;
                 }
 
+                // Store for the CSV Download
+                currentApplicantsList = applicants;
+
                 container.classList.remove('hidden');
                 tbody.innerHTML = ''; 
 
                 applicants.forEach(app => {
+                    const emailSubject = encodeURIComponent(`Regarding your application for ${app.job_title} at ${currentRecruiter.company_name}`);
+
                     tbody.innerHTML += `
-                        <tr class="hover:bg-indigo-50/50 transition">
+                        <tr class="hover:bg-indigo-50/50 transition border-b border-slate-100">
                             <td class="p-4 text-xs font-bold text-slate-400 whitespace-nowrap">${app.apply_date}</td>
                             <td class="p-4 font-bold text-indigo-700">${app.job_title}</td>
                             <td class="p-4"><p class="font-bold text-slate-800">${app.first_name} ${app.last_name || ''}</p><p class="text-xs text-slate-500">${app.email}</p></td>
                             <td class="p-4 font-semibold text-teal-600">${app.cgpa}</td>
                             <td class="p-4">
                                 <div class="flex flex-wrap gap-1">
-                                    ${(app.skills || '').split(',').slice(0, 2).map(s => s.trim() ? `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-1 rounded uppercase font-bold border border-slate-200">${s.trim()}</span>` : '').join('')}
+                                    ${(app.skills || '').split(',').slice(0, 3).map(s => s.trim() ? `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-1 rounded uppercase font-bold border border-slate-200">${s.trim()}</span>` : '<span class="text-xs text-slate-400">None listed</span>').join('')}
                                 </div>
+                            </td>
+                            <td class="p-4 text-right">
+                                <a href="mailto:${app.email}?subject=${emailSubject}" class="bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white text-xs font-bold py-2 px-4 rounded transition inline-block">
+                                    ✉️ Notify
+                                </a>
                             </td>
                         </tr>
                     `;
@@ -200,6 +215,38 @@
                 container.classList.add('hidden');
                 console.error(error);
             }
+        }
+
+        function downloadCSV() {
+            if (currentApplicantsList.length === 0) {
+                alert("No applicants to export.");
+                return;
+            }
+
+            let csvContent = "Application Date,Job Role,First Name,Last Name,Email,CGPA,Skills\n";
+
+            currentApplicantsList.forEach(app => {
+                const row = [
+                    `"${app.apply_date}"`, 
+                    `"${app.job_title}"`, 
+                    `"${app.first_name}"`, 
+                    `"${app.last_name || ''}"`, 
+                    `"${app.email}"`, 
+                    `"${app.cgpa}"`, 
+                    `"${app.skills || ''}"`
+                ].join(",");
+                csvContent += row + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `${currentRecruiter.company_name.replace(/\s+/g, '_')}_Applicants.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         async function submitJobPosting(event) {
@@ -260,8 +307,10 @@
 
                 candidates.forEach(student => {
                     const card = document.createElement('div');
-                    card.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition relative overflow-hidden";
+                    card.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition relative overflow-hidden flex flex-col";
                     const scoreBadge = student.match_score > 0 ? `<div class="absolute top-0 right-0 bg-purple-600 text-white text-[10px] font-black px-3 py-1 rounded-bl-lg shadow-sm">🔥 MATCH SCORE: ${student.match_score}</div>` : '';
+                    
+                    const outreachSubject = encodeURIComponent(`Interested in your profile - ${currentRecruiter ? currentRecruiter.company_name : 'Recruiting Team'}`);
 
                     card.innerHTML = `
                         ${scoreBadge}
@@ -269,13 +318,16 @@
                             <div><h3 class="text-xl font-bold text-slate-800">${student.first_name || ''} ${student.last_name || ''}</h3><p class="text-sm text-blue-600 font-semibold">${student.email}</p></div>
                             <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full border border-green-200">CGPA: ${student.cgpa}</span>
                         </div>
-                        <div class="mb-4">
+                        <div class="mb-4 flex-grow">
                             <p class="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Technical Stack</p>
                             <div class="flex flex-wrap gap-2">
                                 ${(student.skills || '').split(',').map(s => s.trim() ? `<span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-md uppercase font-bold border border-slate-200">${s.trim()}</span>` : '').join('')}
                             </div>
                         </div>
-                        <a href="${student.github || '#'}" target="_blank" class="block w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-lg transition shadow-md shadow-slate-300">View GitHub Portfolio</a>
+                        <div class="flex gap-2 mt-4">
+                            <a href="${student.github || '#'}" target="_blank" class="flex-1 text-center bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-lg transition shadow-md shadow-slate-300 text-sm">GitHub</a>
+                            <a href="mailto:${student.email}?subject=${outreachSubject}" class="flex-1 text-center bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white font-bold py-2 rounded-lg transition shadow-md shadow-slate-300 text-sm">✉️ Notify</a>
+                        </div>
                     `;
                     grid.appendChild(card);
                 });
