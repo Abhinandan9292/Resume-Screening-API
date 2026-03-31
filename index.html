@@ -2,48 +2,113 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Talent Engine | Home</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talent Engine | Smart Campus Hiring</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-[#0f172a] min-h-screen flex flex-col items-center justify-center font-sans text-white">
-
-    <div class="absolute top-6 right-8">
-        <a href="login.html" class="text-slate-400 hover:text-white font-semibold transition">
-            Login &rarr;
-        </a>
-    </div>
-
-    <div class="text-center mb-16 mt-8">
-        <h1 class="text-6xl font-extrabold text-[#2dd4bf] mb-4 tracking-tight">Talent Engine</h1>
-        <p class="text-slate-400 text-lg">The Ultimate Bridge: Students. Recruiters. Placement Cell.</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl px-6">
-        
-        <div class="bg-[#1e293b] p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition duration-300 border border-slate-700 flex flex-col items-center text-center">
-            <div class="text-4xl mb-4">🎓</div>
-            <h2 class="text-2xl font-bold text-white mb-3">Student Vault</h2>
-            <p class="text-slate-400 text-sm mb-6 flex-grow">Build your profile, use AI to parse your resume, and manage your placement status.</p>
-            <div class="w-full flex gap-3">
-                <a href="login.html" class="w-1/2 bg-[#14b8a6] hover:bg-teal-400 text-slate-900 font-bold py-2 rounded-lg transition">Login</a>
-                <a href="student.html" class="w-1/2 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 rounded-lg transition">Register</a>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <a class="brand" href="index.html">
+                <span class="brand-mark">TE</span>
+                <span>Talent Engine</span>
+            </a>
+            <div class="action-row">
+                <a class="ghost-button" href="student.html">Create student profile</a>
+                <a class="button" href="login.html">Student login</a>
             </div>
-        </div>
+        </header>
 
-        <a href="recruiter.html" class="bg-[#1e293b] p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition duration-300 border border-slate-700 flex flex-col items-center text-center block cursor-pointer">
-            <div class="text-4xl mb-4">💼</div>
-            <h2 class="text-2xl font-bold text-white mb-3">Recruiter Gateway</h2>
-            <p class="text-slate-400 text-sm mb-6">Search by skills and find the top candidates instantly using pattern matching.</p>
-            <span class="mt-auto inline-block bg-slate-700 text-white font-bold py-2 px-6 rounded-lg w-full">Access Portal</span>
-        </a>
+        <section class="hero">
+            <div class="hero-grid">
+                <div>
+                    <span class="eyebrow">AI-first placement platform</span>
+                    <h1>Campus hiring that actually feels premium.</h1>
+                    <p>
+                        Talent Engine connects students, recruiters, and placement teams in one clean workflow.
+                        Resume parsing, live applications, talent search, and placement visibility all happen from a single portal.
+                    </p>
+                    <div class="hero-actions">
+                        <a class="button" href="student.html">Launch student journey</a>
+                        <a class="ghost-button" href="recruiter.html">Open recruiter portal</a>
+                        <a class="ghost-button" href="admin.html">Placement cell console</a>
+                    </div>
+                </div>
+                <div class="hero-stat-list">
+                    <div class="hero-stat">
+                        <span>Student vault</span>
+                        <strong>Resume to profile in minutes</strong>
+                        <p class="muted">Students can register, parse PDFs, manage skills, and apply to open roles from one dashboard.</p>
+                    </div>
+                    <div class="hero-stat">
+                        <span>Recruiter gateway</span>
+                        <strong>Fast skill-based talent discovery</strong>
+                        <p class="muted">Recruiters can post jobs, scan top candidates, export applicants, and contact students instantly.</p>
+                    </div>
+                    <div class="hero-stat">
+                        <span>Placement command</span>
+                        <strong>Live oversight for the campus team</strong>
+                        <p class="muted">Admins get placement analytics, recruiter onboarding, student management, and audit activity in one place.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <a href="admin.html" class="bg-[#1e293b] p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition duration-300 border border-slate-700 flex flex-col items-center text-center block cursor-pointer">
-            <div class="text-4xl mb-4">🔑</div>
-            <h2 class="text-2xl font-bold text-white mb-3">Placement Cell</h2>
-            <p class="text-slate-400 text-sm mb-6">Manage placements, update student status, and control the talent pipeline.</p>
-            <span class="mt-auto inline-block bg-slate-700 text-white font-bold py-2 px-6 rounded-lg w-full">Admin Login</span>
-        </a>
+        <section class="feature-grid">
+            <article class="feature-card">
+                <div class="feature-icon">01</div>
+                <h3>Student Vault</h3>
+                <p class="muted">Profile setup, resume parsing, skill badges, application flow, and a modern dashboard that feels like a real product.</p>
+                <div class="action-row">
+                    <a class="button" href="student.html">Register now</a>
+                    <a class="ghost-button" href="login.html">Login</a>
+                </div>
+            </article>
+            <article class="feature-card">
+                <div class="feature-icon">02</div>
+                <h3>Recruiter Gateway</h3>
+                <p class="muted">Post openings, review applicants, search by skills, and reach candidates from a cleaner, sharper recruiting workspace.</p>
+                <div class="action-row">
+                    <a class="button" href="recruiter.html">Access portal</a>
+                </div>
+            </article>
+            <article class="feature-card">
+                <div class="feature-icon">03</div>
+                <h3>Placement Cell</h3>
+                <p class="muted">Track hiring progress, activate recruiter accounts, and manage student outcomes with operational visibility.</p>
+                <div class="action-row">
+                    <a class="button" href="admin.html">Open console</a>
+                </div>
+            </article>
+        </section>
 
+        <section class="panel feature-card">
+            <div class="split-layout">
+                <div>
+                    <span class="eyebrow">Why it works</span>
+                    <h2 class="page-title" style="font-size: clamp(2.2rem, 5vw, 3.4rem); margin-top: 16px;">One platform, three experiences, zero clutter.</h2>
+                </div>
+                <div class="stack-list">
+                    <div class="stack-item">
+                        <strong>Students</strong>
+                        <p class="muted">Build a polished profile, upload a resume, and stay job-ready.</p>
+                    </div>
+                    <div class="stack-item">
+                        <strong>Recruiters</strong>
+                        <p class="muted">Get applicants and proactively source talent from the same workspace.</p>
+                    </div>
+                    <div class="stack-item">
+                        <strong>Admins</strong>
+                        <p class="muted">Monitor the full placement pipeline with accountability and analytics.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <p class="footer-note">Talent Engine for modern placement drives, smart sourcing, and cleaner campus operations.</p>
     </div>
 </body>
 </html>

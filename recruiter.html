@@ -2,109 +2,146 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recruiter Gateway | Talent Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-slate-50 min-h-screen font-sans">
-    
-    <div id="login-screen" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
-            <h2 class="text-3xl font-black text-slate-800 mb-2">Corporate Portal</h2>
-            <p class="text-slate-500 mb-6">Log in to post jobs and view your candidate inbox.</p>
-            <form id="recruiter-login-form" onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Corporate Email</label>
-                    <input type="email" id="login-email" required placeholder="hr@company.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Access Code</label>
-                    <input type="password" id="login-pass" required placeholder="••••••••" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500">
-                </div>
-                <button type="submit" id="login-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg mt-4 shadow-lg transition">Authenticate</button>
-            </form>
-            <div class="mt-4 text-xs text-slate-400 text-center">
-                Test Accounts: hr@voyageai.com (voyage123) | campus@google.com (google123)
+<body class="light-body">
+    <div id="login-screen" class="overlay-screen">
+        <section class="login-card" style="max-width: 520px; width: 100%;">
+            <div class="brand" style="color: var(--text-dark); margin-bottom: 18px;">
+                <span class="brand-mark">TE</span>
+                <span>Recruiter Gateway</span>
             </div>
-        </div>
+            <h2>Corporate portal access</h2>
+            <p class="muted">Log in to post roles, review applicants, and search your next candidate.</p>
+            <form id="recruiter-login-form" onsubmit="handleLogin(event)" style="display: grid; gap: 16px; margin-top: 24px;">
+                <div>
+                    <label class="field-label" for="login-email">Corporate email</label>
+                    <input class="input" type="email" id="login-email" required placeholder="hr@company.com">
+                </div>
+                <div>
+                    <label class="field-label" for="login-pass">Access code</label>
+                    <input class="input" type="password" id="login-pass" required placeholder="Enter recruiter password">
+                </div>
+                <button type="submit" id="login-btn" class="button" style="width: 100%;">Authenticate</button>
+            </form>
+            <p class="muted" style="margin-top: 18px;">Test accounts: hr@voyageai.com / voyage123 and campus@google.com / google123.</p>
+        </section>
     </div>
 
-    <div id="dashboard-screen" class="hidden p-8">
-        
-        <div class="max-w-6xl mx-auto mb-6 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <div class="bg-slate-800 text-purple-400 px-4 py-2 rounded-lg font-bold shadow-sm">
-                    Corporate Partner Access
+    <div id="dashboard-screen" class="hidden">
+        <div class="page-shell">
+            <header class="topbar">
+                <div class="brand" style="color: var(--text-dark);">
+                    <span class="brand-mark">TE</span>
+                    <span id="company-display">Company Name</span>
                 </div>
-                <span id="company-display" class="font-black text-slate-700 text-xl tracking-tight">Company Name</span>
-            </div>
-            <div class="flex gap-3">
-                <button onclick="toggleJobForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition flex items-center gap-2">
-                    <span>➕</span> Post a New Job
-                </button>
-                <button onclick="logoutRecruiter()" class="bg-red-100 text-red-600 hover:bg-red-200 font-bold py-2 px-4 rounded-lg transition">Logout</button>
-            </div>
-        </div>
-
-        <div id="job-form-section" class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-xl border border-slate-200 mb-10 hidden transition-all">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-black text-slate-800 tracking-tight">Create Job Requisition</h2>
-                <button onclick="toggleJobForm()" class="text-slate-400 hover:text-red-500 font-bold text-xl">&times;</button>
-            </div>
-            <form id="post-job-form" onsubmit="submitJobPosting(event)" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Job Title</label><input type="text" id="job-title" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
-                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Company Name</label><input type="text" id="job-company" readonly class="w-full p-3 bg-slate-200 text-slate-500 border border-slate-200 rounded-lg cursor-not-allowed"></div>
+                <div class="action-row">
+                    <button onclick="toggleJobForm()" class="button">Post a new job</button>
+                    <button onclick="logoutRecruiter()" class="danger-button">Logout</button>
                 </div>
-                <div class="grid grid-cols-3 gap-4">
-                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Salary / CTC</label><input type="text" id="job-salary" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
-                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Req. Exp (Yrs)</label><input type="number" step="0.5" id="job-exp" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
-                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Location</label><input type="text" id="job-location" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></div>
+            </header>
+
+            <section class="surface-card section-block">
+                <div class="portal-header">
+                    <div class="portal-title">
+                        <span class="eyebrow">Recruiter workspace</span>
+                        <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: var(--text-dark);">Hire faster with a cleaner candidate pipeline.</h1>
+                        <p>Review inbound applications, publish new roles, and proactively search by skills.</p>
+                    </div>
                 </div>
-                <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Job Description</label><textarea id="job-desc" required rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg"></textarea></div>
-                <button type="submit" id="submit-job-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg mt-4 shadow-lg">Publish Job</button>
-            </form>
-        </div>
+            </section>
 
-        <div id="inbox-container" class="hidden max-w-6xl mx-auto mb-10 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="bg-indigo-50 p-4 border-b border-indigo-100 flex justify-between items-center">
-                <h2 class="text-sm font-bold text-indigo-800 uppercase tracking-wider">📥 Applicant Inbox (Your Jobs)</h2>
-                <button onclick="downloadCSV()" class="bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-1 px-3 rounded shadow transition flex items-center gap-1">
-                    <span>📊</span> Export to Excel/CSV
-                </button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-200">
-                            <th class="p-4 font-bold">Applied On</th>
-                            <th class="p-4 font-bold">Role</th>
-                            <th class="p-4 font-bold">Candidate</th>
-                            <th class="p-4 font-bold">CGPA</th>
-                            <th class="p-4 font-bold">Top Skills</th>
-                            <th class="p-4 font-bold text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inbox-table-body" class="divide-y divide-slate-100">
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            <section id="job-form-section" class="form-panel section-block hidden">
+                <div class="portal-header">
+                    <div class="portal-title">
+                        <h2>Create job requisition</h2>
+                        <p>Publish a role that instantly appears in the student dashboard.</p>
+                    </div>
+                    <button onclick="toggleJobForm()" class="ghost-button" style="color: var(--text-dark);">Close</button>
+                </div>
+                <form id="post-job-form" onsubmit="submitJobPosting(event)" style="display: grid; gap: 18px;">
+                    <div class="field-grid">
+                        <div>
+                            <label class="field-label" for="job-title">Job title</label>
+                            <input class="input" type="text" id="job-title" required>
+                        </div>
+                        <div>
+                            <label class="field-label" for="job-company">Company name</label>
+                            <input class="input" type="text" id="job-company" readonly>
+                        </div>
+                    </div>
+                    <div class="field-grid thirds">
+                        <div>
+                            <label class="field-label" for="job-salary">Salary / CTC</label>
+                            <input class="input" type="text" id="job-salary" required>
+                        </div>
+                        <div>
+                            <label class="field-label" for="job-exp">Required experience</label>
+                            <input class="input" type="number" step="0.5" id="job-exp" required>
+                        </div>
+                        <div>
+                            <label class="field-label" for="job-location">Location</label>
+                            <input class="input" type="text" id="job-location" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="field-label" for="job-desc">Job description</label>
+                        <textarea class="textarea" id="job-desc" required></textarea>
+                    </div>
+                    <button type="submit" id="submit-job-btn" class="button">Publish job</button>
+                </form>
+            </section>
 
-        <div class="max-w-6xl mx-auto mb-10 text-center pt-8 border-t border-slate-200">
-            <h1 class="text-3xl font-extrabold text-slate-800 mb-2">Proactive Talent Search</h1>
-            <p class="text-slate-500 mb-6">Don't wait for applicants. Find exact matches using our PL/SQL algorithm.</p>
-            <div class="flex max-w-2xl mx-auto shadow-md rounded-xl overflow-hidden border border-slate-200">
-                <input type="text" id="search-input" placeholder="Search skills (e.g., Python, React)..." class="w-full p-3 outline-none text-slate-700 font-medium">
-                <button onclick="searchCandidates()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 transition">Search</button>
-            </div>
+            <section id="inbox-container" class="table-panel section-block hidden">
+                <div class="table-header">
+                    <div>
+                        <strong class="section-title">Applicant inbox</strong>
+                        <p class="muted" style="margin: 6px 0 0;">Applications received for jobs posted by your company.</p>
+                    </div>
+                    <button onclick="downloadCSV()" class="button">Export CSV</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Applied on</th>
+                                <th>Role</th>
+                                <th>Candidate</th>
+                                <th>CGPA</th>
+                                <th>Top skills</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inbox-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="surface-card section-block">
+                <div class="portal-header">
+                    <div class="portal-title">
+                        <h2>Proactive talent search</h2>
+                        <p>Search the student pool by stack, tools, or role-specific skills.</p>
+                    </div>
+                </div>
+                <div class="action-row" style="align-items: stretch;">
+                    <input class="input" type="text" id="search-input" placeholder="Python, React, SQL, AI/ML..." style="flex: 1 1 320px;">
+                    <button onclick="searchCandidates()" class="button">Search candidates</button>
+                </div>
+                <div id="results-grid" class="results-grid" style="margin-top: 24px;"></div>
+            </section>
         </div>
-        <div id="results-grid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
 
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
         let currentRecruiter = null;
-        let currentApplicantsList = []; // Array to store applicants for CSV export
+        let currentApplicantsList = [];
 
         window.onload = () => {
             const session = localStorage.getItem('recruiterSession');
@@ -149,10 +186,8 @@
         function showDashboard() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('dashboard-screen').classList.remove('hidden');
-            
             document.getElementById('company-display').innerText = currentRecruiter.company_name;
             document.getElementById('job-company').value = currentRecruiter.company_name;
-
             loadInbox();
             searchCandidates();
         }
@@ -169,13 +204,12 @@
         async function loadInbox() {
             const container = document.getElementById('inbox-container');
             const tbody = document.getElementById('inbox-table-body');
-            
+
             if (!currentRecruiter || !currentRecruiter.recruiter_id) return;
 
             try {
                 const response = await fetch(`${API_BASE}/recruiter/applicants?recruiter_id=${currentRecruiter.recruiter_id}`);
                 const applicants = await response.json();
-
                 if (!Array.isArray(applicants)) throw new Error("Backend error");
 
                 if (applicants.length === 0) {
@@ -183,31 +217,24 @@
                     return;
                 }
 
-                // Store for the CSV Download
                 currentApplicantsList = applicants;
-
                 container.classList.remove('hidden');
-                tbody.innerHTML = ''; 
+                tbody.innerHTML = '';
 
                 applicants.forEach(app => {
                     const emailSubject = encodeURIComponent(`Regarding your application for ${app.job_title} at ${currentRecruiter.company_name}`);
-
                     tbody.innerHTML += `
-                        <tr class="hover:bg-indigo-50/50 transition border-b border-slate-100">
-                            <td class="p-4 text-xs font-bold text-slate-400 whitespace-nowrap">${app.apply_date}</td>
-                            <td class="p-4 font-bold text-indigo-700">${app.job_title}</td>
-                            <td class="p-4"><p class="font-bold text-slate-800">${app.first_name} ${app.last_name || ''}</p><p class="text-xs text-slate-500">${app.email}</p></td>
-                            <td class="p-4 font-semibold text-teal-600">${app.cgpa}</td>
-                            <td class="p-4">
-                                <div class="flex flex-wrap gap-1">
-                                    ${(app.skills || '').split(',').slice(0, 3).map(s => s.trim() ? `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-1 rounded uppercase font-bold border border-slate-200">${s.trim()}</span>` : '<span class="text-xs text-slate-400">None listed</span>').join('')}
+                        <tr>
+                            <td>${app.apply_date}</td>
+                            <td><strong>${app.job_title}</strong></td>
+                            <td><strong>${app.first_name} ${app.last_name || ''}</strong><br><span class="muted">${app.email}</span></td>
+                            <td>${app.cgpa}</td>
+                            <td>
+                                <div class="badge-row">
+                                    ${(app.skills || '').split(',').slice(0, 3).map(s => s.trim() ? `<span class="chip">${s.trim()}</span>` : '').join('') || '<span class="muted">None listed</span>'}
                                 </div>
                             </td>
-                            <td class="p-4 text-right">
-                                <a href="mailto:${app.email}?subject=${emailSubject}" class="bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white text-xs font-bold py-2 px-4 rounded transition inline-block">
-                                    ✉️ Notify
-                                </a>
-                            </td>
+                            <td><a class="button" href="mailto:${app.email}?subject=${emailSubject}">Notify</a></td>
                         </tr>
                     `;
                 });
@@ -224,15 +251,14 @@
             }
 
             let csvContent = "Application Date,Job Role,First Name,Last Name,Email,CGPA,Skills\n";
-
             currentApplicantsList.forEach(app => {
                 const row = [
-                    `"${app.apply_date}"`, 
-                    `"${app.job_title}"`, 
-                    `"${app.first_name}"`, 
-                    `"${app.last_name || ''}"`, 
-                    `"${app.email}"`, 
-                    `"${app.cgpa}"`, 
+                    `"${app.apply_date}"`,
+                    `"${app.job_title}"`,
+                    `"${app.first_name}"`,
+                    `"${app.last_name || ''}"`,
+                    `"${app.email}"`,
+                    `"${app.cgpa}"`,
                     `"${app.skills || ''}"`
                 ].join(",");
                 csvContent += row + "\n";
@@ -250,7 +276,7 @@
         }
 
         async function submitJobPosting(event) {
-            event.preventDefault(); 
+            event.preventDefault();
             const btn = document.getElementById('submit-job-btn');
             btn.innerText = "Publishing...";
             btn.disabled = true;
@@ -258,7 +284,7 @@
             const jobData = {
                 job_title: document.getElementById('job-title').value,
                 company_name: currentRecruiter.company_name,
-                salary: document.getElementById('job-salary').value,       
+                salary: document.getElementById('job-salary').value,
                 required_exp: parseFloat(document.getElementById('job-exp').value),
                 location: document.getElementById('job-location').value,
                 job_description: document.getElementById('job-desc').value,
@@ -274,17 +300,17 @@
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    alert("✅ Job successfully published to the portal!");
+                    alert("Job successfully published to the portal!");
                     document.getElementById('post-job-form').reset();
                     document.getElementById('job-company').value = currentRecruiter.company_name;
-                    toggleJobForm(); 
+                    toggleJobForm();
                 } else {
                     alert("Database Error: " + result.message);
                 }
             } catch (error) {
                 alert("Connection failed.");
             } finally {
-                btn.innerText = "Publish Job";
+                btn.innerText = "Publish job";
                 btn.disabled = false;
             }
         }
@@ -292,47 +318,48 @@
         async function searchCandidates() {
             const grid = document.getElementById('results-grid');
             const skill = document.getElementById('search-input').value;
-            grid.innerHTML = '<p class="text-center col-span-full text-slate-400 font-bold animate-pulse">Searching...</p>';
+            grid.innerHTML = '<div class="empty-state">Searching candidates...</div>';
 
             try {
                 const url = skill ? `${API_BASE}/recruiter/candidates?skills=${encodeURIComponent(skill)}` : `${API_BASE}/recruiter/candidates`;
                 const response = await fetch(url);
                 const candidates = await response.json();
-                grid.innerHTML = ''; 
+                grid.innerHTML = '';
 
                 if (candidates.length === 0) {
-                    grid.innerHTML = '<p class="text-center col-span-full text-slate-500 font-bold">No candidates found.</p>';
+                    grid.innerHTML = '<div class="empty-state">No candidates found.</div>';
                     return;
                 }
 
                 candidates.forEach(student => {
                     const card = document.createElement('div');
-                    card.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition relative overflow-hidden flex flex-col";
-                    const scoreBadge = student.match_score > 0 ? `<div class="absolute top-0 right-0 bg-purple-600 text-white text-[10px] font-black px-3 py-1 rounded-bl-lg shadow-sm">🔥 MATCH SCORE: ${student.match_score}</div>` : '';
-                    
+                    card.className = "candidate-card";
+                    const scoreBadge = student.match_score > 0 ? `<span class="status-pill">Match score ${student.match_score}</span>` : '';
                     const outreachSubject = encodeURIComponent(`Interested in your profile - ${currentRecruiter ? currentRecruiter.company_name : 'Recruiting Team'}`);
 
                     card.innerHTML = `
-                        ${scoreBadge}
-                        <div class="flex justify-between items-start mb-4 mt-2">
-                            <div><h3 class="text-xl font-bold text-slate-800">${student.first_name || ''} ${student.last_name || ''}</h3><p class="text-sm text-blue-600 font-semibold">${student.email}</p></div>
-                            <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full border border-green-200">CGPA: ${student.cgpa}</span>
-                        </div>
-                        <div class="mb-4 flex-grow">
-                            <p class="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Technical Stack</p>
-                            <div class="flex flex-wrap gap-2">
-                                ${(student.skills || '').split(',').map(s => s.trim() ? `<span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-md uppercase font-bold border border-slate-200">${s.trim()}</span>` : '').join('')}
+                        <div style="display: flex; justify-content: space-between; gap: 16px; align-items: flex-start;">
+                            <div>
+                                <h3>${student.first_name || ''} ${student.last_name || ''}</h3>
+                                <p style="margin: 8px 0 0; color: #245ba8; font-weight: 700;">${student.email}</p>
+                            </div>
+                            <div style="display: grid; gap: 10px; justify-items: end;">
+                                <span class="mini-pill">CGPA ${student.cgpa}</span>
+                                ${scoreBadge}
                             </div>
                         </div>
-                        <div class="flex gap-2 mt-4">
-                            <a href="${student.github || '#'}" target="_blank" class="flex-1 text-center bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-lg transition shadow-md shadow-slate-300 text-sm">GitHub</a>
-                            <a href="mailto:${student.email}?subject=${outreachSubject}" class="flex-1 text-center bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white font-bold py-2 rounded-lg transition shadow-md shadow-slate-300 text-sm">✉️ Notify</a>
+                        <div class="badge-row" style="margin: 18px 0;">
+                            ${(student.skills || '').split(',').map(s => s.trim() ? `<span class="chip">${s.trim()}</span>` : '').join('')}
+                        </div>
+                        <div class="action-row">
+                            <a href="${student.github || '#'}" target="_blank" class="ghost-button" style="color: var(--text-dark);">GitHub</a>
+                            <a href="mailto:${student.email}?subject=${outreachSubject}" class="button">Notify</a>
                         </div>
                     `;
                     grid.appendChild(card);
                 });
             } catch (error) {
-                grid.innerHTML = '<p class="text-center col-span-full text-red-500 font-bold">Connection failed.</p>';
+                grid.innerHTML = '<div class="empty-state">Connection failed.</div>';
             }
         }
     </script>

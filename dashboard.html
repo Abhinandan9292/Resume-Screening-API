@@ -4,126 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard | Talent Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-slate-50 min-h-screen p-4 md:p-8 font-sans">
-
-    <nav class="max-w-4xl mx-auto flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm mb-8 border border-slate-100">
-        <h1 class="text-xl font-bold text-blue-900 tracking-tight">Talent Engine <span class="text-blue-500 underline decoration-2">Vault</span></h1>
-        <button onclick="logout()" class="text-red-500 font-bold hover:text-red-700 px-4 py-2 rounded-lg hover:bg-red-50 transition duration-200">
-            Secure Logout
-        </button>
-    </nav>
-
-    <div class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-3xl shadow-xl border border-slate-100">
-        
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-8 mb-8 gap-4">
-            <div>
-                <h2 class="text-4xl font-black text-slate-800">Welcome, <span id="display-name" class="text-blue-600">Student</span>!</h2>
-                <p class="text-slate-500 mt-2 font-medium">Your synchronized cloud profile.</p>
+<body class="light-body">
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="brand" style="color: var(--text-dark);">
+                <span class="brand-mark">TE</span>
+                <span>Talent Engine Vault</span>
             </div>
-            <button onclick="window.openEditModal()" class="w-full md:w-auto bg-blue-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95">
-                Edit Profile & Skills
-            </button>
-        </div>
+            <div class="action-row">
+                <button onclick="window.openEditModal()" class="button">Edit profile</button>
+                <button onclick="logout()" class="danger-button">Logout</button>
+            </div>
+        </header>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-blue-200 transition">
-                <p class="text-xs font-black text-blue-400 uppercase tracking-widest mb-2">Registered Email</p>
-                <p id="display-email" class="text-lg font-bold text-slate-700 break-all">Loading...</p>
+        <section class="surface-card section-block">
+            <div class="portal-header">
+                <div class="portal-title">
+                    <span class="eyebrow">Student dashboard</span>
+                    <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: var(--text-dark);">Welcome, <span id="display-name">Student</span></h1>
+                    <p>Your live placement profile, current skills, and active job opportunities.</p>
+                </div>
+                <div id="display-status" class="status-pill warn">Loading status...</div>
             </div>
 
-            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-blue-200 transition">
-                <p class="text-xs font-black text-blue-400 uppercase tracking-widest mb-2">Academic CGPA</p>
-                <p id="display-cgpa" class="text-2xl font-black text-slate-800">Loading...</p>
-            </div>
-
-            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-blue-200 transition">
-                <p class="text-xs font-black text-blue-400 uppercase tracking-widest mb-2">Placement Status</p>
-                <p id="display-status" class="text-lg font-bold">Loading...</p>
-            </div>
-
-            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-blue-200 transition">
-                <p class="text-xs font-black text-blue-400 uppercase tracking-widest mb-2">GitHub Portfolio</p>
-                <a id="display-github" href="#" target="_blank" class="text-lg font-bold text-blue-600 hover:underline inline-flex items-center">
-                    View Code Base <span class="ml-2">↗</span>
-                </a>
-            </div>
-        </div>
-
-        <div class="mt-8 space-y-6">
-            <div class="bg-white p-6 rounded-2xl border-2 border-dashed border-slate-200">
-                <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Technical Stack (Normalized)</p>
-                <div id="display-skills" class="flex flex-wrap gap-2 text-slate-700 font-bold">
-                    Loading...
+            <div class="card-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">ID</div>
+                    <strong>Registered email</strong>
+                    <span id="display-email" class="metric-value" style="font-size: 1.15rem;">Loading...</span>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">CG</div>
+                    <strong>Academic CGPA</strong>
+                    <span id="display-cgpa" class="metric-value">0.0</span>
                 </div>
             </div>
 
-            <div class="bg-slate-800 p-8 rounded-2xl shadow-inner text-white">
-                <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Professional Bio</p>
-                <p id="display-bio" class="text-slate-300 leading-relaxed font-medium italic">
-                    Loading bio data...
-                </p>
+            <div class="section-block">
+                <div class="surface-card" style="background: rgba(13, 27, 46, 0.05); box-shadow: none;">
+                    <strong class="section-title">Technical stack</strong>
+                    <p class="muted" style="margin: 8px 0 16px;">These skills are shown to recruiters during talent search.</p>
+                    <div id="display-skills" class="chip-row">Loading...</div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="max-w-4xl mx-auto mt-12 mb-4">
-        <h2 class="text-2xl font-black text-slate-800 tracking-tight">Open Job Requisitions</h2>
-        <p class="text-slate-500">Apply to these roles directly from your portal.</p>
-    </div>
-    
-    <div id="jobs-grid" class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <p class="text-slate-500 font-bold col-span-full text-center py-10 animate-pulse">Loading open positions...</p>
-    </div>
+            <div class="section-block">
+                <div class="split-layout">
+                    <div class="surface-card" style="background: rgba(13, 27, 46, 0.05); box-shadow: none;">
+                        <strong class="section-title">GitHub portfolio</strong>
+                        <p class="muted" style="margin: 8px 0 14px;">Keep your projects visible and easy to review.</p>
+                        <a id="display-github" class="button" href="#" target="_blank">Open GitHub</a>
+                    </div>
+                    <div class="surface-card" style="background: linear-gradient(135deg, #11213b, #17305b); color: var(--text); box-shadow: none;">
+                        <strong class="section-title">Professional bio</strong>
+                        <p id="display-bio" class="muted" style="color: rgba(237, 244, 255, 0.78); margin-top: 14px;">Loading bio data...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <footer class="mt-12 mb-8 text-center text-slate-400 text-sm font-medium">
-        &copy; 2026 Talent Engine | Powered by PostgreSQL 3NF Architecture
-    </footer>
+        <section class="section-block">
+            <div class="portal-header">
+                <div class="portal-title">
+                    <h2>Open job requisitions</h2>
+                    <p>Apply directly from your portal when a role looks right for you.</p>
+                </div>
+            </div>
+            <div id="jobs-grid" class="jobs-grid">
+                <div class="empty-state">Loading open positions...</div>
+            </div>
+        </section>
+
+        <p class="footer-note">Talent Engine student experience for applications, profile updates, and placement readiness.</p>
+    </div>
 
     <script>
-        // Global API Base URL
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
-
-        // --- 1. THE SECURITY GATEKEEPER ---
         const sessionData = localStorage.getItem('studentSession');
-        
+
         if (!sessionData) {
             alert("Security Alert: You must log in to view this page.");
             window.location.href = 'login.html';
         } else {
             const user = JSON.parse(sessionData);
 
-            document.getElementById('display-name').innerText = (user.first_name || '') + " " + (user.last_name || '');
+            document.getElementById('display-name').innerText = ((user.first_name || '') + " " + (user.last_name || '')).trim() || 'Student';
             document.getElementById('display-email').innerText = user.email || 'No email provided';
             document.getElementById('display-cgpa').innerText = user.cgpa || '0.0';
             document.getElementById('display-github').href = user.github || '#';
             document.getElementById('display-bio').innerText = user.bio || 'No bio provided.';
 
-            // Format Skills as badges
             const skillsContainer = document.getElementById('display-skills');
             const skillsArray = user.skills ? user.skills.split(',') : [];
-            skillsContainer.innerHTML = skillsArray.map(s => 
-                `<span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">${s.trim()}</span>`
-            ).join('') || "No skills listed.";
+            skillsContainer.innerHTML = skillsArray.length
+                ? skillsArray.map(s => `<span class="chip">${s.trim()}</span>`).join('')
+                : "No skills listed.";
 
-            // Placement Status Styling
             const statusElement = document.getElementById('display-status');
             if (user.is_placed === 1) {
-                statusElement.innerText = "Placed ✅";
-                statusElement.className = "text-lg font-bold text-green-600";
+                statusElement.innerText = "Placed";
+                statusElement.className = "status-pill";
             } else {
-                statusElement.innerText = "Actively Seeking 🔍";
-                statusElement.className = "text-lg font-bold text-orange-500";
+                statusElement.innerText = "Actively seeking";
+                statusElement.className = "status-pill warn";
             }
 
-            // LOAD JOBS AUTOMATICALLY
             loadJobs();
 
-            // --- 2. DYNAMIC DATABASE UPDATE LOGIC ---
             window.openEditModal = async function() {
                 const currentUser = JSON.parse(localStorage.getItem('studentSession'));
-                
                 const newCGPA = prompt("Update Academic CGPA:", currentUser.cgpa);
                 const newSkills = prompt("Update Skills (Comma Separated):", currentUser.skills);
 
@@ -134,31 +128,30 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            student_id: currentUser.id, 
+                            student_id: currentUser.id,
                             new_cgpa: parseFloat(newCGPA),
                             new_skills: newSkills
                         })
                     });
 
                     const result = await response.json();
-                    
+
                     if (result.status === 'success') {
                         currentUser.cgpa = parseFloat(newCGPA);
                         currentUser.skills = newSkills;
                         localStorage.setItem('studentSession', JSON.stringify(currentUser));
-                        
-                        alert("✅ SUCCESS: Profile Updated.");
-                        location.reload(); 
+
+                        alert("SUCCESS: Profile Updated.");
+                        location.reload();
                     } else {
-                        alert("❌ ERROR: " + (result.message || "Unknown Server Error"));
+                        alert("ERROR: " + (result.message || "Unknown Server Error"));
                     }
                 } catch (err) {
-                    alert("❌ NETWORK ERROR: Backend unreachable.");
+                    alert("NETWORK ERROR: Backend unreachable.");
                 }
-            }
+            };
         }
 
-        // --- 3. LOAD JOBS FROM DATABASE ---
         async function loadJobs() {
             const grid = document.getElementById('jobs-grid');
             try {
@@ -167,50 +160,39 @@
                 grid.innerHTML = '';
 
                 if (jobs.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full bg-white p-10 rounded-2xl text-center border border-slate-200 shadow-sm">
-                        <p class="text-xl font-bold text-slate-500">No jobs posted yet.</p>
-                        <p class="text-slate-400 mt-2">Check back later when recruiters have published new roles.</p>
-                    </div>`;
+                    grid.innerHTML = `<div class="empty-state">No jobs posted yet. Check back later when recruiters publish new roles.</div>`;
                     return;
                 }
 
                 jobs.forEach(job => {
                     const card = document.createElement('div');
-                    card.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-blue-200 transition flex flex-col justify-between";
-                    
+                    card.className = "job-card";
                     card.innerHTML = `
-                        <div>
-                            <div class="flex justify-between items-start mb-2">
-                                <h2 class="text-xl font-black text-slate-800 tracking-tight">${job.job_title}</h2>
-                                <span class="bg-green-100 text-green-700 font-bold px-3 py-1 rounded-full text-xs border border-green-200 whitespace-nowrap">
-                                    ${job.salary || 'Not Disclosed'}
-                                </span>
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+                            <div>
+                                <h3>${job.job_title}</h3>
+                                <p style="margin: 8px 0 0; color: #245ba8; font-weight: 700;">${job.company_name || 'Confidential Company'}</p>
                             </div>
-                            <p class="text-blue-600 font-bold text-sm uppercase tracking-wide mb-4">🏢 ${job.company_name || 'Confidential Company'}</p>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-semibold">📍 ${job.location}</span>
-                                <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-semibold">⏳ ${job.required_exp} Yrs Exp</span>
-                            </div>
-                            <p class="text-slate-600 text-sm mb-6 line-clamp-3">${job.job_description}</p>
+                            <span class="status-pill">${job.salary || 'Not disclosed'}</span>
                         </div>
-                        <button onclick="applyForJob(${job.job_id}, this)" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition shadow-md">
-                            Apply for Role
-                        </button>
+                        <div class="job-meta">
+                            <span class="mini-pill">${job.location}</span>
+                            <span class="mini-pill">${job.required_exp} yrs exp</span>
+                        </div>
+                        <p class="muted" style="margin-bottom: 20px;">${job.job_description}</p>
+                        <button onclick="applyForJob(${job.job_id}, this)" class="button" style="width: 100%;">Apply for role</button>
                     `;
                     grid.appendChild(card);
                 });
             } catch (error) {
-                grid.innerHTML = '<p class="text-center col-span-full text-red-500 font-bold">Failed to load jobs.</p>';
+                grid.innerHTML = '<div class="empty-state">Failed to load jobs.</div>';
             }
         }
 
-        // --- 4. APPLY FOR JOB ---
-       // --- 4. APPLY FOR JOB (Dynamically uses logged-in Student ID) ---
         async function applyForJob(jobId, btnElement) {
             btnElement.innerText = "Submitting...";
             btnElement.disabled = true;
 
-            // Grab the real student ID from the active session
             const currentUser = JSON.parse(localStorage.getItem('studentSession'));
             if (!currentUser || !currentUser.id) {
                 alert("Session error. Please log in again.");
@@ -218,26 +200,23 @@
             }
 
             try {
-                // Notice the new ?student_id= parameter in the URL
                 const response = await fetch(`${API_BASE}/student/apply/${jobId}?student_id=${currentUser.id}`, { method: 'POST' });
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    btnElement.innerText = "✅ Applied Successfully";
-                    btnElement.classList.replace('bg-slate-900', 'bg-green-600');
-                    btnElement.classList.replace('hover:bg-slate-800', 'hover:bg-green-700');
+                    btnElement.innerText = "Applied successfully";
                 } else {
                     alert("Notice: " + result.message);
-                    btnElement.innerText = "Apply for Role";
+                    btnElement.innerText = "Apply for role";
                     btnElement.disabled = false;
                 }
             } catch (error) {
                 alert("Connection failed.");
-                btnElement.innerText = "Apply for Role";
+                btnElement.innerText = "Apply for role";
                 btnElement.disabled = false;
             }
         }
-        // --- 5. SECURE LOGOUT ---
+
         function logout() {
             localStorage.removeItem('studentSession');
             window.location.href = 'login.html';

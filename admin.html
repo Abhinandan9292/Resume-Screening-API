@@ -2,115 +2,141 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Placement Cell Admin | Talent Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-slate-50 min-h-screen p-8 font-sans">
-    
-    <div class="max-w-6xl mx-auto mb-8 flex justify-between items-center bg-slate-900 p-6 rounded-2xl shadow-lg">
-        <div>
-            <h1 class="text-3xl font-bold text-white tracking-tight">Placement Cell Control</h1>
-            <p class="text-slate-400 mt-1">Manage active student profiles and corporate partners.</p>
-        </div>
-        <div class="bg-slate-800 text-teal-400 px-4 py-2 rounded-lg font-bold border border-slate-700">
-            Secure Admin Session
-        </div>
-    </div>
-
-    <div class="max-w-6xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-orange-500">
-            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Total Candidates Seeking</p>
-            <p id="stat-seeking" class="text-3xl font-black text-slate-800">...</p>
-        </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-green-500">
-            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Successfully Placed</p>
-            <p id="stat-hired" class="text-3xl font-black text-green-600">...</p>
-        </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-teal-500">
-            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Avg CGPA of Placed</p>
-            <p id="stat-cgpa" class="text-3xl font-black text-teal-600">...</p>
-        </div>
-    </div>
-
-    <div class="max-w-6xl mx-auto mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
-            <h2 class="text-lg font-black text-slate-800 tracking-tight">🏢 Onboard Corporate Partner</h2>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Generate Access Credentials</p>
-        </div>
-        <form id="add-recruiter-form" onsubmit="addRecruiter(event)" class="flex gap-4 items-end">
-            <div class="w-1/3">
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Company Name</label>
-                <input type="text" id="rec-company" required placeholder="e.g. Amazon" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
+<body class="light-body">
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="brand" style="color: var(--text-dark);">
+                <span class="brand-mark">TE</span>
+                <span>Placement Cell Control</span>
             </div>
-            <div class="w-1/3">
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">HR Email</label>
-                <input type="email" id="rec-email" required placeholder="hr@amazon.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
+            <div class="status-pill">Secure admin session</div>
+        </header>
+
+        <section class="surface-card section-block">
+            <div class="portal-header">
+                <div class="portal-title">
+                    <span class="eyebrow">Admin console</span>
+                    <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: var(--text-dark);">Placement operations with real visibility.</h1>
+                    <p>Track student outcomes, recruiter activity, and system movement from one polished command layer.</p>
+                </div>
             </div>
-            <div class="w-1/4">
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Access Code</label>
-                <input type="text" id="rec-code" required placeholder="Set Password" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 transition">
+
+            <div class="stats-grid">
+                <article class="metric-card">
+                    <div class="metric-icon">SE</div>
+                    <strong>Total candidates seeking</strong>
+                    <span id="stat-seeking" class="metric-value">...</span>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-icon">PL</div>
+                    <strong>Successfully placed</strong>
+                    <span id="stat-hired" class="metric-value">...</span>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-icon">CG</div>
+                    <strong>Avg CGPA of placed</strong>
+                    <span id="stat-cgpa" class="metric-value">...</span>
+                </article>
             </div>
-            <button type="submit" id="add-rec-btn" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-lg transition shadow-md whitespace-nowrap">
-                Create Account
-            </button>
-        </form>
-    </div>
+        </section>
 
-    <div class="max-w-6xl mx-auto mb-8 bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-        <h2 class="text-xl font-black text-slate-800 tracking-tight mb-2">Corporate Partner Analytics</h2>
-        <p class="text-slate-500 mb-6 text-sm">Real-time overview of company activity, job postings, and candidate engagement.</p>
-        
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-200">
-                        <th class="p-4 font-bold">Company Name</th>
-                        <th class="p-4 font-bold">HR Email</th>
-                        <th class="p-4 font-bold text-center">Jobs Posted</th>
-                        <th class="p-4 font-bold text-center">Total Applicants</th>
-                    </tr>
-                </thead>
-                <tbody id="partner-stats-body" class="divide-y divide-slate-100">
-                    <tr><td colspan="4" class="p-8 text-center text-slate-400 font-medium animate-pulse">Loading analytics...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+        <section class="form-panel section-block">
+            <div class="portal-header">
+                <div class="portal-title">
+                    <h2>Onboard corporate partner</h2>
+                    <p>Create recruiter credentials for new companies joining the placement pipeline.</p>
+                </div>
+            </div>
+            <form id="add-recruiter-form" onsubmit="addRecruiter(event)" style="display: grid; gap: 18px;">
+                <div class="field-grid thirds">
+                    <div>
+                        <label class="field-label" for="rec-company">Company name</label>
+                        <input class="input" type="text" id="rec-company" required placeholder="Amazon">
+                    </div>
+                    <div>
+                        <label class="field-label" for="rec-email">HR email</label>
+                        <input class="input" type="email" id="rec-email" required placeholder="hr@amazon.com">
+                    </div>
+                    <div>
+                        <label class="field-label" for="rec-code">Access code</label>
+                        <input class="input" type="text" id="rec-code" required placeholder="Set recruiter password">
+                    </div>
+                </div>
+                <button type="submit" id="add-rec-btn" class="button">Create recruiter account</button>
+            </form>
+        </section>
 
-    <div class="max-w-6xl mx-auto mb-8 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="bg-slate-100 p-4 border-b border-slate-200">
-            <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Candidate Master List</h2>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-200">
-                        <th class="p-4 font-bold">Student Name</th>
-                        <th class="p-4 font-bold">Email</th>
-                        <th class="p-4 font-bold">CGPA</th>
-                        <th class="p-4 font-bold">Core Skills</th>
-                        <th class="p-4 font-bold text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-table-body" class="divide-y divide-slate-100">
-                    <tr><td colspan="5" class="p-8 text-center text-slate-500 font-medium">Loading database records...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+        <section class="table-panel section-block">
+            <div class="table-header">
+                <div>
+                    <strong class="section-title">Corporate partner analytics</strong>
+                    <p class="muted" style="margin: 6px 0 0;">Live activity snapshot for recruiter accounts, job volume, and applicants.</p>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company name</th>
+                            <th>HR email</th>
+                            <th>Jobs posted</th>
+                            <th>Total applicants</th>
+                        </tr>
+                    </thead>
+                    <tbody id="partner-stats-body">
+                        <tr><td colspan="4">Loading analytics...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="bg-slate-900 p-4 border-b border-slate-800 flex justify-between items-center">
-            <h2 class="text-sm font-bold text-teal-400 uppercase tracking-wider">System Security & Audit Log</h2>
-            <span class="text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded">Live DB Triggers</span>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <tbody id="audit-table-body" class="divide-y divide-slate-100">
-                    <tr><td class="p-6 text-center text-slate-500">Loading secure logs...</td></tr>
-                </tbody>
-            </table>
-        </div>
+        <section class="table-panel section-block">
+            <div class="table-header">
+                <div>
+                    <strong class="section-title">Candidate master list</strong>
+                    <p class="muted" style="margin: 6px 0 0;">Review active students and update placement status as placements close.</p>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student name</th>
+                            <th>Email</th>
+                            <th>CGPA</th>
+                            <th>Core skills</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body">
+                        <tr><td colspan="5">Loading database records...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="table-panel section-block">
+            <div class="table-header">
+                <div>
+                    <strong class="section-title">System security and audit log</strong>
+                    <p class="muted" style="margin: 6px 0 0;">Recent automated and admin-triggered activity from the placement workflow.</p>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <tbody id="audit-table-body">
+                        <tr><td>Loading secure logs...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
 
     <script>
@@ -118,7 +144,7 @@
 
         window.onload = async () => {
             const pass = prompt("Secure Placement Cell Portal\n\nEnter Admin PIN:");
-            
+
             if (!pass) {
                 window.location.href = 'index.html';
                 return;
@@ -130,13 +156,13 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pin: pass })
                 });
-                
+
                 const result = await response.json();
 
                 if (result.status === 'success') {
                     loadAllStudents();
-                    loadStatistics(); 
-                    loadAuditLogs(); 
+                    loadStatistics();
+                    loadAuditLogs();
                     loadPartnerStats();
                 } else {
                     alert("Security Alert: Invalid PIN.");
@@ -169,7 +195,7 @@
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    alert("✅ " + result.message);
+                    alert(result.message);
                     document.getElementById('add-recruiter-form').reset();
                     loadPartnerStats();
                 } else {
@@ -178,7 +204,7 @@
             } catch (error) {
                 alert("Connection failed.");
             } finally {
-                btn.innerText = "Create Account";
+                btn.innerText = "Create recruiter account";
                 btn.disabled = false;
             }
         }
@@ -188,32 +214,29 @@
             try {
                 const response = await fetch(`${API_BASE}/admin/recruiters/stats`);
                 const stats = await response.json();
-                
+
                 tbody.innerHTML = '';
-                
                 if (stats.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-500 font-bold">No corporate partners onboarded yet.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4">No corporate partners onboarded yet.</td></tr>`;
                     return;
                 }
 
                 stats.forEach(stat => {
-                    const activityBadge = stat.jobs_posted > 0 
-                        ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold ml-2">Active</span>` 
-                        : `<span class="bg-slate-100 text-slate-500 px-2 py-1 rounded text-xs font-bold ml-2">Idle</span>`;
+                    const activityBadge = stat.jobs_posted > 0
+                        ? `<span class="status-pill">Active</span>`
+                        : `<span class="status-pill warn">Idle</span>`;
 
                     tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                            <td class="p-4 font-bold text-slate-800 flex items-center">
-                                ${stat.company_name} ${activityBadge}
-                            </td>
-                            <td class="p-4 text-sm text-slate-500 font-medium">${stat.email}</td>
-                            <td class="p-4 text-center font-black text-indigo-600 text-lg">${stat.jobs_posted}</td>
-                            <td class="p-4 text-center font-black text-teal-600 text-lg">${stat.total_applicants}</td>
+                        <tr>
+                            <td><strong>${stat.company_name}</strong><div style="margin-top: 8px;">${activityBadge}</div></td>
+                            <td>${stat.email}</td>
+                            <td>${stat.jobs_posted}</td>
+                            <td>${stat.total_applicants}</td>
                         </tr>
                     `;
                 });
             } catch (error) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-red-500 font-bold">Failed to load analytics.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4">Failed to load analytics.</td></tr>`;
             }
         }
 
@@ -223,13 +246,19 @@
                 const stats = await response.json();
                 let hired = 0, seeking = 0, avgCgpa = 0.0;
                 stats.forEach(row => {
-                    if (row.status === 'Placed') { hired = row.total_candidates; avgCgpa = row.average_cgpa; } 
-                    else { seeking = row.total_candidates; }
+                    if (row.status === 'Placed') {
+                        hired = row.total_candidates;
+                        avgCgpa = row.average_cgpa;
+                    } else {
+                        seeking = row.total_candidates;
+                    }
                 });
                 document.getElementById('stat-hired').innerText = hired;
                 document.getElementById('stat-seeking').innerText = seeking;
                 document.getElementById('stat-cgpa').innerText = avgCgpa || '0.0';
-            } catch (error) { console.error("Stats failed", error); }
+            } catch (error) {
+                console.error("Stats failed", error);
+            }
         }
 
         async function loadAuditLogs() {
@@ -239,19 +268,21 @@
                 const logs = await response.json();
                 tbody.innerHTML = '';
                 if (logs.length === 0) {
-                    tbody.innerHTML = `<tr><td class="p-6 text-center text-slate-500">No recent automated activity detected.</td></tr>`;
+                    tbody.innerHTML = `<tr><td>No recent automated activity detected.</td></tr>`;
                     return;
                 }
                 logs.forEach(log => {
                     tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="p-4 text-xs font-bold text-slate-400 whitespace-nowrap w-48">${log.timestamp}</td>
-                            <td class="p-4 font-bold text-slate-800 w-64">${log.first_name} ${log.last_name}</td>
-                            <td class="p-4 text-sm font-semibold text-indigo-600">${log.action}</td>
+                        <tr>
+                            <td style="width: 220px;">${log.timestamp}</td>
+                            <td style="width: 260px;"><strong>${log.first_name} ${log.last_name}</strong></td>
+                            <td>${log.action}</td>
                         </tr>
                     `;
                 });
-            } catch (error) { console.error("Logs failed", error); }
+            } catch (error) {
+                console.error("Logs failed", error);
+            }
         }
 
         async function loadAllStudents() {
@@ -259,34 +290,35 @@
             try {
                 const response = await fetch(`${API_BASE}/admin/all_students`);
                 const students = await response.json();
-                tbody.innerHTML = ''; 
+                tbody.innerHTML = '';
                 if (students.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No students found.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5">No students found.</td></tr>`;
                     return;
                 }
                 students.forEach(student => {
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
-                    const actionContent = student.is_placed === 1 
-                        ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">PLACED ✅</span>`
-                        : `<button onclick="markAsPlaced(${student.id}, this)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-lg transition shadow-md shadow-indigo-200">Mark as Placed</button>`;
+                    const actionContent = student.is_placed === 1
+                        ? `<span class="status-pill">Placed</span>`
+                        : `<button onclick="markAsPlaced(${student.id}, this)" class="button">Mark as placed</button>`;
 
-                    tr.innerHTML = `
-                        <td class="p-4 font-bold text-slate-800">${student.first_name || ''} ${student.last_name || ''}</td>
-                        <td class="p-4 text-slate-600">${student.email}</td>
-                        <td class="p-4 font-semibold text-teal-600">${student.cgpa}</td>
-                        <td class="p-4">
-                            <div class="flex flex-wrap gap-1">
-                                ${(student.skills || '').split(',').slice(0, 3).map(skill => 
-                                    `<span class="bg-slate-200 text-slate-700 text-[10px] px-2 py-1 rounded-md uppercase font-bold">${skill.trim()}</span>`
-                                ).join('')}
-                            </div>
-                        </td>
-                        <td class="p-4 text-center">${actionContent}</td>
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${student.first_name || ''} ${student.last_name || ''}</strong></td>
+                            <td>${student.email}</td>
+                            <td>${student.cgpa}</td>
+                            <td>
+                                <div class="badge-row">
+                                    ${(student.skills || '').split(',').slice(0, 3).map(skill =>
+                                        `<span class="chip">${skill.trim()}</span>`
+                                    ).join('')}
+                                </div>
+                            </td>
+                            <td>${actionContent}</td>
+                        </tr>
                     `;
-                    tbody.appendChild(tr);
                 });
-            } catch (error) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Database connection failed.</td></tr>`; }
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="5">Database connection failed.</td></tr>`;
+            }
         }
 
         async function markAsPlaced(studentId, btnElement) {
@@ -298,18 +330,18 @@
                 const response = await fetch(`${API_BASE}/admin/mark_placed/${studentId}`, { method: 'POST' });
                 const result = await response.json();
                 if (result.status === 'success') {
-                    loadAllStudents();  
-                    loadStatistics();   
-                    loadAuditLogs();    
-                    loadPartnerStats(); 
+                    loadAllStudents();
+                    loadStatistics();
+                    loadAuditLogs();
+                    loadPartnerStats();
                 } else {
                     alert("Database Error: " + (result.message || "Could not update."));
-                    btnElement.innerText = "Mark as Placed";
+                    btnElement.innerText = "Mark as placed";
                     btnElement.disabled = false;
                 }
             } catch (error) {
                 alert("Connection failed.");
-                btnElement.innerText = "Mark as Placed";
+                btnElement.innerText = "Mark as placed";
                 btnElement.disabled = false;
             }
         }

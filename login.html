@@ -2,36 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Login | Talent Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-8">
-    
-    <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-800">Welcome Back</h2>
-            <p class="text-gray-500 text-sm mt-2">Enter your credentials to access your vault.</p>
+<body>
+    <div class="page-shell">
+        <div class="login-layout">
+            <section class="login-hero">
+                <span class="eyebrow">Student access</span>
+                <h1 style="font-size: clamp(2.6rem, 5vw, 4.8rem); margin: 18px 0 14px;">Welcome back to your placement vault.</h1>
+                <p class="muted">
+                    Sign in to review your profile, refresh your skills, and apply to active openings from the student dashboard.
+                </p>
+                <div class="stack-list" style="margin-top: 28px;">
+                    <div class="stack-item">
+                        <strong>Profile control</strong>
+                        <p class="muted">Update your CGPA, technical stack, GitHub, and bio from one place.</p>
+                    </div>
+                    <div class="stack-item">
+                        <strong>Live openings</strong>
+                        <p class="muted">Browse jobs posted by recruiter partners and apply directly through the portal.</p>
+                    </div>
+                    <div class="stack-item">
+                        <strong>Placement readiness</strong>
+                        <p class="muted">Keep your information fresh so you surface in recruiter searches more often.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="login-card">
+                <div class="brand" style="color: var(--text-dark); margin-bottom: 18px;">
+                    <span class="brand-mark">TE</span>
+                    <span>Talent Engine</span>
+                </div>
+                <h2>Secure student login</h2>
+                <p class="muted">Enter your credentials to unlock your dashboard.</p>
+
+                <form id="loginForm" style="display: grid; gap: 16px; margin-top: 26px;">
+                    <div>
+                        <label class="field-label" for="email">Email address</label>
+                        <input class="input" type="email" id="email" required>
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="password">Password</label>
+                        <input class="input" type="password" id="password" required>
+                    </div>
+
+                    <button type="submit" class="button" style="width: 100%; margin-top: 8px;">Secure login</button>
+                </form>
+
+                <p class="muted" style="margin-top: 22px;">
+                    New here? <a href="student.html" style="color: #245ba8; font-weight: 700;">Create your student profile</a>
+                </p>
+            </section>
         </div>
-
-        <form id="loginForm" class="space-y-6">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                <input type="email" id="email" required class="border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 outline-none transition">
-            </div>
-            
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input type="password" id="password" required class="border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 outline-none transition">
-            </div>
-
-            <button type="submit" class="w-full bg-gray-900 text-white font-bold py-4 rounded-xl hover:bg-black transition shadow-lg shadow-gray-300">
-                Secure Login
-            </button>
-        </form>
-
-        <p class="text-center text-sm text-gray-500 mt-6">
-            Don't have a profile? <a href="student.html" class="text-blue-600 font-bold hover:underline">Register here</a>
-        </p>
     </div>
 
     <script>
@@ -55,13 +84,11 @@
                 });
 
                 const result = await res.json();
-                
+
                 if (result.status === 'success') {
-                    // 🧠 THE MAGIC TRICK: Save the user data to the browser's memory!
                     localStorage.setItem('studentSession', JSON.stringify(result.user));
-                    
-                    alert("Login Successful! Welcome " + result.user.FName);
-                    window.location.href = 'dashboard.html'; // We will build this next!
+                    alert("Login Successful! Welcome " + result.user.first_name);
+                    window.location.href = 'dashboard.html';
                 } else {
                     alert("Access Denied: " + result.message);
                 }
@@ -69,7 +96,7 @@
                 alert("Server Connection Failed. Is Render awake?");
                 console.error(err);
             } finally {
-                submitBtn.innerText = "Secure Login";
+                submitBtn.innerText = "Secure login";
             }
         });
     </script>
