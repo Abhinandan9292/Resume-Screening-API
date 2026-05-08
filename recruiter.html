@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recruiter Gateway | Talent Engine</title>
+    <title>Recruiter Workspace | Campus Placement Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=20260509c">
 </head>
 <body class="light-body">
     <div id="login-screen" class="overlay-screen">
         <section class="login-card" style="max-width: 520px; width: 100%;">
             <div class="brand" style="color: var(--text-dark); margin-bottom: 18px;">
-                <span class="brand-mark">TE</span>
-                <span>Recruiter Gateway</span>
+                <span class="brand-mark">CP</span>
+                <span>Recruiter Workspace</span>
             </div>
-            <h2>Corporate portal access</h2>
-            <p class="muted">Log in to post roles, review applicants, and search your next candidate.</p>
+            <div class="visual-frame compact-visual">
+                <img src="assets/recruiter-operations-visual.jpg" alt="Recruiters reviewing candidate information" loading="eager" decoding="async">
+            </div>
+            <h2>Recruiter access</h2>
+            <p class="muted">Sign in to manage job postings, applicants, and candidate search.</p>
             <form id="recruiter-login-form" onsubmit="handleLogin(event)" style="display: grid; gap: 16px; margin-top: 24px;">
                 <div>
                     <label class="field-label" for="login-email">Corporate email</label>
@@ -25,11 +28,11 @@
                 </div>
                 <div>
                     <label class="field-label" for="login-pass">Access code</label>
-                    <input class="input" type="password" id="login-pass" required placeholder="Enter recruiter password">
+                    <input class="input" type="password" id="login-pass" required placeholder="Enter recruiter access code">
                 </div>
-                <button type="submit" id="login-btn" class="button" style="width: 100%;">Authenticate</button>
+                <button type="submit" id="login-btn" class="button" style="width: 100%;">Sign in</button>
             </form>
-            <p class="muted" style="margin-top: 18px;">Test accounts: hr@voyageai.com / voyage123 and campus@google.com / google123.</p>
+            <p class="muted" style="margin-top: 18px;">If you need access, contact the placement office administrator.</p>
         </section>
     </div>
 
@@ -37,21 +40,26 @@
         <div class="page-shell">
             <header class="topbar">
                 <div class="brand" style="color: var(--text-dark);">
-                    <span class="brand-mark">TE</span>
-                    <span id="company-display">Company Name</span>
+                    <span class="brand-mark">CP</span>
+                    <span id="company-display">Recruiter Workspace</span>
                 </div>
                 <div class="action-row">
-                    <button onclick="toggleJobForm()" class="button">Post a new job</button>
-                    <button onclick="logoutRecruiter()" class="danger-button">Logout</button>
+                    <button onclick="toggleJobForm()" class="button">Post New Role</button>
+                    <button onclick="logoutRecruiter()" class="danger-button">Sign out</button>
                 </div>
             </header>
 
             <section class="surface-card section-block">
-                <div class="portal-header">
-                    <div class="portal-title">
-                        <span class="eyebrow">Recruiter workspace</span>
-                        <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: var(--text-dark);">Hire faster with a cleaner candidate pipeline.</h1>
-                        <p>Review inbound applications, publish new roles, and proactively search by skills.</p>
+                <div class="split-layout">
+                    <div class="portal-header" style="margin-bottom: 0;">
+                        <div class="portal-title">
+                            <span class="eyebrow">Recruiter Portal</span>
+                            <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: var(--text);">Recruitment management.</h1>
+                            <p>Create job postings, review applicants, and search active student profiles.</p>
+                        </div>
+                    </div>
+                    <div class="visual-frame">
+                        <img src="assets/recruiter-operations-visual.jpg" alt="Recruitment operations dashboard review" loading="lazy" decoding="async">
                     </div>
                 </div>
             </section>
@@ -59,8 +67,8 @@
             <section id="job-form-section" class="form-panel section-block hidden">
                 <div class="portal-header">
                     <div class="portal-title">
-                        <h2>Create job requisition</h2>
-                        <p>Publish a role that instantly appears in the student dashboard.</p>
+                        <h2>New job posting</h2>
+                        <p>Create and publish a role for student applications.</p>
                     </div>
                     <button onclick="toggleJobForm()" class="ghost-button" style="color: var(--text-dark);">Close</button>
                 </div>
@@ -93,7 +101,7 @@
                         <label class="field-label" for="job-desc">Job description</label>
                         <textarea class="textarea" id="job-desc" required></textarea>
                     </div>
-                    <button type="submit" id="submit-job-btn" class="button">Publish job</button>
+                    <button type="submit" id="submit-job-btn" class="button">Publish role</button>
                 </form>
             </section>
 
@@ -101,9 +109,9 @@
                 <div class="table-header">
                     <div>
                         <strong class="section-title">Applicant inbox</strong>
-                        <p class="muted" style="margin: 6px 0 0;">Applications received for jobs posted by your company.</p>
+                        <p class="muted" style="margin: 6px 0 0;">Submitted applications for your published roles.</p>
                     </div>
-                    <button onclick="downloadCSV()" class="button">Export CSV</button>
+                    <button onclick="downloadCSV()" class="button">Export applicants</button>
                 </div>
                 <div class="table-wrap">
                     <table>
@@ -125,12 +133,12 @@
             <section class="surface-card section-block">
                 <div class="portal-header">
                     <div class="portal-title">
-                        <h2>Proactive talent search</h2>
-                        <p>Search the student pool by stack, tools, or role-specific skills.</p>
+                        <h2>Candidate search</h2>
+                        <p>Filter active candidates by skill set and view relevant profiles.</p>
                     </div>
                 </div>
                 <div class="action-row" style="align-items: stretch;">
-                    <input class="input" type="text" id="search-input" placeholder="Python, React, SQL, AI/ML..." style="flex: 1 1 320px;">
+                    <input class="input" type="text" id="search-input" placeholder="Python, React, SQL, Data Analysis" style="flex: 1 1 320px;">
                     <button onclick="searchCandidates()" class="button">Search candidates</button>
                 </div>
                 <div id="results-grid" class="results-grid" style="margin-top: 24px;"></div>
@@ -144,7 +152,7 @@
         let currentApplicantsList = [];
 
         window.onload = () => {
-            const session = localStorage.getItem('recruiterSession');
+            const session = localStorage.getItem("recruiterSession");
             if (session) {
                 currentRecruiter = JSON.parse(session);
                 showDashboard();
@@ -153,123 +161,124 @@
 
         async function handleLogin(event) {
             event.preventDefault();
-            const btn = document.getElementById('login-btn');
-            btn.innerText = "Authenticating...";
-            btn.disabled = true;
+            const button = document.getElementById("login-btn");
+            button.innerText = "Signing in...";
+            button.disabled = true;
 
-            const email = document.getElementById('login-email').value;
-            const code = document.getElementById('login-pass').value;
+            const email = document.getElementById("login-email").value;
+            const code = document.getElementById("login-pass").value;
 
             try {
                 const response = await fetch(`${API_BASE}/recruiter/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email: email, access_code: code })
                 });
                 const result = await response.json();
 
-                if (result.status === 'success') {
+                if (result.status === "success") {
                     currentRecruiter = result.recruiter;
-                    localStorage.setItem('recruiterSession', JSON.stringify(currentRecruiter));
+                    localStorage.setItem("recruiterSession", JSON.stringify(currentRecruiter));
                     showDashboard();
                 } else {
-                    alert(result.message);
+                    alert(result.message || "Unable to sign in. Please verify your access details.");
                 }
             } catch (error) {
-                alert("Connection failed.");
+                alert("The recruiter service is currently unavailable. Please try again shortly.");
             } finally {
-                btn.innerText = "Authenticate";
-                btn.disabled = false;
+                button.innerText = "Sign in";
+                button.disabled = false;
             }
         }
 
         function showDashboard() {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('dashboard-screen').classList.remove('hidden');
-            document.getElementById('company-display').innerText = currentRecruiter.company_name;
-            document.getElementById('job-company').value = currentRecruiter.company_name;
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("dashboard-screen").classList.remove("hidden");
+            document.getElementById("company-display").innerText = currentRecruiter.company_name || "Recruiter Workspace";
+            document.getElementById("job-company").value = currentRecruiter.company_name || "";
             loadInbox();
             searchCandidates();
         }
 
         function logoutRecruiter() {
-            localStorage.removeItem('recruiterSession');
+            localStorage.removeItem("recruiterSession");
             location.reload();
         }
 
         function toggleJobForm() {
-            document.getElementById('job-form-section').classList.toggle('hidden');
+            document.getElementById("job-form-section").classList.toggle("hidden");
         }
 
         async function loadInbox() {
-            const container = document.getElementById('inbox-container');
-            const tbody = document.getElementById('inbox-table-body');
+            const container = document.getElementById("inbox-container");
+            const tbody = document.getElementById("inbox-table-body");
 
-            if (!currentRecruiter || !currentRecruiter.recruiter_id) return;
+            if (!currentRecruiter || !currentRecruiter.recruiter_id) {
+                return;
+            }
 
             try {
                 const response = await fetch(`${API_BASE}/recruiter/applicants?recruiter_id=${currentRecruiter.recruiter_id}`);
                 const applicants = await response.json();
-                if (!Array.isArray(applicants)) throw new Error("Backend error");
 
-                if (applicants.length === 0) {
-                    container.classList.add('hidden');
+                if (!Array.isArray(applicants) || applicants.length === 0) {
+                    container.classList.add("hidden");
                     return;
                 }
 
                 currentApplicantsList = applicants;
-                container.classList.remove('hidden');
-                tbody.innerHTML = '';
+                container.classList.remove("hidden");
+                tbody.innerHTML = "";
 
-                applicants.forEach(app => {
-                    const emailSubject = encodeURIComponent(`Regarding your application for ${app.job_title} at ${currentRecruiter.company_name}`);
+                applicants.forEach((application) => {
+                    const emailSubject = encodeURIComponent(`Regarding your application for ${application.job_title} at ${currentRecruiter.company_name}`);
                     tbody.innerHTML += `
                         <tr>
-                            <td>${app.apply_date}</td>
-                            <td><strong>${app.job_title}</strong></td>
-                            <td><strong>${app.first_name} ${app.last_name || ''}</strong><br><span class="muted">${app.email}</span></td>
-                            <td>${app.cgpa}</td>
+                            <td>${application.apply_date}</td>
+                            <td><strong>${application.job_title}</strong></td>
+                            <td><strong>${application.first_name} ${application.last_name || ""}</strong><br><span class="muted">${application.email}</span></td>
+                            <td>${application.cgpa}</td>
                             <td>
                                 <div class="badge-row">
-                                    ${(app.skills || '').split(',').slice(0, 3).map(s => s.trim() ? `<span class="chip">${s.trim()}</span>` : '').join('') || '<span class="muted">None listed</span>'}
+                                    ${(application.skills || "").split(",").slice(0, 3).map((skill) => skill.trim() ? `<span class="chip">${skill.trim()}</span>` : "").join("") || '<span class="muted">No skills listed</span>'}
                                 </div>
                             </td>
-                            <td><a class="button" href="mailto:${app.email}?subject=${emailSubject}">Notify</a></td>
+                            <td><a class="button" href="mailto:${application.email}?subject=${emailSubject}">Email candidate</a></td>
                         </tr>
                     `;
                 });
             } catch (error) {
-                container.classList.add('hidden');
+                container.classList.add("hidden");
                 console.error(error);
             }
         }
 
         function downloadCSV() {
             if (currentApplicantsList.length === 0) {
-                alert("No applicants to export.");
+                alert("There are no applicants available for export.");
                 return;
             }
 
             let csvContent = "Application Date,Job Role,First Name,Last Name,Email,CGPA,Skills\n";
-            currentApplicantsList.forEach(app => {
+            currentApplicantsList.forEach((application) => {
                 const row = [
-                    `"${app.apply_date}"`,
-                    `"${app.job_title}"`,
-                    `"${app.first_name}"`,
-                    `"${app.last_name || ''}"`,
-                    `"${app.email}"`,
-                    `"${app.cgpa}"`,
-                    `"${app.skills || ''}"`
+                    `"${application.apply_date}"`,
+                    `"${application.job_title}"`,
+                    `"${application.first_name}"`,
+                    `"${application.last_name || ""}"`,
+                    `"${application.email}"`,
+                    `"${application.cgpa}"`,
+                    `"${application.skills || ""}"`
                 ].join(",");
                 csvContent += row + "\n";
             });
 
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
-            link.setAttribute("download", `${currentRecruiter.company_name.replace(/\s+/g, '_')}_Applicants.csv`);
-            link.style.visibility = 'hidden';
+            link.setAttribute("download", `${(currentRecruiter.company_name || "applicants").replace(/\s+/g, "_")}_Applicants.csv`);
+            link.style.visibility = "hidden";
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -277,71 +286,71 @@
 
         async function submitJobPosting(event) {
             event.preventDefault();
-            const btn = document.getElementById('submit-job-btn');
-            btn.innerText = "Publishing...";
-            btn.disabled = true;
+            const button = document.getElementById("submit-job-btn");
+            button.innerText = "Publishing...";
+            button.disabled = true;
 
             const jobData = {
-                job_title: document.getElementById('job-title').value,
+                job_title: document.getElementById("job-title").value,
                 company_name: currentRecruiter.company_name,
-                salary: document.getElementById('job-salary').value,
-                required_exp: parseFloat(document.getElementById('job-exp').value),
-                location: document.getElementById('job-location').value,
-                job_description: document.getElementById('job-desc').value,
+                salary: document.getElementById("job-salary").value,
+                required_exp: parseFloat(document.getElementById("job-exp").value),
+                location: document.getElementById("job-location").value,
+                job_description: document.getElementById("job-desc").value,
                 recruiter_id: currentRecruiter.recruiter_id
             };
 
             try {
                 const response = await fetch(`${API_BASE}/recruiter/jobs`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(jobData)
                 });
                 const result = await response.json();
 
-                if (result.status === 'success') {
-                    alert("Job successfully published to the portal!");
-                    document.getElementById('post-job-form').reset();
-                    document.getElementById('job-company').value = currentRecruiter.company_name;
+                if (result.status === "success") {
+                    alert("Role published successfully.");
+                    document.getElementById("post-job-form").reset();
+                    document.getElementById("job-company").value = currentRecruiter.company_name;
                     toggleJobForm();
                 } else {
-                    alert("Database Error: " + result.message);
+                    alert(result.message || "We could not publish the role.");
                 }
             } catch (error) {
-                alert("Connection failed.");
+                alert("The publishing service is currently unavailable. Please try again shortly.");
             } finally {
-                btn.innerText = "Publish job";
-                btn.disabled = false;
+                button.innerText = "Publish role";
+                button.disabled = false;
             }
         }
 
         async function searchCandidates() {
-            const grid = document.getElementById('results-grid');
-            const skill = document.getElementById('search-input').value;
-            grid.innerHTML = '<div class="empty-state">Searching candidates...</div>';
+            const grid = document.getElementById("results-grid");
+            const skill = document.getElementById("search-input").value;
+            grid.innerHTML = '<div class="empty-state">Searching candidate profiles...</div>';
 
             try {
                 const url = skill ? `${API_BASE}/recruiter/candidates?skills=${encodeURIComponent(skill)}` : `${API_BASE}/recruiter/candidates`;
                 const response = await fetch(url);
                 const candidates = await response.json();
-                grid.innerHTML = '';
+                grid.innerHTML = "";
 
-                if (candidates.length === 0) {
-                    grid.innerHTML = '<div class="empty-state">No candidates found.</div>';
+                if (!candidates.length) {
+                    grid.innerHTML = '<div class="empty-state">No candidates matched the current search.</div>';
                     return;
                 }
 
-                candidates.forEach(student => {
-                    const card = document.createElement('div');
+                candidates.forEach((student) => {
+                    const card = document.createElement("div");
                     card.className = "candidate-card";
-                    const scoreBadge = student.match_score > 0 ? `<span class="status-pill">Match score ${student.match_score}</span>` : '';
-                    const outreachSubject = encodeURIComponent(`Interested in your profile - ${currentRecruiter ? currentRecruiter.company_name : 'Recruiting Team'}`);
+                    const scoreBadge = student.match_score > 0 ? `<span class="status-pill">Profile fit ${student.match_score}</span>` : "";
+                    const outreachSubject = encodeURIComponent(`Opportunity from ${currentRecruiter ? currentRecruiter.company_name : "Recruitment Team"}`);
 
                     card.innerHTML = `
                         <div style="display: flex; justify-content: space-between; gap: 16px; align-items: flex-start;">
                             <div>
-                                <h3>${student.first_name || ''} ${student.last_name || ''}</h3>
-                                <p style="margin: 8px 0 0; color: #245ba8; font-weight: 700;">${student.email}</p>
+                                <h3>${student.first_name || ""} ${student.last_name || ""}</h3>
+                                <p style="margin: 8px 0 0; color: var(--brand); font-weight: 700;">${student.email}</p>
                             </div>
                             <div style="display: grid; gap: 10px; justify-items: end;">
                                 <span class="mini-pill">CGPA ${student.cgpa}</span>
@@ -349,17 +358,17 @@
                             </div>
                         </div>
                         <div class="badge-row" style="margin: 18px 0;">
-                            ${(student.skills || '').split(',').map(s => s.trim() ? `<span class="chip">${s.trim()}</span>` : '').join('')}
+                            ${(student.skills || "").split(",").map((skillLabel) => skillLabel.trim() ? `<span class="chip">${skillLabel.trim()}</span>` : "").join("")}
                         </div>
                         <div class="action-row">
-                            <a href="${student.github || '#'}" target="_blank" class="ghost-button" style="color: var(--text-dark);">GitHub</a>
-                            <a href="mailto:${student.email}?subject=${outreachSubject}" class="button">Notify</a>
+                            <a href="${student.github || "#"}" target="_blank" rel="noreferrer" class="ghost-button" style="color: var(--text-dark);">GitHub profile</a>
+                            <a href="mailto:${student.email}?subject=${outreachSubject}" class="button">Email candidate</a>
                         </div>
                     `;
                     grid.appendChild(card);
                 });
             } catch (error) {
-                grid.innerHTML = '<div class="empty-state">Connection failed.</div>';
+                grid.innerHTML = '<div class="empty-state">We could not load candidate results. Please try again later.</div>';
             }
         }
     </script>
