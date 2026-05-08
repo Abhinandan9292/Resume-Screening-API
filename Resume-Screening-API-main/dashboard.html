@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Workspace | Campus Placement Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=20260509c">
+</head>
+<body class="light-body">
+    <div id="edit-profile-modal" class="overlay-screen hidden">
+        <section class="login-card" style="max-width: 560px; width: 100%;">
+            <div class="portal-header" style="margin-bottom: 18px;">
+                <div class="portal-title">
+                    <h2>Edit profile details</h2>
+                    <p>Update your CGPA and listed skills.</p>
+                </div>
+                <button type="button" onclick="closeEditModal()" class="ghost-button">Close</button>
+            </div>
+
+            <form id="edit-profile-form" style="display: grid; gap: 16px;">
+                <div>
+                    <label class="field-label" for="edit-cgpa">CGPA</label>
+                    <input class="input" type="number" step="0.01" id="edit-cgpa" required>
+                </div>
+
+                <div>
+                    <label class="field-label" for="edit-skills">Skills</label>
+                    <textarea class="textarea" id="edit-skills" placeholder="Python, SQL, React, Data Analysis" required></textarea>
+                </div>
+
+                <button type="submit" class="button" style="width: 100%;">Save changes</button>
+            </form>
+        </section>
+    </div>
+
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="brand" style="color: var(--text-dark);">
+                <span class="brand-mark">CP</span>
+                <span>Student Workspace</span>
+            </div>
+            <div class="action-row">
+                <button onclick="openEditModal()" class="button">Edit details</button>
+                <button onclick="logout()" class="danger-button">Sign out</button>
+            </div>
+        </header>
+
+        <section class="surface-card section-block">
+            <div class="portal-header">
+                <div class="portal-title">
+                    <span class="eyebrow">Student Profile</span>
+                    <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: var(--text);">Profile Overview: <span id="display-name">Student</span></h1>
+                    <p>Review your details, update your record, and apply for current openings.</p>
+                </div>
+                <div id="display-status" class="status-pill warn">Loading status</div>
+            </div>
+
+            <div class="visual-frame compact-visual section-image">
+                <img src="assets/student-workspace-visual.jpg" alt="Student profile and portfolio workspace" loading="lazy" decoding="async">
+            </div>
+
+            <div class="card-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">ID</div>
+                    <strong>Registered email</strong>
+                    <span id="display-email" class="metric-value" style="font-size: 1.1rem;">Loading...</span>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">CG</div>
+                    <strong>Current CGPA</strong>
+                    <span id="display-cgpa" class="metric-value">0.0</span>
+                </div>
+            </div>
+
+            <div class="section-block">
+                <div class="surface-card" style="background: var(--surface-muted); box-shadow: none;">
+                    <strong class="section-title">Skills listed on your profile</strong>
+                    <p class="muted" style="margin: 8px 0 16px;">These skills are visible to employers and the placement office.</p>
+                    <div id="display-skills" class="chip-row">Loading...</div>
+                </div>
+            </div>
+
+            <div class="section-block">
+                <div class="split-layout">
+                    <div class="surface-card" style="background: var(--surface-muted); box-shadow: none;">
+                        <strong class="section-title">GitHub profile</strong>
+                        <p class="muted" style="margin: 8px 0 14px;">Open your public repository and portfolio links.</p>
+                        <a id="display-github" class="button" href="#" target="_blank" rel="noreferrer">Open GitHub profile</a>
+                    </div>
+                    <div class="surface-card" style="background: linear-gradient(180deg, #163253 0%, #10233d 100%); color: var(--text-inverse); box-shadow: none;">
+                        <strong class="section-title">Professional summary</strong>
+                        <p id="display-bio" class="muted" style="color: rgba(248, 251, 255, 0.8); margin-top: 14px;">Loading summary...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-block">
+            <div class="portal-header">
+                <div class="portal-title">
+                    <h2>Open roles</h2>
+                    <p>Current opportunities available for student applications.</p>
+                </div>
+            </div>
+            <div id="jobs-grid" class="jobs-grid">
+                <div class="empty-state">Loading current openings...</div>
+            </div>
+        </section>
+
+        <p class="footer-note">Student profile management and job applications.</p>
+    </div>
+
+    <script>
+        const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
+        const sessionData = localStorage.getItem("studentSession");
+
+        if (!sessionData) {
+            window.location.href = "login.html";
+        } else {
+            const user = JSON.parse(sessionData);
+            populateDashboard(user);
+            loadJobs();
+        }
+
+        document.getElementById("edit-profile-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const submitBtn = event.target.querySelector("button");
+            submitBtn.innerText = "Saving...";
+            submitBtn.disabled = true;
+
+            const currentUser = JSON.parse(localStorage.getItem("studentSession"));
+
+            try {
+                const response = await fetch(`${API_BASE}/update_profile`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        student_id: currentUser.id,
+                        new_cgpa: parseFloat(document.getElementById("edit-cgpa").value),
+                        new_skills: document.getElementById("edit-skills").value
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    currentUser.cgpa = parseFloat(document.getElementById("edit-cgpa").value);
+                    currentUser.skills = document.getElementById("edit-skills").value;
+                    localStorage.setItem("studentSession", JSON.stringify(currentUser));
+                    populateDashboard(currentUser);
+                    closeEditModal();
+                    alert("Profile updated successfully.");
+                } else {
+                    alert(result.message || "We could not save your changes.");
+                }
+            } catch (error) {
+                alert("The profile update service is currently unavailable. Please try again shortly.");
+            } finally {
+                submitBtn.innerText = "Save changes";
+                submitBtn.disabled = false;
+            }
+        });
+
+        function populateDashboard(user) {
+            document.getElementById("display-name").innerText = ((user.first_name || "") + " " + (user.last_name || "")).trim() || "Student";
+            document.getElementById("display-email").innerText = user.email || "Not provided";
+            document.getElementById("display-cgpa").innerText = user.cgpa || "0.0";
+            document.getElementById("display-bio").innerText = user.bio || "No professional summary has been added yet.";
+
+            const githubButton = document.getElementById("display-github");
+            if (user.github) {
+                githubButton.href = user.github;
+                githubButton.innerText = "Open GitHub profile";
+            } else {
+                githubButton.href = "#";
+                githubButton.innerText = "GitHub profile not provided";
+                githubButton.onclick = (event) => event.preventDefault();
+            }
+
+            const skillsContainer = document.getElementById("display-skills");
+            const skillsArray = user.skills ? user.skills.split(",").map((skill) => skill.trim()).filter(Boolean) : [];
+            skillsContainer.innerHTML = skillsArray.length
+                ? skillsArray.map((skill) => `<span class="chip">${skill}</span>`).join("")
+                : "No skills listed.";
+
+            const statusElement = document.getElementById("display-status");
+            if (user.is_placed === 1) {
+                statusElement.innerText = "Placed";
+                statusElement.className = "status-pill";
+            } else {
+                statusElement.innerText = "Open to opportunities";
+                statusElement.className = "status-pill warn";
+            }
+
+            document.getElementById("edit-cgpa").value = user.cgpa || "";
+            document.getElementById("edit-skills").value = user.skills || "";
+        }
+
+        async function loadJobs() {
+            const grid = document.getElementById("jobs-grid");
+
+            try {
+                const response = await fetch(`${API_BASE}/jobs`);
+                const jobs = await response.json();
+                grid.innerHTML = "";
+
+                if (!jobs.length) {
+                    grid.innerHTML = '<div class="empty-state">There are no open roles available at the moment.</div>';
+                    return;
+                }
+
+                jobs.forEach((job) => {
+                    const card = document.createElement("div");
+                    const experienceLabel = Number(job.required_exp) > 0 ? `${job.required_exp} years experience` : "Entry level";
+                    card.className = "job-card";
+                    card.innerHTML = `
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+                            <div>
+                                <h3>${job.job_title}</h3>
+                                <p style="margin: 8px 0 0; color: var(--brand); font-weight: 700;">${job.company_name || "Company name not listed"}</p>
+                            </div>
+                            <span class="status-pill">${job.salary || "Compensation not listed"}</span>
+                        </div>
+                        <div class="job-meta">
+                            <span class="mini-pill">${job.location || "Location not listed"}</span>
+                            <span class="mini-pill">${experienceLabel}</span>
+                        </div>
+                        <p class="muted" style="margin-bottom: 20px;">${job.job_description || "Role description not available."}</p>
+                        <button onclick="applyForJob(${job.job_id}, this)" class="button" style="width: 100%;">Apply for role</button>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                grid.innerHTML = '<div class="empty-state">We could not load current openings. Please try again later.</div>';
+            }
+        }
+
+        async function applyForJob(jobId, buttonElement) {
+            buttonElement.innerText = "Submitting application...";
+            buttonElement.disabled = true;
+
+            const currentUser = JSON.parse(localStorage.getItem("studentSession"));
+            if (!currentUser || !currentUser.id) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/student/apply/${jobId}?student_id=${currentUser.id}`, { method: "POST" });
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    buttonElement.innerText = "Application submitted";
+                } else {
+                    alert(result.message || "We could not submit your application.");
+                    buttonElement.innerText = "Apply for role";
+                    buttonElement.disabled = false;
+                }
+            } catch (error) {
+                alert("The application service is currently unavailable. Please try again shortly.");
+                buttonElement.innerText = "Apply for role";
+                buttonElement.disabled = false;
+            }
+        }
+
+        function openEditModal() {
+            document.getElementById("edit-profile-modal").classList.remove("hidden");
+        }
+
+        function closeEditModal() {
+            document.getElementById("edit-profile-modal").classList.add("hidden");
+        }
+
+        function logout() {
+            localStorage.removeItem("studentSession");
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>

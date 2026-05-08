@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login | Campus Placement Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=20260509c">
+</head>
+<body>
+    <div class="page-shell">
+        <div class="login-layout">
+            <section class="login-hero">
+                <span class="eyebrow">Student Sign-In</span>
+                <h1 style="font-size: clamp(2.6rem, 5vw, 4.5rem); margin: 18px 0 14px;">Student account access.</h1>
+                <p class="muted">Sign in to review your profile, manage applications, and track current opportunities.</p>
+                <div class="visual-frame">
+                    <img src="assets/student-workspace-visual.jpg" alt="Student reviewing a placement profile on a laptop" loading="eager" decoding="async">
+                </div>
+                <div class="stack-list" style="margin-top: 28px;">
+                    <div class="stack-item">
+                        <strong>Profile Management</strong>
+                        <p class="muted">Maintain academic details, skills, project links, and your professional summary.</p>
+                    </div>
+                    <div class="stack-item">
+                        <strong>Applications</strong>
+                        <p class="muted">View open roles and submit applications from a single dashboard.</p>
+                    </div>
+                    <div class="stack-item">
+                        <strong>Status Tracking</strong>
+                        <p class="muted">Monitor your placement status and keep your record current.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="login-card">
+                <div class="brand" style="color: var(--text-dark); margin-bottom: 18px;">
+                    <span class="brand-mark">CP</span>
+                    <span>Campus Placement Portal</span>
+                </div>
+                <h2>Student sign in</h2>
+                <p class="muted">Use your registered email address and password to continue.</p>
+
+                <form id="loginForm" style="display: grid; gap: 16px; margin-top: 26px;">
+                    <div>
+                        <label class="field-label" for="email">Email address</label>
+                        <input class="input" type="email" id="email" required>
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="password">Password</label>
+                        <input class="input" type="password" id="password" required>
+                    </div>
+
+                    <button type="submit" class="button" style="width: 100%; margin-top: 8px;">Sign in</button>
+                </form>
+
+                <p class="muted" style="margin-top: 22px;">
+                    Need an account? <a href="student.html" class="text-link">Create your student profile</a>
+                </p>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
+
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const submitBtn = event.target.querySelector("button");
+            submitBtn.innerText = "Signing in...";
+            submitBtn.disabled = true;
+
+            const loginData = {
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(loginData)
+                });
+
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    localStorage.setItem("studentSession", JSON.stringify(result.user));
+                    window.location.href = "dashboard.html";
+                } else {
+                    alert(result.message || "Unable to sign in. Please verify your credentials.");
+                }
+            } catch (error) {
+                alert("The sign-in service is currently unavailable. Please try again shortly.");
+                console.error(error);
+            } finally {
+                submitBtn.innerText = "Sign in";
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
