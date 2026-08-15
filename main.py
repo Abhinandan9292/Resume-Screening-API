@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from resume_parser import parse_resume_text
 
 app = FastAPI()
 
@@ -93,12 +94,28 @@ class RecruiterCreate(BaseModel):
 
 @app.post("/ai_parse")
 async def ai_parse(file: UploadFile = File(...)):
-    contents = await file.read()
-    doc = fitz.open(stream=contents, filetype="pdf")
-    text = "".join([page.get_text() for page in doc])
-    keywords = ["python", "cpp", "java", "sql", "react", "ml", "ai", "dsa", "javascript"]
-    found = [k for k in keywords if k in text.lower()]
-    return {"suggested_skills": ", ".join(found), "bio_preview": text[:300]}
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Please upload a PDF resume.")
+
+    try:
+        contents = await file.read()
+        if not contents:
+            raise HTTPException(status_code=400, detail="The uploaded PDF is empty.")
+
+        with fitz.open(stream=contents, filetype="pdf") as document:
+            text = "\n".join(page.get_text("text") for page in document)
+
+        if not text.strip():
+            raise HTTPException(
+                status_code=422,
+                detail="We could not read text from this PDF. Please use a text-based PDF or complete the form manually.",
+            )
+
+        return parse_resume_text(text)
+    except HTTPException:
+        raise
+    except (fitz.FileDataError, RuntimeError, ValueError):
+        raise HTTPException(status_code=400, detail="We could not read this file as a PDF resume.")
 
 @app.post("/register_student")
 def register(s: StudentData):

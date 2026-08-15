@@ -133,11 +133,27 @@
             try {
                 const response = await fetch(`${API_BASE}/ai_parse`, { method: "POST", body: formData });
                 const data = await response.json();
-                document.getElementById("skills").value = data.suggested_skills || "";
-                document.getElementById("bio").value = data.bio_preview || "";
-                setResumeStatus("Resume processed. Review the suggested fields before submitting.", "success");
+                if (!response.ok) {
+                    throw new Error(data.detail || "We could not process this resume.");
+                }
+
+                const skills = document.getElementById("skills");
+                const bio = document.getElementById("bio");
+                skills.value = data.suggested_skills || "";
+
+                if (data.bio_preview) {
+                    bio.value = data.bio_preview;
+                }
+
+                const skillsMessage = data.skills_count
+                    ? `Found ${data.skills_count} skill${data.skills_count === 1 ? "" : "s"}.`
+                    : "No recognised skills were found.";
+                const summaryMessage = data.summary_found
+                    ? " Imported the Summary/Objective section."
+                    : " No Summary/Objective section was found, so the professional summary was left for you to write.";
+                setResumeStatus(`${skillsMessage}${summaryMessage} Review the fields before submitting.`, "success");
             } catch (error) {
-                setResumeStatus("We could not process the file. You can complete the form manually.", "error");
+                setResumeStatus(error.message || "We could not process the file. You can complete the form manually.", "error");
             }
         });
 
