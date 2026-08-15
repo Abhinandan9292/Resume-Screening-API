@@ -4,145 +4,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recruiter Workspace | Campus Placement Portal</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260509c">
+    <link rel="stylesheet" href="styles.css?v=20260815">
 </head>
-<body class="light-body">
-    <div id="login-screen" class="overlay-screen">
-        <section class="login-card" style="max-width: 520px; width: 100%;">
-            <div class="brand" style="color: var(--text-dark); margin-bottom: 18px;">
-                <span class="brand-mark">CP</span>
-                <span>Recruiter Workspace</span>
-            </div>
-            <div class="visual-frame compact-visual">
-                <img src="assets/recruiter-operations-visual.jpg" alt="Recruiters reviewing candidate information" loading="eager" decoding="async">
-            </div>
-            <h2>Recruiter access</h2>
-            <p class="muted">Sign in to manage job postings, applicants, and candidate search.</p>
-            <form id="recruiter-login-form" onsubmit="handleLogin(event)" style="display: grid; gap: 16px; margin-top: 24px;">
+<body>
+    <main id="login-screen" class="auth-page">
+        <section class="auth-card" aria-labelledby="recruiter-login-title">
+            <a class="brand auth-brand" href="index.html">
+                <span>Campus Placement Portal</span>
+            </a>
+            <h1 id="recruiter-login-title">Recruiter sign in</h1>
+            <p class="muted">Access candidate search, job posting, and applicant management for your organisation.</p>
+
+            <div id="recruiter-login-message" class="form-message" role="alert" aria-live="polite"></div>
+
+            <form id="recruiter-login-form" class="form-stack" onsubmit="handleLogin(event)">
                 <div>
                     <label class="field-label" for="login-email">Corporate email</label>
-                    <input class="input" type="email" id="login-email" required placeholder="hr@company.com">
+                    <input class="input" type="email" id="login-email" autocomplete="email" required placeholder="hr@company.com">
                 </div>
                 <div>
                     <label class="field-label" for="login-pass">Access code</label>
-                    <input class="input" type="password" id="login-pass" required placeholder="Enter recruiter access code">
+                    <input class="input" type="password" id="login-pass" autocomplete="current-password" required>
                 </div>
-                <button type="submit" id="login-btn" class="button" style="width: 100%;">Sign in</button>
+                <button type="submit" id="login-btn" class="button">Sign in</button>
             </form>
-            <p class="muted" style="margin-top: 18px;">If you need access, contact the placement office administrator.</p>
+            <p class="muted" style="margin: 24px 0 0;">Need access? Contact your placement office administrator.</p>
         </section>
-    </div>
+    </main>
 
     <div id="dashboard-screen" class="hidden">
-        <div class="page-shell">
-            <header class="topbar">
-                <div class="brand" style="color: var(--text-dark);">
-                    <span class="brand-mark">CP</span>
-                    <span id="company-display">Recruiter Workspace</span>
-                </div>
+        <div class="page-shell dashboard-main">
+            <header class="topbar dashboard-header">
+                <a class="brand" href="index.html">
+                    <span id="company-display">Recruiter workspace</span>
+                </a>
                 <div class="action-row">
-                    <button onclick="toggleJobForm()" class="button">Post New Role</button>
+                    <button onclick="toggleJobForm()" class="button">Post a role</button>
                     <button onclick="logoutRecruiter()" class="danger-button">Sign out</button>
                 </div>
             </header>
 
-            <section class="surface-card section-block">
-                <div class="split-layout">
-                    <div class="portal-header" style="margin-bottom: 0;">
-                        <div class="portal-title">
-                            <span class="eyebrow">Recruiter Portal</span>
-                            <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: var(--text);">Recruitment management.</h1>
-                            <p>Create job postings, review applicants, and search active student profiles.</p>
-                        </div>
-                    </div>
-                    <div class="visual-frame">
-                        <img src="assets/recruiter-operations-visual.jpg" alt="Recruitment operations dashboard review" loading="lazy" decoding="async">
-                    </div>
-                </div>
-            </section>
-
-            <section id="job-form-section" class="form-panel section-block hidden">
-                <div class="portal-header">
-                    <div class="portal-title">
-                        <h2>New job posting</h2>
-                        <p>Create and publish a role for student applications.</p>
-                    </div>
-                    <button onclick="toggleJobForm()" class="ghost-button" style="color: var(--text-dark);">Close</button>
-                </div>
-                <form id="post-job-form" onsubmit="submitJobPosting(event)" style="display: grid; gap: 18px;">
-                    <div class="field-grid">
-                        <div>
-                            <label class="field-label" for="job-title">Job title</label>
-                            <input class="input" type="text" id="job-title" required>
-                        </div>
-                        <div>
-                            <label class="field-label" for="job-company">Company name</label>
-                            <input class="input" type="text" id="job-company" readonly>
-                        </div>
-                    </div>
-                    <div class="field-grid thirds">
-                        <div>
-                            <label class="field-label" for="job-salary">Salary / CTC</label>
-                            <input class="input" type="text" id="job-salary" required>
-                        </div>
-                        <div>
-                            <label class="field-label" for="job-exp">Required experience</label>
-                            <input class="input" type="number" step="0.5" id="job-exp" required>
-                        </div>
-                        <div>
-                            <label class="field-label" for="job-location">Location</label>
-                            <input class="input" type="text" id="job-location" required>
-                        </div>
-                    </div>
+            <main>
+                <section class="summary-bar">
                     <div>
-                        <label class="field-label" for="job-desc">Job description</label>
-                        <textarea class="textarea" id="job-desc" required></textarea>
+                        <span class="eyebrow">Recruiter workspace</span>
+                        <h1>Hiring activity</h1>
+                        <p>Post roles, review applications, and identify students that match your hiring needs.</p>
                     </div>
-                    <button type="submit" id="submit-job-btn" class="button">Publish role</button>
-                </form>
-            </section>
+                </section>
 
-            <section id="inbox-container" class="table-panel section-block hidden">
-                <div class="table-header">
-                    <div>
-                        <strong class="section-title">Applicant inbox</strong>
-                        <p class="muted" style="margin: 6px 0 0;">Submitted applications for your published roles.</p>
-                    </div>
-                    <button onclick="downloadCSV()" class="button">Export applicants</button>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Applied on</th>
-                                <th>Role</th>
-                                <th>Candidate</th>
-                                <th>CGPA</th>
-                                <th>Top skills</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inbox-table-body"></tbody>
-                    </table>
-                </div>
-            </section>
+                <div id="workspace-message" class="form-message" role="status" aria-live="polite" style="margin-top: 20px;"></div>
 
-            <section class="surface-card section-block">
-                <div class="portal-header">
-                    <div class="portal-title">
-                        <h2>Candidate search</h2>
-                        <p>Filter active candidates by skill set and view relevant profiles.</p>
+                <section id="job-form-section" class="form-panel section-block hidden" aria-labelledby="new-job-heading" style="margin-top: 24px;">
+                    <div class="section-heading">
+                        <div>
+                            <h2 id="new-job-heading">Post a new role</h2>
+                            <p>Published roles are immediately available for student applications.</p>
+                        </div>
+                        <button onclick="toggleJobForm()" class="ghost-button">Cancel</button>
                     </div>
-                </div>
-                <div class="action-row" style="align-items: stretch;">
-                    <input class="input" type="text" id="search-input" placeholder="Python, React, SQL, Data Analysis" style="flex: 1 1 320px;">
-                    <button onclick="searchCandidates()" class="button">Search candidates</button>
-                </div>
-                <div id="results-grid" class="results-grid" style="margin-top: 24px;"></div>
-            </section>
+                    <form id="post-job-form" class="form-stack" onsubmit="submitJobPosting(event)">
+                        <div class="field-grid">
+                            <div>
+                                <label class="field-label" for="job-title">Job title</label>
+                                <input class="input" type="text" id="job-title" required>
+                            </div>
+                            <div>
+                                <label class="field-label" for="job-company">Company</label>
+                                <input class="input" type="text" id="job-company" readonly>
+                            </div>
+                        </div>
+                        <div class="field-grid thirds">
+                            <div>
+                                <label class="field-label" for="job-salary">Salary / CTC</label>
+                                <input class="input" type="text" id="job-salary" required>
+                            </div>
+                            <div>
+                                <label class="field-label" for="job-exp">Required experience</label>
+                                <input class="input" type="number" min="0" step="0.5" id="job-exp" required>
+                            </div>
+                            <div>
+                                <label class="field-label" for="job-location">Location</label>
+                                <input class="input" type="text" id="job-location" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="field-label" for="job-desc">Job description</label>
+                            <textarea class="textarea" id="job-desc" required></textarea>
+                        </div>
+                        <button type="submit" id="submit-job-btn" class="button">Publish role</button>
+                    </form>
+                </section>
+
+                <section id="inbox-container" class="table-panel section-block hidden" aria-labelledby="applicant-inbox-heading">
+                    <div class="table-header">
+                        <div>
+                            <h2 id="applicant-inbox-heading">Applicant inbox</h2>
+                            <p>Applications received for roles posted by your organisation.</p>
+                        </div>
+                        <button onclick="downloadCSV()" class="ghost-button">Export CSV</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Applied</th>
+                                    <th>Role</th>
+                                    <th>Candidate</th>
+                                    <th>CGPA</th>
+                                    <th>Skills</th>
+                                    <th>Contact</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inbox-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="section-block" aria-labelledby="candidate-search-heading">
+                    <div class="section-heading">
+                        <div>
+                            <h2 id="candidate-search-heading">Candidate search</h2>
+                            <p>Search active student profiles by one or more skills.</p>
+                        </div>
+                    </div>
+                    <form class="search-row" onsubmit="event.preventDefault(); searchCandidates();">
+                        <input class="input" type="text" id="search-input" placeholder="For example: Python, React, SQL">
+                        <button type="submit" class="button">Search candidates</button>
+                    </form>
+                    <div id="results-grid" class="results-grid" style="margin-top: 16px;">
+                        <div class="empty-state">Loading candidate profiles…</div>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
 
@@ -159,11 +153,18 @@
             }
         };
 
+        function showMessage(elementId, text, type) {
+            const message = document.getElementById(elementId);
+            message.textContent = text;
+            message.className = `form-message visible ${type}`;
+        }
+
         async function handleLogin(event) {
             event.preventDefault();
             const button = document.getElementById("login-btn");
-            button.innerText = "Signing in...";
+            button.innerText = "Signing in…";
             button.disabled = true;
+            document.getElementById("recruiter-login-message").className = "form-message";
 
             const email = document.getElementById("login-email").value;
             const code = document.getElementById("login-pass").value;
@@ -181,10 +182,10 @@
                     localStorage.setItem("recruiterSession", JSON.stringify(currentRecruiter));
                     showDashboard();
                 } else {
-                    alert(result.message || "Unable to sign in. Please verify your access details.");
+                    showMessage("recruiter-login-message", result.message || "We could not sign you in. Check your credentials and try again.", "error");
                 }
             } catch (error) {
-                alert("The recruiter service is currently unavailable. Please try again shortly.");
+                showMessage("recruiter-login-message", "The recruiter service is unavailable. Please try again shortly.", "error");
             } finally {
                 button.innerText = "Sign in";
                 button.disabled = false;
@@ -194,7 +195,7 @@
         function showDashboard() {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("dashboard-screen").classList.remove("hidden");
-            document.getElementById("company-display").innerText = currentRecruiter.company_name || "Recruiter Workspace";
+            document.getElementById("company-display").innerText = currentRecruiter.company_name || "Recruiter workspace";
             document.getElementById("job-company").value = currentRecruiter.company_name || "";
             loadInbox();
             searchCandidates();
@@ -213,9 +214,7 @@
             const container = document.getElementById("inbox-container");
             const tbody = document.getElementById("inbox-table-body");
 
-            if (!currentRecruiter || !currentRecruiter.recruiter_id) {
-                return;
-            }
+            if (!currentRecruiter || !currentRecruiter.recruiter_id) return;
 
             try {
                 const response = await fetch(`${API_BASE}/recruiter/applicants?recruiter_id=${currentRecruiter.recruiter_id}`);
@@ -238,37 +237,29 @@
                             <td><strong>${application.job_title}</strong></td>
                             <td><strong>${application.first_name} ${application.last_name || ""}</strong><br><span class="muted">${application.email}</span></td>
                             <td>${application.cgpa}</td>
-                            <td>
-                                <div class="badge-row">
-                                    ${(application.skills || "").split(",").slice(0, 3).map((skill) => skill.trim() ? `<span class="chip">${skill.trim()}</span>` : "").join("") || '<span class="muted">No skills listed</span>'}
-                                </div>
-                            </td>
-                            <td><a class="button" href="mailto:${application.email}?subject=${emailSubject}">Email candidate</a></td>
+                            <td><div class="badge-row">${(application.skills || "").split(",").slice(0, 3).map((skill) => skill.trim() ? `<span class="chip">${skill.trim()}</span>` : "").join("") || '<span class="muted">No skills listed</span>'}</div></td>
+                            <td><a class="ghost-button" href="mailto:${application.email}?subject=${emailSubject}">Email</a></td>
                         </tr>
                     `;
                 });
             } catch (error) {
                 container.classList.add("hidden");
+                showMessage("workspace-message", "We could not load the applicant inbox.", "error");
                 console.error(error);
             }
         }
 
         function downloadCSV() {
             if (currentApplicantsList.length === 0) {
-                alert("There are no applicants available for export.");
+                showMessage("workspace-message", "There are no applicants available for export.", "info");
                 return;
             }
 
             let csvContent = "Application Date,Job Role,First Name,Last Name,Email,CGPA,Skills\n";
             currentApplicantsList.forEach((application) => {
                 const row = [
-                    `"${application.apply_date}"`,
-                    `"${application.job_title}"`,
-                    `"${application.first_name}"`,
-                    `"${application.last_name || ""}"`,
-                    `"${application.email}"`,
-                    `"${application.cgpa}"`,
-                    `"${application.skills || ""}"`
+                    `"${application.apply_date}"`, `"${application.job_title}"`, `"${application.first_name}"`,
+                    `"${application.last_name || ""}"`, `"${application.email}"`, `"${application.cgpa}"`, `"${application.skills || ""}"`
                 ].join(",");
                 csvContent += row + "\n";
             });
@@ -287,7 +278,7 @@
         async function submitJobPosting(event) {
             event.preventDefault();
             const button = document.getElementById("submit-job-btn");
-            button.innerText = "Publishing...";
+            button.innerText = "Publishing…";
             button.disabled = true;
 
             const jobData = {
@@ -309,15 +300,15 @@
                 const result = await response.json();
 
                 if (result.status === "success") {
-                    alert("Role published successfully.");
                     document.getElementById("post-job-form").reset();
                     document.getElementById("job-company").value = currentRecruiter.company_name;
-                    toggleJobForm();
+                    document.getElementById("job-form-section").classList.add("hidden");
+                    showMessage("workspace-message", "Role published successfully.", "success");
                 } else {
-                    alert(result.message || "We could not publish the role.");
+                    showMessage("workspace-message", result.message || "We could not publish the role.", "error");
                 }
             } catch (error) {
-                alert("The publishing service is currently unavailable. Please try again shortly.");
+                showMessage("workspace-message", "The publishing service is unavailable. Please try again shortly.", "error");
             } finally {
                 button.innerText = "Publish role";
                 button.disabled = false;
@@ -327,7 +318,7 @@
         async function searchCandidates() {
             const grid = document.getElementById("results-grid");
             const skill = document.getElementById("search-input").value;
-            grid.innerHTML = '<div class="empty-state">Searching candidate profiles...</div>';
+            grid.innerHTML = '<div class="empty-state">Searching candidate profiles…</div>';
 
             try {
                 const url = skill ? `${API_BASE}/recruiter/candidates?skills=${encodeURIComponent(skill)}` : `${API_BASE}/recruiter/candidates`;
@@ -336,39 +327,34 @@
                 grid.innerHTML = "";
 
                 if (!candidates.length) {
-                    grid.innerHTML = '<div class="empty-state">No candidates matched the current search.</div>';
+                    grid.innerHTML = '<div class="empty-state">No active candidates matched this search.</div>';
                     return;
                 }
 
                 candidates.forEach((student) => {
-                    const card = document.createElement("div");
+                    const card = document.createElement("article");
                     card.className = "candidate-card";
-                    const scoreBadge = student.match_score > 0 ? `<span class="status-pill">Profile fit ${student.match_score}</span>` : "";
+                    const scoreBadge = student.match_score > 0 ? `<span class="status-pill">Match ${student.match_score}</span>` : "";
                     const outreachSubject = encodeURIComponent(`Opportunity from ${currentRecruiter ? currentRecruiter.company_name : "Recruitment Team"}`);
 
                     card.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; gap: 16px; align-items: flex-start;">
+                        <div class="candidate-card-head">
                             <div>
                                 <h3>${student.first_name || ""} ${student.last_name || ""}</h3>
-                                <p style="margin: 8px 0 0; color: var(--brand); font-weight: 700;">${student.email}</p>
+                                <p class="company-name">${student.email}</p>
                             </div>
-                            <div style="display: grid; gap: 10px; justify-items: end;">
-                                <span class="mini-pill">CGPA ${student.cgpa}</span>
-                                ${scoreBadge}
-                            </div>
+                            <div class="badge-row"><span class="mini-pill">CGPA ${student.cgpa}</span>${scoreBadge}</div>
                         </div>
-                        <div class="badge-row" style="margin: 18px 0;">
-                            ${(student.skills || "").split(",").map((skillLabel) => skillLabel.trim() ? `<span class="chip">${skillLabel.trim()}</span>` : "").join("")}
-                        </div>
-                        <div class="action-row">
-                            <a href="${student.github || "#"}" target="_blank" rel="noreferrer" class="ghost-button" style="color: var(--text-dark);">GitHub profile</a>
+                        <div class="candidate-meta">${(student.skills || "").split(",").map((skillLabel) => skillLabel.trim() ? `<span class="chip">${skillLabel.trim()}</span>` : "").join("") || '<span class="muted">No skills listed</span>'}</div>
+                        <div class="button-row">
+                            <a href="${student.github || "#"}" target="_blank" rel="noreferrer" class="ghost-button">GitHub</a>
                             <a href="mailto:${student.email}?subject=${outreachSubject}" class="button">Email candidate</a>
                         </div>
                     `;
                     grid.appendChild(card);
                 });
             } catch (error) {
-                grid.innerHTML = '<div class="empty-state">We could not load candidate results. Please try again later.</div>';
+                grid.innerHTML = '<div class="empty-state">We could not load candidate profiles. Please try again later.</div>';
             }
         }
     </script>

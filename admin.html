@@ -4,167 +4,160 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Placement Office | Campus Placement Portal</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260509c">
+    <link rel="stylesheet" href="styles.css?v=20260815">
 </head>
-<body class="light-body">
-    <div id="admin-login-screen" class="overlay-screen">
-        <section class="login-card" style="max-width: 520px; width: 100%;">
-            <div class="brand" style="color: var(--text-dark); margin-bottom: 18px;">
-                <span class="brand-mark">CP</span>
-                <span>Placement Office</span>
-            </div>
-            <h2>Administrator sign in</h2>
-            <p class="muted">Use the office PIN to access recruiter management, student records, and placement reporting.</p>
-            <div class="visual-frame compact-visual">
-                <img src="assets/recruiter-operations-visual.jpg" alt="Placement office operations review" loading="eager" decoding="async">
-            </div>
+<body>
+    <main id="admin-login-screen" class="auth-page">
+        <section class="auth-card" aria-labelledby="admin-login-title">
+            <a class="brand auth-brand" href="index.html">
+                <span>Campus Placement Portal</span>
+            </a>
+            <h1 id="admin-login-title">Placement office sign in</h1>
+            <p class="muted">Use the office PIN to access student records, recruiter accounts, and placement reporting.</p>
 
-            <form id="admin-login-form" style="display: grid; gap: 16px; margin-top: 24px;">
+            <div id="admin-login-message" class="form-message" role="alert" aria-live="polite"></div>
+
+            <form id="admin-login-form" class="form-stack">
                 <div>
                     <label class="field-label" for="admin-pin">Office PIN</label>
-                    <input class="input" type="password" id="admin-pin" required placeholder="Enter administrator PIN">
+                    <input class="input" type="password" id="admin-pin" autocomplete="current-password" required>
                 </div>
-                <button type="submit" id="admin-login-btn" class="button" style="width: 100%;">Sign in</button>
+                <button type="submit" id="admin-login-btn" class="button">Sign in</button>
             </form>
         </section>
-    </div>
+    </main>
 
     <div id="admin-dashboard" class="hidden">
-        <div class="page-shell">
-            <header class="topbar">
-                <div class="brand" style="color: var(--text-dark);">
-                    <span class="brand-mark">CP</span>
-                    <span>Placement Office</span>
-                </div>
-                <div class="status-pill">Authorized session</div>
+        <div class="page-shell dashboard-main">
+            <header class="topbar dashboard-header">
+                <a class="brand" href="index.html">
+                    <span>Placement office</span>
+                </a>
+                <span class="status-pill">Authorised session</span>
             </header>
 
-            <section class="surface-card section-block">
-                <div class="split-layout">
-                    <div class="portal-header" style="margin-bottom: 0;">
-                        <div class="portal-title">
-                            <span class="eyebrow">Placement Administration</span>
-                            <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: var(--text);">Administrative overview.</h1>
-                            <p>Monitor student records, recruiter activity, and placement outcomes from one administrative dashboard.</p>
-                        </div>
+            <main>
+                <section class="summary-bar">
+                    <div>
+                        <span class="eyebrow">Placement administration</span>
+                        <h1>Placement overview</h1>
+                        <p>Monitor active student profiles, employer activity, and placement outcomes.</p>
                     </div>
-                    <div class="visual-frame">
-                        <img src="assets/campus-operations-hero.jpg" alt="Campus placement office and recruiter operations" loading="lazy" decoding="async">
-                    </div>
-                </div>
+                </section>
 
-                <div class="stats-grid">
+                <div id="admin-message" class="form-message" role="status" aria-live="polite" style="margin-top: 20px;"></div>
+
+                <section class="stats-grid" aria-label="Placement statistics" style="margin-top: 24px;">
                     <article class="metric-card">
-                        <div class="metric-icon">SE</div>
                         <strong>Students seeking roles</strong>
-                        <span id="stat-seeking" class="metric-value">...</span>
+                        <span id="stat-seeking" class="metric-value">…</span>
                     </article>
                     <article class="metric-card">
-                        <div class="metric-icon">PL</div>
                         <strong>Students placed</strong>
-                        <span id="stat-hired" class="metric-value">...</span>
+                        <span id="stat-hired" class="metric-value">…</span>
                     </article>
                     <article class="metric-card">
-                        <div class="metric-icon">CG</div>
                         <strong>Average CGPA of placed students</strong>
-                        <span id="stat-cgpa" class="metric-value">...</span>
+                        <span id="stat-cgpa" class="metric-value">…</span>
                     </article>
-                </div>
-            </section>
+                </section>
 
-            <section class="form-panel section-block">
-                <div class="portal-header">
-                    <div class="portal-title">
-                        <h2>Add recruiter account</h2>
-                        <p>Create access for a recruiting partner.</p>
+                <section class="form-panel section-block" aria-labelledby="add-recruiter-heading">
+                    <div class="panel-heading">
+                        <h2 id="add-recruiter-heading">Add recruiter account</h2>
+                        <p>Create access for a corporate recruiting partner.</p>
                     </div>
-                </div>
-                <form id="add-recruiter-form" onsubmit="addRecruiter(event)" style="display: grid; gap: 18px;">
-                    <div class="field-grid thirds">
-                        <div>
-                            <label class="field-label" for="rec-company">Company name</label>
-                            <input class="input" type="text" id="rec-company" required placeholder="Company name">
+                    <form id="add-recruiter-form" class="form-stack" onsubmit="addRecruiter(event)">
+                        <div class="field-grid thirds">
+                            <div>
+                                <label class="field-label" for="rec-company">Company name</label>
+                                <input class="input" type="text" id="rec-company" required placeholder="Company name">
+                            </div>
+                            <div>
+                                <label class="field-label" for="rec-email">HR email</label>
+                                <input class="input" type="email" id="rec-email" required placeholder="hr@company.com">
+                            </div>
+                            <div>
+                                <label class="field-label" for="rec-code">Access code</label>
+                                <input class="input" type="text" id="rec-code" required placeholder="Set access code">
+                            </div>
                         </div>
+                        <button type="submit" id="add-rec-btn" class="button">Create recruiter account</button>
+                    </form>
+                </section>
+
+                <section class="table-panel section-block" aria-labelledby="recruiter-activity-heading">
+                    <div class="table-header">
                         <div>
-                            <label class="field-label" for="rec-email">HR email</label>
-                            <input class="input" type="email" id="rec-email" required placeholder="hr@company.com">
+                            <h2 id="recruiter-activity-heading">Recruiter activity</h2>
+                            <p>Partner accounts, posted roles, and active applicant totals.</p>
                         </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>HR email</th>
+                                    <th>Jobs posted</th>
+                                    <th>Active applicants</th>
+                                </tr>
+                            </thead>
+                            <tbody id="partner-stats-body">
+                                <tr><td colspan="4">Loading recruiter activity…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="table-panel section-block" aria-labelledby="student-records-heading">
+                    <div class="table-header">
                         <div>
-                            <label class="field-label" for="rec-code">Access code</label>
-                            <input class="input" type="text" id="rec-code" required placeholder="Set recruiter access code">
+                            <h2 id="student-records-heading">Student records</h2>
+                            <p>Profile data and current placement status.</p>
                         </div>
                     </div>
-                    <button type="submit" id="add-rec-btn" class="button">Create recruiter account</button>
-                </form>
-            </section>
-
-            <section class="table-panel section-block">
-                <div class="table-header">
-                    <div>
-                        <strong class="section-title">Recruiter activity</strong>
-                        <p class="muted" style="margin: 6px 0 0;">Partner accounts, jobs posted, and active applicant totals.</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Email</th>
+                                    <th>CGPA</th>
+                                    <th>Core skills</th>
+                                    <th>Placement status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-table-body">
+                                <tr><td colspan="5">Loading student records…</td></tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Company name</th>
-                                <th>HR email</th>
-                                <th>Jobs posted</th>
-                                <th>Active applicants</th>
-                            </tr>
-                        </thead>
-                        <tbody id="partner-stats-body">
-                            <tr><td colspan="4">Loading recruiter activity...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+                </section>
 
-            <section class="table-panel section-block">
-                <div class="table-header">
-                    <div>
-                        <strong class="section-title">Student records</strong>
-                        <p class="muted" style="margin: 6px 0 0;">Profile data and current placement status.</p>
+                <section class="table-panel section-block" aria-labelledby="audit-log-heading">
+                    <div class="table-header">
+                        <div>
+                            <h2 id="audit-log-heading">Audit log</h2>
+                            <p>Recent administrative and placement activity.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Student name</th>
-                                <th>Email</th>
-                                <th>CGPA</th>
-                                <th>Core skills</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-table-body">
-                            <tr><td colspan="5">Loading student records...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section class="table-panel section-block">
-                <div class="table-header">
-                    <div>
-                        <strong class="section-title">Audit log</strong>
-                        <p class="muted" style="margin: 6px 0 0;">Recent administrative and placement activity.</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>When</th>
+                                    <th>Actor</th>
+                                    <th>Activity</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-table-body">
+                                <tr><td colspan="3">Loading audit activity…</td></tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <tbody id="audit-table-body">
-                            <tr><td>Loading audit activity...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+                </section>
+            </main>
         </div>
     </div>
 
@@ -175,11 +168,18 @@
             document.getElementById("admin-login-form").addEventListener("submit", handleAdminLogin);
         };
 
+        function showAdminMessage(elementId, text, type) {
+            const message = document.getElementById(elementId);
+            message.textContent = text;
+            message.className = `form-message visible ${type}`;
+        }
+
         async function handleAdminLogin(event) {
             event.preventDefault();
             const button = document.getElementById("admin-login-btn");
-            button.innerText = "Signing in...";
+            button.innerText = "Signing in…";
             button.disabled = true;
+            document.getElementById("admin-login-message").className = "form-message";
 
             try {
                 const response = await fetch(`${API_BASE}/admin/login`, {
@@ -187,7 +187,6 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ pin: document.getElementById("admin-pin").value })
                 });
-
                 const result = await response.json();
 
                 if (result.status === "success") {
@@ -197,10 +196,10 @@
                     loadAuditLogs();
                     loadPartnerStats();
                 } else {
-                    alert(result.message || "Invalid administrator PIN.");
+                    showAdminMessage("admin-login-message", result.message || "Invalid office PIN.", "error");
                 }
             } catch (error) {
-                alert("The administration service is currently unavailable. Please try again shortly.");
+                showAdminMessage("admin-login-message", "The administration service is unavailable. Please try again shortly.", "error");
             } finally {
                 button.innerText = "Sign in";
                 button.disabled = false;
@@ -215,7 +214,7 @@
         async function addRecruiter(event) {
             event.preventDefault();
             const button = document.getElementById("add-rec-btn");
-            button.innerText = "Creating account...";
+            button.innerText = "Creating account…";
             button.disabled = true;
 
             const recruiterData = {
@@ -233,14 +232,14 @@
                 const result = await response.json();
 
                 if (result.status === "success") {
-                    alert(result.message || "Recruiter account created successfully.");
                     document.getElementById("add-recruiter-form").reset();
+                    showAdminMessage("admin-message", result.message || "Recruiter account created successfully.", "success");
                     loadPartnerStats();
                 } else {
-                    alert(result.message || "We could not create the recruiter account.");
+                    showAdminMessage("admin-message", result.message || "We could not create the recruiter account.", "error");
                 }
             } catch (error) {
-                alert("The recruiter management service is currently unavailable. Please try again shortly.");
+                showAdminMessage("admin-message", "The recruiter management service is unavailable. Please try again shortly.", "error");
             } finally {
                 button.innerText = "Create recruiter account";
                 button.disabled = false;
@@ -253,7 +252,6 @@
             try {
                 const response = await fetch(`${API_BASE}/admin/recruiters/stats`);
                 const stats = await response.json();
-
                 tbody.innerHTML = "";
                 if (!stats.length) {
                     tbody.innerHTML = '<tr><td colspan="4">No recruiter accounts have been added yet.</td></tr>';
@@ -267,7 +265,7 @@
 
                     tbody.innerHTML += `
                         <tr>
-                            <td><strong>${stat.company_name}</strong><div style="margin-top: 8px;">${activityBadge}</div></td>
+                            <td><strong>${stat.company_name}</strong><div style="margin-top: 6px;">${activityBadge}</div></td>
                             <td>${stat.email}</td>
                             <td>${stat.jobs_posted}</td>
                             <td>${stat.total_applicants}</td>
@@ -300,7 +298,7 @@
                 document.getElementById("stat-seeking").innerText = seeking;
                 document.getElementById("stat-cgpa").innerText = averageCgpa || "0.0";
             } catch (error) {
-                console.error("Statistics unavailable", error);
+                showAdminMessage("admin-message", "Placement statistics are currently unavailable.", "error");
             }
         }
 
@@ -313,21 +311,21 @@
                 tbody.innerHTML = "";
 
                 if (!logs.length) {
-                    tbody.innerHTML = "<tr><td>No recent activity recorded.</td></tr>";
+                    tbody.innerHTML = '<tr><td colspan="3">No recent activity recorded.</td></tr>';
                     return;
                 }
 
                 logs.forEach((log) => {
                     tbody.innerHTML += `
                         <tr>
-                            <td style="width: 220px;">${log.timestamp}</td>
-                            <td style="width: 260px;"><strong>${log.first_name} ${log.last_name}</strong></td>
+                            <td>${log.timestamp}</td>
+                            <td><strong>${log.first_name} ${log.last_name}</strong></td>
                             <td>${log.action}</td>
                         </tr>
                     `;
                 });
             } catch (error) {
-                tbody.innerHTML = "<tr><td>We could not load the audit log.</td></tr>";
+                tbody.innerHTML = '<tr><td colspan="3">We could not load the audit log.</td></tr>';
             }
         }
 
@@ -347,18 +345,14 @@
                 students.forEach((student) => {
                     const actionContent = student.is_placed === 1
                         ? '<span class="status-pill">Placed</span>'
-                        : `<button onclick="markAsPlaced(${student.id}, this)" class="button">Mark as placed</button>`;
+                        : `<button onclick="markAsPlaced(${student.id}, this)" class="ghost-button">Mark as placed</button>`;
 
                     tbody.innerHTML += `
                         <tr>
                             <td><strong>${student.first_name || ""} ${student.last_name || ""}</strong></td>
                             <td>${student.email}</td>
                             <td>${student.cgpa}</td>
-                            <td>
-                                <div class="badge-row">
-                                    ${(student.skills || "").split(",").slice(0, 3).map((skill) => skill.trim() ? `<span class="chip">${skill.trim()}</span>` : "").join("")}
-                                </div>
-                            </td>
+                            <td><div class="badge-row">${(student.skills || "").split(",").slice(0, 3).map((skill) => skill.trim() ? `<span class="chip">${skill.trim()}</span>` : "").join("") || '<span class="muted">No skills listed</span>'}</div></td>
                             <td>${actionContent}</td>
                         </tr>
                     `;
@@ -369,11 +363,9 @@
         }
 
         async function markAsPlaced(studentId, buttonElement) {
-            if (!confirm("Mark this student as placed?")) {
-                return;
-            }
+            if (!confirm("Mark this student as placed?")) return;
 
-            buttonElement.innerText = "Updating...";
+            buttonElement.innerText = "Updating…";
             buttonElement.disabled = true;
 
             try {
@@ -381,17 +373,18 @@
                 const result = await response.json();
 
                 if (result.status === "success") {
+                    showAdminMessage("admin-message", "Student marked as placed.", "success");
                     loadAllStudents();
                     loadStatistics();
                     loadAuditLogs();
                     loadPartnerStats();
                 } else {
-                    alert(result.message || "We could not update the placement status.");
+                    showAdminMessage("admin-message", result.message || "We could not update the placement status.", "error");
                     buttonElement.innerText = "Mark as placed";
                     buttonElement.disabled = false;
                 }
             } catch (error) {
-                alert("The update service is currently unavailable. Please try again shortly.");
+                showAdminMessage("admin-message", "The update service is unavailable. Please try again shortly.", "error");
                 buttonElement.innerText = "Mark as placed";
                 buttonElement.disabled = false;
             }

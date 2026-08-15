@@ -4,113 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Workspace | Campus Placement Portal</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260509c">
+    <link rel="stylesheet" href="styles.css?v=20260815">
 </head>
-<body class="light-body">
-    <div id="edit-profile-modal" class="overlay-screen hidden">
-        <section class="login-card" style="max-width: 560px; width: 100%;">
-            <div class="portal-header" style="margin-bottom: 18px;">
-                <div class="portal-title">
-                    <h2>Edit profile details</h2>
-                    <p>Update your CGPA and listed skills.</p>
+<body>
+    <div id="edit-profile-modal" class="overlay-screen hidden" role="dialog" aria-modal="true" aria-labelledby="edit-profile-title">
+        <section class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h2 id="edit-profile-title">Edit profile</h2>
+                    <p>Update your CGPA and the skills visible to recruiters.</p>
                 </div>
                 <button type="button" onclick="closeEditModal()" class="ghost-button">Close</button>
             </div>
 
-            <form id="edit-profile-form" style="display: grid; gap: 16px;">
+            <form id="edit-profile-form" class="form-stack">
                 <div>
                     <label class="field-label" for="edit-cgpa">CGPA</label>
-                    <input class="input" type="number" step="0.01" id="edit-cgpa" required>
+                    <input class="input" type="number" min="0" max="10" step="0.01" id="edit-cgpa" required>
                 </div>
-
                 <div>
                     <label class="field-label" for="edit-skills">Skills</label>
                     <textarea class="textarea" id="edit-skills" placeholder="Python, SQL, React, Data Analysis" required></textarea>
+                    <p class="field-hint">Separate skills with commas.</p>
                 </div>
-
-                <button type="submit" class="button" style="width: 100%;">Save changes</button>
+                <button type="submit" class="button">Save changes</button>
             </form>
         </section>
     </div>
 
-    <div class="page-shell">
-        <header class="topbar">
-            <div class="brand" style="color: var(--text-dark);">
-                <span class="brand-mark">CP</span>
-                <span>Student Workspace</span>
-            </div>
+    <div class="page-shell dashboard-main">
+        <header class="topbar dashboard-header">
+            <a class="brand" href="index.html">
+                <span>Student workspace</span>
+            </a>
             <div class="action-row">
-                <button onclick="openEditModal()" class="button">Edit details</button>
+                <button onclick="openEditModal()" class="ghost-button">Edit profile</button>
                 <button onclick="logout()" class="danger-button">Sign out</button>
             </div>
         </header>
 
-        <section class="surface-card section-block">
-            <div class="portal-header">
-                <div class="portal-title">
-                    <span class="eyebrow">Student Profile</span>
-                    <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: var(--text);">Profile Overview: <span id="display-name">Student</span></h1>
-                    <p>Review your details, update your record, and apply for current openings.</p>
+        <main>
+            <section class="summary-bar" aria-labelledby="profile-heading">
+                <div>
+                    <span class="eyebrow">Your profile</span>
+                    <h1 id="profile-heading"><span id="display-name">Student</span></h1>
+                    <p>Keep your profile accurate so that recruiters can find your relevant experience.</p>
                 </div>
                 <div id="display-status" class="status-pill warn">Loading status</div>
-            </div>
+            </section>
 
-            <div class="visual-frame compact-visual section-image">
-                <img src="assets/student-workspace-visual.jpg" alt="Student profile and portfolio workspace" loading="lazy" decoding="async">
-            </div>
+            <div id="profile-message" class="form-message" role="status" aria-live="polite" style="margin-top: 20px;"></div>
 
-            <div class="card-grid">
-                <div class="metric-card">
-                    <div class="metric-icon">ID</div>
-                    <strong>Registered email</strong>
-                    <span id="display-email" class="metric-value" style="font-size: 1.1rem;">Loading...</span>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-icon">CG</div>
-                    <strong>Current CGPA</strong>
-                    <span id="display-cgpa" class="metric-value">0.0</span>
-                </div>
-            </div>
+            <section class="profile-layout" aria-label="Student profile details">
+                <article class="surface-card profile-details">
+                    <dl class="detail-list">
+                        <div class="detail-row">
+                            <dt>Email address</dt>
+                            <dd id="display-email">Loading…</dd>
+                        </div>
+                        <div class="detail-row">
+                            <dt>Current CGPA</dt>
+                            <dd id="display-cgpa">0.0</dd>
+                        </div>
+                        <div class="detail-row">
+                            <dt>Skills</dt>
+                            <dd id="display-skills">Loading…</dd>
+                        </div>
+                        <div class="detail-row">
+                            <dt>Professional summary</dt>
+                            <dd id="display-bio">Loading profile summary…</dd>
+                        </div>
+                    </dl>
+                </article>
 
-            <div class="section-block">
-                <div class="surface-card" style="background: var(--surface-muted); box-shadow: none;">
-                    <strong class="section-title">Skills listed on your profile</strong>
-                    <p class="muted" style="margin: 8px 0 16px;">These skills are visible to employers and the placement office.</p>
-                    <div id="display-skills" class="chip-row">Loading...</div>
-                </div>
-            </div>
+                <aside class="profile-aside">
+                    <article class="surface-card">
+                        <h2>GitHub profile</h2>
+                        <p>Share project work and public repositories with recruiters.</p>
+                        <a id="display-github" class="ghost-button" href="#" target="_blank" rel="noreferrer">Open GitHub profile</a>
+                    </article>
+                    <article class="surface-card">
+                        <h2>Next step</h2>
+                        <p>Review the available roles below and apply when a role matches your goals.</p>
+                    </article>
+                </aside>
+            </section>
 
-            <div class="section-block">
-                <div class="split-layout">
-                    <div class="surface-card" style="background: var(--surface-muted); box-shadow: none;">
-                        <strong class="section-title">GitHub profile</strong>
-                        <p class="muted" style="margin: 8px 0 14px;">Open your public repository and portfolio links.</p>
-                        <a id="display-github" class="button" href="#" target="_blank" rel="noreferrer">Open GitHub profile</a>
+            <section class="section-block" aria-labelledby="roles-heading">
+                <div class="section-heading">
+                    <div>
+                        <h2 id="roles-heading">Open roles</h2>
+                        <p>Current opportunities available for student applications.</p>
                     </div>
-                    <div class="surface-card" style="background: linear-gradient(180deg, #163253 0%, #10233d 100%); color: var(--text-inverse); box-shadow: none;">
-                        <strong class="section-title">Professional summary</strong>
-                        <p id="display-bio" class="muted" style="color: rgba(248, 251, 255, 0.8); margin-top: 14px;">Loading summary...</p>
-                    </div>
                 </div>
-            </div>
-        </section>
-
-        <section class="section-block">
-            <div class="portal-header">
-                <div class="portal-title">
-                    <h2>Open roles</h2>
-                    <p>Current opportunities available for student applications.</p>
+                <div id="jobs-grid" class="jobs-grid">
+                    <div class="empty-state">Loading open roles…</div>
                 </div>
-            </div>
-            <div id="jobs-grid" class="jobs-grid">
-                <div class="empty-state">Loading current openings...</div>
-            </div>
-        </section>
+            </section>
+        </main>
 
-        <p class="footer-note">Student profile management and job applications.</p>
+        <p class="footer-note">Student profile management and job applications</p>
     </div>
 
     <script>
@@ -125,10 +118,16 @@
             loadJobs();
         }
 
+        function showProfileMessage(text, type) {
+            const message = document.getElementById("profile-message");
+            message.textContent = text;
+            message.className = `form-message visible ${type}`;
+        }
+
         document.getElementById("edit-profile-form").addEventListener("submit", async function(event) {
             event.preventDefault();
             const submitBtn = event.target.querySelector("button");
-            submitBtn.innerText = "Saving...";
+            submitBtn.innerText = "Saving…";
             submitBtn.disabled = true;
 
             const currentUser = JSON.parse(localStorage.getItem("studentSession"));
@@ -143,7 +142,6 @@
                         new_skills: document.getElementById("edit-skills").value
                     })
                 });
-
                 const result = await response.json();
 
                 if (result.status === "success") {
@@ -152,12 +150,12 @@
                     localStorage.setItem("studentSession", JSON.stringify(currentUser));
                     populateDashboard(currentUser);
                     closeEditModal();
-                    alert("Profile updated successfully.");
+                    showProfileMessage("Profile updated successfully.", "success");
                 } else {
-                    alert(result.message || "We could not save your changes.");
+                    showProfileMessage(result.message || "We could not save your changes.", "error");
                 }
             } catch (error) {
-                alert("The profile update service is currently unavailable. Please try again shortly.");
+                showProfileMessage("The profile update service is unavailable. Please try again shortly.", "error");
             } finally {
                 submitBtn.innerText = "Save changes";
                 submitBtn.disabled = false;
@@ -174,6 +172,7 @@
             if (user.github) {
                 githubButton.href = user.github;
                 githubButton.innerText = "Open GitHub profile";
+                githubButton.onclick = null;
             } else {
                 githubButton.href = "#";
                 githubButton.innerText = "GitHub profile not provided";
@@ -182,6 +181,7 @@
 
             const skillsContainer = document.getElementById("display-skills");
             const skillsArray = user.skills ? user.skills.split(",").map((skill) => skill.trim()).filter(Boolean) : [];
+            skillsContainer.className = skillsArray.length ? "chip-row" : "";
             skillsContainer.innerHTML = skillsArray.length
                 ? skillsArray.map((skill) => `<span class="chip">${skill}</span>`).join("")
                 : "No skills listed.";
@@ -208,38 +208,38 @@
                 grid.innerHTML = "";
 
                 if (!jobs.length) {
-                    grid.innerHTML = '<div class="empty-state">There are no open roles available at the moment.</div>';
+                    grid.innerHTML = '<div class="empty-state">There are no open roles at the moment. Please check back later.</div>';
                     return;
                 }
 
                 jobs.forEach((job) => {
-                    const card = document.createElement("div");
+                    const card = document.createElement("article");
                     const experienceLabel = Number(job.required_exp) > 0 ? `${job.required_exp} years experience` : "Entry level";
                     card.className = "job-card";
                     card.innerHTML = `
-                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+                        <div class="job-card-head">
                             <div>
                                 <h3>${job.job_title}</h3>
-                                <p style="margin: 8px 0 0; color: var(--brand); font-weight: 700;">${job.company_name || "Company name not listed"}</p>
+                                <p class="company-name">${job.company_name || "Company name not listed"}</p>
                             </div>
-                            <span class="status-pill">${job.salary || "Compensation not listed"}</span>
+                            <span class="mini-pill">${job.salary || "Compensation not listed"}</span>
                         </div>
                         <div class="job-meta">
                             <span class="mini-pill">${job.location || "Location not listed"}</span>
                             <span class="mini-pill">${experienceLabel}</span>
                         </div>
-                        <p class="muted" style="margin-bottom: 20px;">${job.job_description || "Role description not available."}</p>
-                        <button onclick="applyForJob(${job.job_id}, this)" class="button" style="width: 100%;">Apply for role</button>
+                        <p class="job-description">${job.job_description || "Role description not available."}</p>
+                        <button onclick="applyForJob(${job.job_id}, this)" class="button">Apply for role</button>
                     `;
                     grid.appendChild(card);
                 });
             } catch (error) {
-                grid.innerHTML = '<div class="empty-state">We could not load current openings. Please try again later.</div>';
+                grid.innerHTML = '<div class="empty-state">We could not load open roles. Please try again later.</div>';
             }
         }
 
         async function applyForJob(jobId, buttonElement) {
-            buttonElement.innerText = "Submitting application...";
+            buttonElement.innerText = "Submitting…";
             buttonElement.disabled = true;
 
             const currentUser = JSON.parse(localStorage.getItem("studentSession"));
@@ -253,14 +253,15 @@
                 const result = await response.json();
 
                 if (result.status === "success") {
-                    buttonElement.innerText = "Application submitted";
+                    buttonElement.innerText = "Application sent";
+                    showProfileMessage("Your application has been submitted.", "success");
                 } else {
-                    alert(result.message || "We could not submit your application.");
+                    showProfileMessage(result.message || "We could not submit your application.", "error");
                     buttonElement.innerText = "Apply for role";
                     buttonElement.disabled = false;
                 }
             } catch (error) {
-                alert("The application service is currently unavailable. Please try again shortly.");
+                showProfileMessage("The application service is unavailable. Please try again shortly.", "error");
                 buttonElement.innerText = "Apply for role";
                 buttonElement.disabled = false;
             }

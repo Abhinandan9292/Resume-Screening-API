@@ -3,118 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Registration | Campus Placement Portal</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260509c">
+    <title>Create Student Profile | Campus Placement Portal</title>
+    <link rel="stylesheet" href="styles.css?v=20260815">
 </head>
-<body class="light-body">
+<body>
     <div class="page-shell">
         <header class="topbar">
-            <a class="brand" href="index.html" style="color: var(--text-dark);">
-                <span class="brand-mark">CP</span>
+            <a class="brand" href="index.html">
                 <span>Campus Placement Portal</span>
             </a>
             <div class="action-row">
-                <a class="ghost-button" href="index.html" style="color: var(--text-dark);">Back Home</a>
-                <a class="button" href="login.html">Student Login</a>
+                <a class="ghost-button" href="index.html">Back to home</a>
+                <a class="button" href="login.html">Student sign in</a>
             </div>
         </header>
 
-        <section class="portal-header">
-            <div class="portal-title">
-                <span class="eyebrow">Student Registration</span>
-                <h1 class="page-title" style="font-size: clamp(2.4rem, 5vw, 4rem); color: var(--text);">Register a student profile.</h1>
-                <p>Upload a resume to prefill selected fields, then review and submit the profile.</p>
+        <main>
+            <section class="page-header">
+                <div>
+                    <span class="eyebrow">Student registration</span>
+                    <h1>Create your student profile</h1>
+                    <p>Complete the fields below so recruiters can find and evaluate your profile. A resume upload can help draft your skills and summary.</p>
+                </div>
+            </section>
+
+            <div class="content-grid wide-form">
+                <aside class="surface-card">
+                    <div class="panel-heading">
+                        <h2>Before you begin</h2>
+                        <p>You can create a profile without uploading a resume.</p>
+                    </div>
+                    <ol class="instruction-list">
+                        <li>Upload a PDF resume to prefill skills and a professional summary.</li>
+                        <li>Review the imported content and add your academic details.</li>
+                        <li>Create your profile, then sign in to view open roles.</li>
+                    </ol>
+
+                    <div class="file-area">
+                        <label class="field-label" for="resumeUpload">Resume (PDF, optional)</label>
+                        <input class="input" type="file" id="resumeUpload" accept=".pdf,application/pdf">
+                        <p id="resumeStatus" class="file-status" aria-live="polite">No resume selected.</p>
+                    </div>
+                </aside>
+
+                <form id="studentForm" class="form-panel">
+                    <div class="panel-heading">
+                        <h2>Profile details</h2>
+                        <p>Fields marked as required must be completed before you create the profile.</p>
+                    </div>
+
+                    <div id="registration-message" class="form-message" role="alert" aria-live="polite"></div>
+
+                    <div class="field-grid">
+                        <div>
+                            <label class="field-label" for="first_name">First name</label>
+                            <input class="input" type="text" id="first_name" autocomplete="given-name" required>
+                        </div>
+                        <div>
+                            <label class="field-label" for="last_name">Last name</label>
+                            <input class="input" type="text" id="last_name" autocomplete="family-name" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="email">Email address</label>
+                        <input class="input" type="email" id="email" autocomplete="email" required>
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="password">Create password</label>
+                        <input class="input" type="password" id="password" autocomplete="new-password" required>
+                    </div>
+
+                    <div class="field-grid">
+                        <div>
+                            <label class="field-label" for="cgpa">CGPA</label>
+                            <input class="input" type="number" step="0.01" min="0" max="10" id="cgpa" required>
+                        </div>
+                        <div>
+                            <label class="field-label" for="github">GitHub profile URL</label>
+                            <input class="input" type="url" id="github" placeholder="https://github.com/username" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="skills">Skills</label>
+                        <textarea class="textarea" id="skills" placeholder="Python, SQL, React, Data Analysis" required></textarea>
+                        <p class="field-hint">Separate skills with commas.</p>
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="bio">Professional summary</label>
+                        <textarea class="textarea" id="bio" placeholder="Summarize your academic strengths, project experience, and the roles you are pursuing." required></textarea>
+                    </div>
+
+                    <button type="submit" class="button">Create profile</button>
+                </form>
             </div>
-        </section>
-
-        <section class="split-layout">
-            <article class="surface-card">
-                <div class="visual-frame section-image">
-                    <img src="assets/student-workspace-visual.jpg" alt="Student building a placement profile on a laptop" loading="eager" decoding="async">
-                </div>
-                <h2 class="section-title">Resume upload</h2>
-                <p class="muted">Upload a PDF resume to extract a draft skills list and summary.</p>
-                <div class="stack-item" style="margin-top: 20px;">
-                    <label class="field-label" for="resumeUpload">Upload PDF resume</label>
-                    <input class="input" type="file" id="resumeUpload" accept=".pdf">
-                    <p id="resumeStatus" class="muted" style="margin: 12px 0 0;">No file selected.</p>
-                </div>
-                <div class="stack-list" style="margin-top: 20px;">
-                    <div class="stack-item">
-                        <strong>Profile details</strong>
-                        <p class="muted">Academic information, skills, GitHub profile, and contact details.</p>
-                    </div>
-                    <div class="stack-item">
-                        <strong>Review before submit</strong>
-                        <p class="muted">Check imported content and make any edits before saving your profile.</p>
-                    </div>
-                </div>
-            </article>
-
-            <form id="studentForm" class="form-panel" style="display: grid; gap: 18px;">
-                <div class="field-grid">
-                    <div>
-                        <label class="field-label" for="first_name">First name</label>
-                        <input class="input" type="text" id="first_name" required>
-                    </div>
-                    <div>
-                        <label class="field-label" for="last_name">Last name</label>
-                        <input class="input" type="text" id="last_name" required>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="field-label" for="email">Email address</label>
-                    <input class="input" type="email" id="email" required>
-                </div>
-
-                <div>
-                    <label class="field-label" for="password">Create password</label>
-                    <input class="input" type="password" id="password" required>
-                </div>
-
-                <div class="field-grid">
-                    <div>
-                        <label class="field-label" for="cgpa">CGPA</label>
-                        <input class="input" type="number" step="0.01" id="cgpa" required>
-                    </div>
-                    <div>
-                        <label class="field-label" for="github">GitHub profile</label>
-                        <input class="input" type="text" id="github" required>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="field-label" for="skills">Skills</label>
-                    <textarea class="textarea" id="skills" placeholder="Python, SQL, React, Data Analysis" required></textarea>
-                </div>
-
-                <div>
-                    <label class="field-label" for="bio">Professional summary</label>
-                    <textarea class="textarea" id="bio" placeholder="Summarize your academic strengths, project experience, and the type of roles you are pursuing." required></textarea>
-                </div>
-
-                <button type="submit" class="button" style="width: 100%;">Create profile</button>
-            </form>
-        </section>
+        </main>
     </div>
 
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
+        const registrationMessage = document.getElementById("registration-message");
+
+        function showRegistrationMessage(text, type) {
+            registrationMessage.textContent = text;
+            registrationMessage.className = `form-message visible ${type}`;
+        }
+
+        function setResumeStatus(text, type = "") {
+            const status = document.getElementById("resumeStatus");
+            status.innerText = text;
+            status.style.color = type === "error" ? "var(--danger)" : type === "success" ? "var(--success)" : "var(--text-muted)";
+        }
 
         document.getElementById("resumeUpload").addEventListener("change", async (event) => {
             const file = event.target.files[0];
-            const status = document.getElementById("resumeStatus");
 
             if (!file) {
-                status.innerText = "No file selected.";
+                setResumeStatus("No resume selected.");
                 return;
             }
 
-            status.innerText = "Processing resume...";
+            setResumeStatus("Reading your resume…");
             const formData = new FormData();
             formData.append("file", file);
 
@@ -123,17 +135,18 @@
                 const data = await response.json();
                 document.getElementById("skills").value = data.suggested_skills || "";
                 document.getElementById("bio").value = data.bio_preview || "";
-                status.innerText = "Resume processed successfully.";
+                setResumeStatus("Resume processed. Review the suggested fields before submitting.", "success");
             } catch (error) {
-                status.innerText = "We could not process the file. Please try again or complete the form manually.";
+                setResumeStatus("We could not process the file. You can complete the form manually.", "error");
             }
         });
 
         document.getElementById("studentForm").addEventListener("submit", async function(event) {
             event.preventDefault();
             const submitBtn = event.target.querySelector("button");
-            submitBtn.innerText = "Creating profile...";
+            submitBtn.innerText = "Creating profile…";
             submitBtn.disabled = true;
+            registrationMessage.className = "form-message";
 
             const studentData = {
                 first_name: document.getElementById("first_name").value,
@@ -155,17 +168,16 @@
                     },
                     body: JSON.stringify(studentData)
                 });
-
                 const result = await response.json();
 
                 if (response.ok && result.status === "success") {
-                    alert("Profile created successfully.");
-                    window.location.href = "index.html";
+                    showRegistrationMessage("Profile created. You can now sign in with your new account.", "success");
+                    setTimeout(() => { window.location.href = "login.html"; }, 900);
                 } else {
-                    alert(result.message || "We could not create the profile. Please review the form and try again.");
+                    showRegistrationMessage(result.message || "We could not create the profile. Review the form and try again.", "error");
                 }
             } catch (error) {
-                alert("The registration service is currently unavailable. Please try again shortly.");
+                showRegistrationMessage("The registration service is unavailable. Please try again shortly.", "error");
                 console.error(error);
             } finally {
                 submitBtn.innerText = "Create profile";
