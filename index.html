@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMTc1Y2QzIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjN2Y1NmQ5Ii8+CjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxNCIgZmlsbD0idXJsKCNnKSIvPgo8cGF0aCBkPSJNMzIgMTQgMTAgMjVsMjIgMTEgMTctOC41VjM4aDRWMjVMMzIgMTRaIiBmaWxsPSIjZmZmIi8+CjxwYXRoIGQ9Ik0xOCAzMC44djguNkwzMiA0NmwxNC02LjZ2LTguNmwtMTQgNi42LTE0LTYuNloiIGZpbGw9IiNmZmYiLz4KPC9zdmc+">
+    <meta name="theme-color" content="#175cd3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <title>Campus Placement Portal</title>
     <link rel="stylesheet" href="styles.css?v=20260815">
 </head>
 <body>
     <div class="page-shell">
         <header class="topbar">
-            <a class="brand" href="index.html" aria-label="Campus Placement Portal home">
+            <a class="brand" href="index.html" aria-label="Campus Placement Portal home"><span class="brand-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 1 8l11 6 9-4.9V15h2V8L12 2Z" fill="currentColor"/><path d="M5 12.6v3.9L12 20l7-3.5v-3.9l-7 3.5-7-3.5Z" fill="currentColor"/></svg></span>
                 <span>Campus Placement Portal</span>
             </a>
             <div class="action-row">
@@ -19,10 +24,30 @@
         </header>
 
         <main>
-            <section class="app-intro" aria-labelledby="page-title">
-                <span class="eyebrow">Placement management</span>
-                <h1 id="page-title">The right workspace for every part of campus hiring.</h1>
-                <p class="lead">Create a student profile, manage recruiting activity, or oversee placement operations from one shared portal.</p>
+            <section class="hero-split" aria-labelledby="page-title">
+                <div class="app-intro" style="padding: 0;">
+                    <span class="eyebrow">Placement management</span>
+                    <h1 id="page-title">The right workspace for every part of campus hiring.</h1>
+                    <p class="lead">Create a student profile, manage recruiting activity, or oversee placement operations from one shared portal.</p>
+                    <div class="hero-actions">
+                        <a class="button" href="student.html">Create student profile</a>
+                        <a class="ghost-button" href="recruiter.html">Recruiter access</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="hero-glow one" aria-hidden="true"></div>
+                    <div class="hero-glow two" aria-hidden="true"></div>
+                    <div class="hero-visual-card">
+                        <img src="assets/campus-operations-hero.jpg" alt="Students and recruiters collaborating in a campus placement workspace" loading="eager" decoding="async">
+                        <div class="hero-badge-float">
+                            <span class="hero-badge-dot" aria-hidden="true"></span>
+                            <div>
+                                <strong>Live placement activity</strong>
+                                <span>Student, recruiter and office workspaces in sync</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <section class="portal-grid" aria-label="Choose a workspace">
