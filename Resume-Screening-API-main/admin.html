@@ -3,183 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placement Office | Campus Placement Portal</title>
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0b0d0d">
+    <title>Placement office · Hirely</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260509c">
-</head>
-<body class="light-body">
-    <div id="admin-login-screen" class="overlay-screen">
-        <section class="login-card" style="max-width: 520px; width: 100%;">
-            <div class="brand" style="color: var(--text-dark); margin-bottom: 18px;">
-                <span class="brand-mark">CP</span>
-                <span>Placement Office</span>
-            </div>
-            <h2>Administrator sign in</h2>
-            <p class="muted">Use the office PIN to access recruiter management, student records, and placement reporting.</p>
-            <div class="visual-frame compact-visual">
-                <img src="assets/recruiter-operations-visual.jpg" alt="Placement office operations review" loading="eager" decoding="async">
-            </div>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=hirely-2">
+    <link rel="stylesheet" href="assets/css/marketing.css?v=hirely-2">
+    <style>
+        .cell-bar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
 
-            <form id="admin-login-form" style="display: grid; gap: 16px; margin-top: 24px;">
-                <div>
-                    <label class="field-label" for="admin-pin">Office PIN</label>
-                    <input class="input" type="password" id="admin-pin" required placeholder="Enter administrator PIN">
+        .cell-bar .bar-track {
+            width: 96px;
+            height: 6px;
+        }
+
+        .cell-bar .cell-num {
+            min-width: 2ch;
+            text-align: right;
+        }
+
+        .meter-row {
+            display: grid;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .session-badge {
+            margin: 0 10px 6px;
+            justify-self: start;
+        }
+
+        @media (max-width: 960px) {
+            .session-badge {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sign in -->
+    <div id="admin-login-screen" class="auth">
+        <a class="skip-link" href="#admin-login-form">Skip to sign in</a>
+        <aside class="auth-aside">
+            <a class="brand" href="index.html">
+                <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8M9 12h6"/><path d="M4.5 8.5V6A1.5 1.5 0 0 1 6 4.5h2.5M15.5 4.5H18A1.5 1.5 0 0 1 19.5 6v2.5M19.5 15.5V18a1.5 1.5 0 0 1-1.5 1.5h-2.5M8.5 19.5H6A1.5 1.5 0 0 1 4.5 18v-2.5"/></svg>
+                <span>Hirely</span>
+            </a>
+            <div class="auth-aside-body">
+                <span class="eyebrow eyebrow--dot">Placement office</span>
+                <p class="auth-aside-title">Manage recruiter access, student records and placement outcomes.</p>
+                <ul class="auth-points">
+                    <li><i class="i" data-icon="check"></i>Create recruiter accounts with access codes</li>
+                    <li><i class="i" data-icon="check"></i>Mark students as placed and follow the placement rate</li>
+                    <li><i class="i" data-icon="check"></i>Review recent activity in the audit log</li>
+                </ul>
+                <div class="mini-preview" aria-hidden="true">
+                    <div class="mini-head"><span>Placement overview</span><span class="frame-tag">Preview</span></div>
+                    <div class="metrics metrics--compact">
+                        <div class="metric"><span class="ph ph--strong" style="width: 40%; height: 14px;"></span><span class="metric-label">Seeking roles</span></div>
+                        <div class="metric"><span class="ph ph--strong" style="width: 32%; height: 14px;"></span><span class="metric-label">Placed</span></div>
+                        <div class="metric"><span class="ph ph--strong" style="width: 46%; height: 14px;"></span><span class="metric-label">Placement rate</span></div>
+                    </div>
+                    <div class="mini-row" style="border-top: 1px solid var(--line);">
+                        <span class="frame-person"><span class="avatar"></span><span class="frame-lines"><span class="ph ph--strong" style="width: 60%"></span><span class="ph" style="width: 80%"></span></span></span>
+                        <span class="badge">Seeking</span>
+                        <span class="btn btn-secondary"><i class="i" data-icon="check"></i>Mark as placed</span>
+                    </div>
+                    <div class="mini-row">
+                        <span class="frame-person"><span class="avatar"></span><span class="frame-lines"><span class="ph ph--strong" style="width: 48%"></span><span class="ph" style="width: 70%"></span></span></span>
+                        <span class="badge badge--positive">Placed</span>
+                        <span class="subtle">—</span>
+                    </div>
                 </div>
-                <button type="submit" id="admin-login-btn" class="button" style="width: 100%;">Sign in</button>
-            </form>
+            </div>
+            <p class="mini-caption">Interface preview with placeholder content.</p>
+        </aside>
+
+        <section class="auth-panel">
+            <div class="auth-panel-top">
+                <span></span>
+                <a class="btn btn-ghost btn-sm" href="index.html"><i class="i" data-icon="arrow-left"></i>Back to home</a>
+            </div>
+            <section class="auth-card" aria-labelledby="admin-login-title">
+                <span class="eyebrow">Administrators</span>
+                <h1 class="auth-title" id="admin-login-title">Administrator sign in</h1>
+                <p class="auth-sub">Use the office PIN to access recruiter management, student records and placement reporting.</p>
+
+                <form id="admin-login-form" class="auth-form" data-validate novalidate>
+                    <div id="admin-login-alert" hidden></div>
+                    <div class="field">
+                        <label class="field-label" for="admin-pin">Office PIN</label>
+                        <div class="input-wrap">
+                            <input class="input" type="password" id="admin-pin" autocomplete="current-password" required placeholder="Enter administrator PIN">
+                            <button type="button" class="btn btn-icon btn-sm input-action" data-toggle-password aria-controls="admin-pin" aria-pressed="false" aria-label="Show PIN"><i class="i" data-icon="eye"></i></button>
+                        </div>
+                    </div>
+                    <button type="submit" id="admin-login-btn" class="btn btn-primary btn-block btn-lg">Sign in</button>
+                </form>
+
+                <div class="auth-divider">Other workspaces</div>
+                <div class="auth-alt">
+                    <a class="btn btn-secondary" href="login.html"><i class="i" data-icon="cap"></i>Student</a>
+                    <a class="btn btn-secondary" href="recruiter.html"><i class="i" data-icon="building"></i>Recruiter</a>
+                </div>
+            </section>
+            <p class="auth-legal">Hirely · Campus Placement Portal</p>
         </section>
     </div>
 
+    <!-- Workspace -->
     <div id="admin-dashboard" class="hidden">
-        <div class="page-shell">
-            <header class="topbar">
-                <div class="brand" style="color: var(--text-dark);">
-                    <span class="brand-mark">CP</span>
-                    <span>Placement Office</span>
-                </div>
-                <div class="status-pill">Authorized session</div>
-            </header>
-
-            <section class="surface-card section-block">
-                <div class="split-layout">
-                    <div class="portal-header" style="margin-bottom: 0;">
-                        <div class="portal-title">
-                            <span class="eyebrow">Placement Administration</span>
-                            <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: var(--text);">Administrative overview.</h1>
-                            <p>Monitor student records, recruiter activity, and placement outcomes from one administrative dashboard.</p>
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div class="app">
+            <aside class="sidebar">
+                <a class="brand" href="index.html">
+                    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8M9 12h6"/><path d="M4.5 8.5V6A1.5 1.5 0 0 1 6 4.5h2.5M15.5 4.5H18A1.5 1.5 0 0 1 19.5 6v2.5M19.5 15.5V18a1.5 1.5 0 0 1-1.5 1.5h-2.5M8.5 19.5H6A1.5 1.5 0 0 1 4.5 18v-2.5"/></svg>
+                    <span>Hirely</span>
+                </a>
+                <p class="side-label">Placement office</p>
+                <nav class="side-nav" aria-label="Placement office">
+                    <a class="nav-item" href="#overview" data-view-link="overview"><i class="i" data-icon="chart"></i>Overview</a>
+                    <a class="nav-item" href="#recruiters" data-view-link="recruiters"><i class="i" data-icon="building"></i>Recruiters<span class="nav-count" id="nav-recruiters-count"></span></a>
+                    <a class="nav-item" href="#students" data-view-link="students"><i class="i" data-icon="cap"></i>Students<span class="nav-count" id="nav-students-count"></span></a>
+                </nav>
+                <div class="sidebar-foot">
+                    <span class="badge badge--positive session-badge">Authorized session</span>
+                    <div class="account">
+                        <span class="avatar" aria-hidden="true"><i class="i" data-icon="shield"></i></span>
+                        <div class="account-text">
+                            <span class="account-name">Placement Office</span>
+                            <span class="account-role">Administrator</span>
                         </div>
                     </div>
-                    <div class="visual-frame">
-                        <img src="assets/campus-operations-hero.jpg" alt="Campus placement office and recruiter operations" loading="lazy" decoding="async">
-                    </div>
+                    <button type="button" class="nav-item" onclick="location.reload()"><i class="i" data-icon="lock"></i><span class="label-text">Lock session</span></button>
                 </div>
+            </aside>
 
-                <div class="stats-grid">
-                    <article class="metric-card">
-                        <div class="metric-icon">SE</div>
-                        <strong>Students seeking roles</strong>
-                        <span id="stat-seeking" class="metric-value">...</span>
-                    </article>
-                    <article class="metric-card">
-                        <div class="metric-icon">PL</div>
-                        <strong>Students placed</strong>
-                        <span id="stat-hired" class="metric-value">...</span>
-                    </article>
-                    <article class="metric-card">
-                        <div class="metric-icon">CG</div>
-                        <strong>Average CGPA of placed students</strong>
-                        <span id="stat-cgpa" class="metric-value">...</span>
-                    </article>
-                </div>
-            </section>
+            <main class="main" id="main">
+                <div class="main-inner">
 
-            <section class="form-panel section-block">
-                <div class="portal-header">
-                    <div class="portal-title">
-                        <h2>Add recruiter account</h2>
-                        <p>Create access for a recruiting partner.</p>
-                    </div>
-                </div>
-                <form id="add-recruiter-form" onsubmit="addRecruiter(event)" style="display: grid; gap: 18px;">
-                    <div class="field-grid thirds">
-                        <div>
-                            <label class="field-label" for="rec-company">Company name</label>
-                            <input class="input" type="text" id="rec-company" required placeholder="Company name">
+                    <!-- Overview -->
+                    <section class="view" data-view="overview" aria-labelledby="overview-title">
+                        <header class="page-head">
+                            <div>
+                                <span class="eyebrow">Placement administration</span>
+                                <h1 class="page-title" id="overview-title">Placement overview</h1>
+                                <p class="page-sub">Monitor student records, recruiter activity and placement outcomes from one administrative dashboard.</p>
+                            </div>
+                            <div class="page-actions">
+                                <a class="btn btn-secondary" href="#students" data-view-link="students"><i class="i" data-icon="cap"></i>Student records</a>
+                                <button type="button" class="btn btn-primary" onclick="openRecruiterForm()"><i class="i" data-icon="plus"></i>Add recruiter</button>
+                            </div>
+                        </header>
+
+                        <div class="stack">
+                            <div class="metrics" aria-label="Placement figures">
+                                <article class="metric">
+                                    <span id="stat-seeking" class="metric-value is-loading">...</span>
+                                    <span class="metric-label">Students seeking roles <i class="i" data-icon="users"></i></span>
+                                </article>
+                                <article class="metric">
+                                    <span id="stat-hired" class="metric-value is-loading">...</span>
+                                    <span class="metric-label">Students placed <i class="i" data-icon="check-circle"></i></span>
+                                </article>
+                                <article class="metric">
+                                    <span id="stat-cgpa" class="metric-value is-loading">...</span>
+                                    <span class="metric-label">Average CGPA of placed students <i class="i" data-icon="cap"></i></span>
+                                </article>
+                                <article class="metric">
+                                    <span id="stat-rate" class="metric-value is-loading">...</span>
+                                    <div class="meter-row">
+                                        <div class="meter" id="stat-rate-meter" role="img" aria-label="Placement rate"><span style="width: 0%"></span></div>
+                                        <span class="metric-label">Placement rate <i class="i" data-icon="target"></i></span>
+                                    </div>
+                                </article>
+                            </div>
+
+                            <div class="grid-main-side">
+                                <section class="panel" aria-labelledby="audit-title">
+                                    <div class="panel-head">
+                                        <div>
+                                            <h2 class="panel-title" id="audit-title">Audit log</h2>
+                                            <p class="panel-sub">Recent administrative and placement activity.</p>
+                                        </div>
+                                        <button type="button" class="btn btn-ghost btn-sm" onclick="loadAuditLogs()"><i class="i" data-icon="refresh"></i>Refresh</button>
+                                    </div>
+                                    <div class="table-wrap">
+                                        <table class="table table--stack">
+                                            <thead>
+                                                <tr><th scope="col">Time</th><th scope="col">Actor</th><th scope="col">Action</th></tr>
+                                            </thead>
+                                            <tbody id="audit-table-body">
+                                                <tr><td colspan="3">Loading audit activity...</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </section>
+
+                                <section class="panel" aria-labelledby="skills-title">
+                                    <div class="panel-head">
+                                        <div>
+                                            <h2 class="panel-title" id="skills-title">Skills across students</h2>
+                                            <p class="panel-sub">Student records listing each skill.</p>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body" id="student-skills"></div>
+                                </section>
+                            </div>
                         </div>
-                        <div>
-                            <label class="field-label" for="rec-email">HR email</label>
-                            <input class="input" type="email" id="rec-email" required placeholder="hr@company.com">
+                    </section>
+
+                    <!-- Recruiters -->
+                    <section class="view" data-view="recruiters" aria-labelledby="recruiters-title" hidden>
+                        <header class="page-head">
+                            <div>
+                                <span class="eyebrow">Recruiting partners</span>
+                                <h1 class="page-title" id="recruiters-title">Recruiters</h1>
+                                <p class="page-sub">Create access for recruiting partners and follow their activity.</p>
+                            </div>
+                        </header>
+
+                        <div class="stack">
+                            <section class="panel" aria-labelledby="add-rec-title">
+                                <div class="panel-head">
+                                    <div>
+                                        <h2 class="panel-title" id="add-rec-title">Add recruiter account</h2>
+                                        <p class="panel-sub">Create access for a recruiting partner. Share the access code with them directly.</p>
+                                    </div>
+                                </div>
+                                <form id="add-recruiter-form" onsubmit="addRecruiter(event)" data-validate novalidate>
+                                    <div class="panel-body stack">
+                                        <div id="rec-alert" hidden></div>
+                                        <div class="field-grid thirds">
+                                            <div class="field">
+                                                <label class="field-label" for="rec-company">Company name</label>
+                                                <input class="input" type="text" id="rec-company" required placeholder="Company name">
+                                            </div>
+                                            <div class="field">
+                                                <label class="field-label" for="rec-email">HR email</label>
+                                                <input class="input" type="email" id="rec-email" required placeholder="hr@company.com">
+                                            </div>
+                                            <div class="field">
+                                                <label class="field-label" for="rec-code">Access code</label>
+                                                <input class="input" type="text" id="rec-code" required placeholder="Set recruiter access code" autocomplete="off">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-foot form-actions" style="justify-content: flex-end;">
+                                        <button type="submit" id="add-rec-btn" class="btn btn-primary"><i class="i" data-icon="plus"></i>Create recruiter account</button>
+                                    </div>
+                                </form>
+                            </section>
+
+                            <section class="panel" aria-labelledby="partners-title">
+                                <div class="panel-head">
+                                    <div>
+                                        <h2 class="panel-title" id="partners-title">Recruiter activity</h2>
+                                        <p class="panel-sub">Partner accounts, jobs posted and active applicant totals. Active applicants count only students who are not yet placed.</p>
+                                    </div>
+                                </div>
+                                <div class="table-wrap">
+                                    <table class="table table--stack">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Company</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col" class="cell-right">Jobs posted</th>
+                                                <th scope="col" class="cell-right">Active applicants</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="partner-stats-body">
+                                            <tr><td colspan="4">Loading recruiter activity...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
                         </div>
-                        <div>
-                            <label class="field-label" for="rec-code">Access code</label>
-                            <input class="input" type="text" id="rec-code" required placeholder="Set recruiter access code">
-                        </div>
-                    </div>
-                    <button type="submit" id="add-rec-btn" class="button">Create recruiter account</button>
-                </form>
-            </section>
+                    </section>
 
-            <section class="table-panel section-block">
-                <div class="table-header">
-                    <div>
-                        <strong class="section-title">Recruiter activity</strong>
-                        <p class="muted" style="margin: 6px 0 0;">Partner accounts, jobs posted, and active applicant totals.</p>
-                    </div>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Company name</th>
-                                <th>HR email</th>
-                                <th>Jobs posted</th>
-                                <th>Active applicants</th>
-                            </tr>
-                        </thead>
-                        <tbody id="partner-stats-body">
-                            <tr><td colspan="4">Loading recruiter activity...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+                    <!-- Students -->
+                    <section class="view" data-view="students" aria-labelledby="students-title" hidden>
+                        <header class="page-head">
+                            <div>
+                                <span class="eyebrow">Records</span>
+                                <h1 class="page-title" id="students-title">Student records</h1>
+                                <p class="page-sub">Profile data and current placement status.</p>
+                            </div>
+                        </header>
 
-            <section class="table-panel section-block">
-                <div class="table-header">
-                    <div>
-                        <strong class="section-title">Student records</strong>
-                        <p class="muted" style="margin: 6px 0 0;">Profile data and current placement status.</p>
-                    </div>
+                        <section class="panel" aria-label="Student records">
+                            <div class="toolbar">
+                                <div class="input-wrap grow">
+                                    <i class="i" data-icon="search"></i>
+                                    <input class="input input-sm" type="search" id="student-search" placeholder="Search by name, email or skill" aria-label="Search students">
+                                </div>
+                                <select class="select select-sm" id="student-status" aria-label="Filter by status" style="width: auto; min-width: 150px;">
+                                    <option value="">All students</option>
+                                    <option value="seeking">Seeking roles</option>
+                                    <option value="placed">Placed</option>
+                                </select>
+                                <span class="toolbar-count" id="student-count" aria-live="polite"></span>
+                            </div>
+                            <div class="table-wrap">
+                                <table class="table table--stack">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Student</th>
+                                            <th scope="col">CGPA</th>
+                                            <th scope="col">Core skills</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col"><span class="sr-only">Action</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-table-body">
+                                        <tr><td colspan="5">Loading student records...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </section>
                 </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Student name</th>
-                                <th>Email</th>
-                                <th>CGPA</th>
-                                <th>Core skills</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-table-body">
-                            <tr><td colspan="5">Loading student records...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section class="table-panel section-block">
-                <div class="table-header">
-                    <div>
-                        <strong class="section-title">Audit log</strong>
-                        <p class="muted" style="margin: 6px 0 0;">Recent administrative and placement activity.</p>
-                    </div>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <tbody id="audit-table-body">
-                            <tr><td>Loading audit activity...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+            </main>
         </div>
     </div>
 
+    <script src="assets/js/hirely.js?v=hirely-2"></script>
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
+        let allStudents = [];
+        let studentsState = "loading";
+        let views = null;
 
-        window.onload = () => {
-            document.getElementById("admin-login-form").addEventListener("submit", handleAdminLogin);
-        };
+        document.getElementById("admin-login-form").addEventListener("submit", handleAdminLogin);
 
         async function handleAdminLogin(event) {
             event.preventDefault();
             const button = document.getElementById("admin-login-btn");
-            button.innerText = "Signing in...";
-            button.disabled = true;
+            Hirely.clearAlert("admin-login-alert");
+            Hirely.busy(button, "Signing in...");
 
             try {
                 const response = await fetch(`${API_BASE}/admin/login`, {
@@ -197,26 +366,33 @@
                     loadAuditLogs();
                     loadPartnerStats();
                 } else {
-                    alert(result.message || "Invalid administrator PIN.");
+                    Hirely.showAlert("admin-login-alert", result.message || "Invalid administrator PIN.");
+                    document.getElementById("admin-pin").select();
                 }
             } catch (error) {
-                alert("The administration service is currently unavailable. Please try again shortly.");
+                Hirely.showAlert("admin-login-alert", "The administration service is currently unavailable. Please try again shortly.");
             } finally {
-                button.innerText = "Sign in";
-                button.disabled = false;
+                Hirely.idle(button);
             }
         }
 
         function showAdminDashboard() {
             document.getElementById("admin-login-screen").classList.add("hidden");
             document.getElementById("admin-dashboard").classList.remove("hidden");
+            document.getElementById("admin-pin").value = "";
+            if (!views) views = Hirely.initViews();
+        }
+
+        function openRecruiterForm() {
+            views.show("recruiters");
+            setTimeout(() => document.getElementById("rec-company").focus(), 60);
         }
 
         async function addRecruiter(event) {
             event.preventDefault();
             const button = document.getElementById("add-rec-btn");
-            button.innerText = "Creating account...";
-            button.disabled = true;
+            Hirely.clearAlert("rec-alert");
+            Hirely.busy(button, "Creating account...");
 
             const recruiterData = {
                 company_name: document.getElementById("rec-company").value,
@@ -233,53 +409,83 @@
                 const result = await response.json();
 
                 if (result.status === "success") {
-                    alert(result.message || "Recruiter account created successfully.");
+                    Hirely.toast(result.message || "Recruiter account created successfully.", "success");
                     document.getElementById("add-recruiter-form").reset();
                     loadPartnerStats();
                 } else {
-                    alert(result.message || "We could not create the recruiter account.");
+                    Hirely.showAlert("rec-alert", result.message || "We could not create the recruiter account.");
                 }
             } catch (error) {
-                alert("The recruiter management service is currently unavailable. Please try again shortly.");
+                Hirely.showAlert("rec-alert", "The recruiter management service is currently unavailable. Please try again shortly.");
             } finally {
-                button.innerText = "Create recruiter account";
-                button.disabled = false;
+                Hirely.idle(button);
             }
+        }
+
+        function cellBar(value, max) {
+            const n = Number(value) || 0;
+            const pct = max > 0 ? Math.max(n > 0 ? 3 : 0, Math.round((n / max) * 100)) : 0;
+            return `<div class="cell-bar"><span class="bar-track" aria-hidden="true"><span class="bar-fill" style="width: ${pct}%; ${n === 0 ? "min-width: 0;" : ""}"></span></span><span class="cell-num">${Hirely.esc(Hirely.formatNumber(value))}</span></div>`;
         }
 
         async function loadPartnerStats() {
             const tbody = document.getElementById("partner-stats-body");
+            if (tbody.querySelector("tr:not(.table-state)") && !tbody.querySelector("td[colspan]")) tbody.classList.add("is-refreshing");
+            else tbody.innerHTML = Hirely.skeletonRows(4, 3);
 
             try {
                 const response = await fetch(`${API_BASE}/admin/recruiters/stats`);
                 const stats = await response.json();
+                if (!Array.isArray(stats)) throw new Error("Unexpected response for /admin/recruiters/stats");
 
-                tbody.innerHTML = "";
+                document.getElementById("nav-recruiters-count").innerText = stats.length || "";
                 if (!stats.length) {
-                    tbody.innerHTML = '<tr><td colspan="4">No recruiter accounts have been added yet.</td></tr>';
+                    tbody.innerHTML = Hirely.tableState(4, {
+                        icon: "building",
+                        title: "No recruiter accounts yet",
+                        text: "No recruiter accounts have been added yet. Create one above to give a partner access."
+                    });
                     return;
                 }
 
-                stats.forEach((stat) => {
+                const maxJobs = Math.max.apply(null, stats.map((stat) => Number(stat.jobs_posted) || 0));
+                const maxApplicants = Math.max.apply(null, stats.map((stat) => Number(stat.total_applicants) || 0));
+                tbody.innerHTML = stats.map((stat) => {
                     const activityBadge = stat.jobs_posted > 0
-                        ? '<span class="status-pill">Active</span>'
-                        : '<span class="status-pill warn">No active roles</span>';
-
-                    tbody.innerHTML += `
+                        ? '<span class="badge badge--positive">Active</span>'
+                        : '<span class="badge badge--warning">No active roles</span>';
+                    const words = String(stat.company_name || "").trim().split(/\s+/);
+                    return `
                         <tr>
-                            <td><strong>${stat.company_name}</strong><div style="margin-top: 8px;">${activityBadge}</div></td>
-                            <td>${stat.email}</td>
-                            <td>${stat.jobs_posted}</td>
-                            <td>${stat.total_applicants}</td>
+                            <td class="cell-primary" data-label="">
+                                <div class="person">
+                                    <span class="avatar" aria-hidden="true">${Hirely.esc(Hirely.initials(words[0], words[1]))}</span>
+                                    <div class="person-text">
+                                        <span class="person-name">${Hirely.esc(stat.company_name)}</span>
+                                        <span class="person-sub">${Hirely.esc(stat.email)}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-label="Status">${activityBadge}</td>
+                            <td data-label="Jobs posted">${cellBar(stat.jobs_posted, maxJobs)}</td>
+                            <td data-label="Active applicants">${cellBar(stat.total_applicants, maxApplicants)}</td>
                         </tr>
                     `;
-                });
+                }).join("");
             } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="4">We could not load recruiter activity.</td></tr>';
+                tbody.innerHTML = Hirely.tableState(4, {
+                    tone: "error",
+                    title: "Activity unavailable",
+                    text: "We could not load recruiter activity.",
+                    action: '<button type="button" class="btn btn-secondary btn-sm" onclick="loadPartnerStats()">Try again</button>'
+                });
+            } finally {
+                tbody.classList.remove("is-refreshing");
             }
         }
 
         async function loadStatistics() {
+            const ids = ["stat-hired", "stat-seeking", "stat-cgpa", "stat-rate"];
             try {
                 const response = await fetch(`${API_BASE}/admin/stats`);
                 const stats = await response.json();
@@ -298,102 +504,192 @@
 
                 document.getElementById("stat-hired").innerText = hired;
                 document.getElementById("stat-seeking").innerText = seeking;
-                document.getElementById("stat-cgpa").innerText = averageCgpa || "0.0";
+                document.getElementById("stat-cgpa").innerText = averageCgpa ? Hirely.formatDecimal(averageCgpa, 2) : "0.0";
+
+                const total = (Number(hired) || 0) + (Number(seeking) || 0);
+                const rate = total > 0 ? Math.round(((Number(hired) || 0) / total) * 100) : null;
+                document.getElementById("stat-rate").innerText = rate === null ? "—" : `${rate}%`;
+                const meter = document.getElementById("stat-rate-meter");
+                meter.setAttribute("aria-label", rate === null ? "Placement rate unavailable" : `Placement rate ${rate}%: ${hired} of ${total} students placed`);
+                meter.firstElementChild.style.width = `${rate || 0}%`;
+                meter.firstElementChild.style.animation = "none";
+                void meter.offsetWidth;
+                meter.firstElementChild.style.animation = "";
             } catch (error) {
                 console.error("Statistics unavailable", error);
+                ids.forEach((id) => {
+                    const el = document.getElementById(id);
+                    if (el.innerText === "...") el.innerText = "—";
+                });
+                Hirely.toast("Placement statistics are currently unavailable.", "error");
+            } finally {
+                ids.forEach((id) => document.getElementById(id).classList.remove("is-loading"));
             }
         }
 
         async function loadAuditLogs() {
             const tbody = document.getElementById("audit-table-body");
+            tbody.classList.add("is-refreshing");
 
             try {
                 const response = await fetch(`${API_BASE}/admin/audit_logs`);
                 const logs = await response.json();
-                tbody.innerHTML = "";
+                if (!Array.isArray(logs)) throw new Error("Unexpected response for /admin/audit_logs");
 
                 if (!logs.length) {
-                    tbody.innerHTML = "<tr><td>No recent activity recorded.</td></tr>";
+                    tbody.innerHTML = Hirely.tableState(3, { compact: true, icon: "activity", title: "No recent activity recorded." });
                     return;
                 }
 
-                logs.forEach((log) => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td style="width: 220px;">${log.timestamp}</td>
-                            <td style="width: 260px;"><strong>${log.first_name} ${log.last_name}</strong></td>
-                            <td>${log.action}</td>
-                        </tr>
-                    `;
-                });
+                tbody.innerHTML = logs.map((log) => `
+                    <tr>
+                        <td data-label="Time" class="num" style="white-space: nowrap; width: 170px;">${Hirely.esc(log.timestamp)}</td>
+                        <td data-label="Actor" class="cell-strong" style="white-space: nowrap;">${Hirely.esc(`${log.first_name} ${log.last_name}`)}</td>
+                        <td data-label="Action">${Hirely.esc(log.action)}</td>
+                    </tr>
+                `).join("");
             } catch (error) {
-                tbody.innerHTML = "<tr><td>We could not load the audit log.</td></tr>";
+                tbody.innerHTML = Hirely.tableState(3, {
+                    compact: true,
+                    tone: "error",
+                    title: "We could not load the audit log.",
+                    action: '<button type="button" class="btn btn-secondary btn-sm" onclick="loadAuditLogs()">Try again</button>'
+                });
+            } finally {
+                tbody.classList.remove("is-refreshing");
             }
         }
 
         async function loadAllStudents() {
             const tbody = document.getElementById("admin-table-body");
+            if (studentsState === "ready") tbody.classList.add("is-refreshing");
+            else tbody.innerHTML = Hirely.skeletonRows(5, 4);
 
             try {
                 const response = await fetch(`${API_BASE}/admin/all_students`);
                 const students = await response.json();
-                tbody.innerHTML = "";
-
-                if (!students.length) {
-                    tbody.innerHTML = '<tr><td colspan="5">No student records found.</td></tr>';
-                    return;
-                }
-
-                students.forEach((student) => {
-                    const actionContent = student.is_placed === 1
-                        ? '<span class="status-pill">Placed</span>'
-                        : `<button onclick="markAsPlaced(${student.id}, this)" class="button">Mark as placed</button>`;
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><strong>${student.first_name || ""} ${student.last_name || ""}</strong></td>
-                            <td>${student.email}</td>
-                            <td>${student.cgpa}</td>
-                            <td>
-                                <div class="badge-row">
-                                    ${(student.skills || "").split(",").slice(0, 3).map((skill) => skill.trim() ? `<span class="chip">${skill.trim()}</span>` : "").join("")}
-                                </div>
-                            </td>
-                            <td>${actionContent}</td>
-                        </tr>
-                    `;
-                });
+                if (!Array.isArray(students)) throw new Error("Unexpected response for /admin/all_students");
+                allStudents = students;
+                studentsState = "ready";
             } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="5">We could not load student records.</td></tr>';
+                studentsState = "error";
             }
+
+            tbody.classList.remove("is-refreshing");
+            renderStudents();
+            renderStudentSkills();
         }
 
-        async function markAsPlaced(studentId, buttonElement) {
-            if (!confirm("Mark this student as placed?")) {
+        function renderStudentSkills() {
+            const container = document.getElementById("student-skills");
+            if (studentsState === "error") {
+                container.innerHTML = Hirely.emptyState({ compact: true, tone: "error", title: "Unavailable" });
+                return;
+            }
+            container.innerHTML = Hirely.barList(Hirely.skillFrequency(allStudents, 8), {
+                unit: "students",
+                emptyTitle: "No skills recorded yet",
+                emptyText: "Skill counts appear as students create profiles."
+            });
+        }
+
+        function renderStudents() {
+            const tbody = document.getElementById("admin-table-body");
+            const count = document.getElementById("student-count");
+
+            if (studentsState === "error") {
+                count.innerText = "";
+                tbody.innerHTML = Hirely.tableState(5, {
+                    tone: "error",
+                    title: "Records unavailable",
+                    text: "We could not load student records.",
+                    action: '<button type="button" class="btn btn-secondary btn-sm" onclick="loadAllStudents()">Try again</button>'
+                });
                 return;
             }
 
-            buttonElement.innerText = "Updating...";
-            buttonElement.disabled = true;
+            document.getElementById("nav-students-count").innerText = allStudents.length || "";
+            if (!allStudents.length) {
+                count.innerText = "";
+                tbody.innerHTML = Hirely.tableState(5, { icon: "cap", title: "No student records found.", text: "Records appear here as students register." });
+                return;
+            }
+
+            const query = document.getElementById("student-search").value.trim().toLowerCase();
+            const status = document.getElementById("student-status").value;
+            const students = allStudents.filter((student) => {
+                if (status === "placed" && student.is_placed !== 1) return false;
+                if (status === "seeking" && student.is_placed === 1) return false;
+                if (!query) return true;
+                return [student.first_name, student.last_name, student.email, student.skills].join(" ").toLowerCase().includes(query);
+            });
+            count.innerText = students.length === allStudents.length ? `${allStudents.length} students` : `${students.length} of ${allStudents.length}`;
+
+            if (!students.length) {
+                tbody.innerHTML = Hirely.tableState(5, { icon: "search", title: "No matching students", text: "Try a different name, skill or status." });
+                return;
+            }
+
+            tbody.innerHTML = students.map((student) => {
+                const placed = student.is_placed === 1;
+                const skills = Hirely.splitSkills(student.skills).slice(0, 3);
+                const actionContent = placed
+                    ? '<span class="subtle">—</span>'
+                    : `<button type="button" onclick="markAsPlaced(${Number(student.id)}, this)" class="btn btn-secondary btn-sm">${Hirely.icon("check")}Mark as placed</button>`;
+                return `
+                    <tr>
+                        <td class="cell-primary" data-label="">
+                            <div class="person">
+                                <span class="avatar" aria-hidden="true">${Hirely.esc(Hirely.initials(student.first_name, student.last_name))}</span>
+                                <div class="person-text">
+                                    <span class="person-name">${Hirely.esc(`${student.first_name || ""} ${student.last_name || ""}`.trim())}</span>
+                                    <span class="person-sub">${Hirely.esc(student.email)}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td data-label="CGPA" class="cell-num">${Hirely.esc(student.cgpa)}</td>
+                        <td data-label="Core skills">${skills.length ? `<div class="chip-row">${skills.map((skill) => `<span class="chip">${Hirely.esc(skill)}</span>`).join("")}</div>` : '<span class="subtle">No skills listed</span>'}</td>
+                        <td data-label="Status">${placed ? '<span class="badge badge--positive">Placed</span>' : '<span class="badge">Seeking</span>'}</td>
+                        <td class="cell-actions" data-label="">${actionContent}</td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        document.getElementById("student-search").addEventListener("input", renderStudents);
+        document.getElementById("student-status").addEventListener("change", renderStudents);
+
+        async function markAsPlaced(studentId, buttonElement) {
+            const student = allStudents.find((entry) => Number(entry.id) === studentId);
+            const name = student ? `${student.first_name || ""} ${student.last_name || ""}`.trim() : "";
+            const confirmed = await Hirely.confirmDialog({
+                title: "Mark as placed?",
+                message: `${name ? name + " will" : "This student will"} be recorded as placed. There is no option to undo this from the dashboard.`,
+                confirmLabel: "Mark as placed"
+            });
+            if (!confirmed) {
+                return;
+            }
+
+            Hirely.busy(buttonElement, "Updating...");
 
             try {
                 const response = await fetch(`${API_BASE}/admin/mark_placed/${studentId}`, { method: "POST" });
                 const result = await response.json();
 
                 if (result.status === "success") {
+                    Hirely.toast(`${name || "Student"} marked as placed.`, "success");
                     loadAllStudents();
                     loadStatistics();
                     loadAuditLogs();
                     loadPartnerStats();
                 } else {
-                    alert(result.message || "We could not update the placement status.");
-                    buttonElement.innerText = "Mark as placed";
-                    buttonElement.disabled = false;
+                    Hirely.toast(result.message || "We could not update the placement status.", "error");
+                    Hirely.idle(buttonElement);
                 }
             } catch (error) {
-                alert("The update service is currently unavailable. Please try again shortly.");
-                buttonElement.innerText = "Mark as placed";
-                buttonElement.disabled = false;
+                Hirely.toast("The update service is currently unavailable. Please try again shortly.", "error");
+                Hirely.idle(buttonElement);
             }
         }
     </script>

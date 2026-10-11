@@ -3,167 +3,452 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recruiter Workspace | Campus Placement Portal</title>
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0b0d0d">
+    <title>Recruiter workspace · Hirely</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260509c">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=hirely-2">
+    <link rel="stylesheet" href="assets/css/marketing.css?v=hirely-2">
+    <style>
+        /* A saved session skips the sign-in screen without flashing it first */
+        .has-session #login-screen {
+            display: none;
+        }
+
+        .search-form {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-hint {
+            padding: 0 16px 14px;
+            color: var(--text-3);
+            font-size: 12.5px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .applicant-tools {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .drawer-section-title {
+            margin-bottom: 12px;
+            color: var(--text-3);
+            font-size: 11.5px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .match-group + .match-group {
+            margin-top: 14px;
+        }
+
+        .match-group-label {
+            margin-bottom: 8px;
+            color: var(--text-2);
+            font-size: 13px;
+        }
+    </style>
+    <script>
+        try {
+            if (localStorage.getItem("recruiterSession")) document.documentElement.classList.add("has-session");
+        } catch (error) {}
+    </script>
 </head>
-<body class="light-body">
-    <div id="login-screen" class="overlay-screen">
-        <section class="login-card" style="max-width: 520px; width: 100%;">
-            <div class="brand" style="color: var(--text-dark); margin-bottom: 18px;">
-                <span class="brand-mark">CP</span>
-                <span>Recruiter Workspace</span>
-            </div>
-            <div class="visual-frame compact-visual">
-                <img src="assets/recruiter-operations-visual.jpg" alt="Recruiters reviewing candidate information" loading="eager" decoding="async">
-            </div>
-            <h2>Recruiter access</h2>
-            <p class="muted">Sign in to manage job postings, applicants, and candidate search.</p>
-            <form id="recruiter-login-form" onsubmit="handleLogin(event)" style="display: grid; gap: 16px; margin-top: 24px;">
-                <div>
-                    <label class="field-label" for="login-email">Corporate email</label>
-                    <input class="input" type="email" id="login-email" required placeholder="hr@company.com">
+<body>
+    <!-- Sign in -->
+    <div id="login-screen" class="auth">
+        <a class="skip-link" href="#recruiter-login-form">Skip to sign in</a>
+        <aside class="auth-aside">
+            <a class="brand" href="index.html">
+                <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8M9 12h6"/><path d="M4.5 8.5V6A1.5 1.5 0 0 1 6 4.5h2.5M15.5 4.5H18A1.5 1.5 0 0 1 19.5 6v2.5M19.5 15.5V18a1.5 1.5 0 0 1-1.5 1.5h-2.5M8.5 19.5H6A1.5 1.5 0 0 1 4.5 18v-2.5"/></svg>
+                <span>Hirely</span>
+            </a>
+            <div class="auth-aside-body">
+                <span class="eyebrow eyebrow--dot">Recruiter workspace</span>
+                <p class="auth-aside-title">Publish roles, review applicants and search the candidate pool by skill.</p>
+                <ul class="auth-points">
+                    <li><i class="i" data-icon="check"></i>Roles you publish are open to students immediately</li>
+                    <li><i class="i" data-icon="check"></i>Every application to your roles arrives in one inbox</li>
+                    <li><i class="i" data-icon="check"></i>Export applicants to CSV when you need to share them</li>
+                </ul>
+                <div class="mini-preview" aria-hidden="true">
+                    <div class="mini-head"><span>Applicant inbox</span><span class="frame-tag">Preview</span></div>
+                    <div class="mini-row">
+                        <span class="frame-person"><span class="avatar"></span><span class="frame-lines"><span class="ph ph--strong" style="width: 62%"></span><span class="ph" style="width: 84%"></span></span></span>
+                        <span class="ph" style="width: 66%"></span>
+                        <span class="btn btn-secondary"><i class="i" data-icon="mail"></i>Email</span>
+                    </div>
+                    <div class="mini-row">
+                        <span class="frame-person"><span class="avatar"></span><span class="frame-lines"><span class="ph ph--strong" style="width: 50%"></span><span class="ph" style="width: 74%"></span></span></span>
+                        <span class="ph" style="width: 54%"></span>
+                        <span class="btn btn-secondary"><i class="i" data-icon="mail"></i>Email</span>
+                    </div>
+                    <div class="mini-row">
+                        <span class="frame-person"><span class="avatar"></span><span class="frame-lines"><span class="ph ph--strong" style="width: 70%"></span><span class="ph" style="width: 60%"></span></span></span>
+                        <span class="ph" style="width: 60%"></span>
+                        <span class="btn btn-secondary"><i class="i" data-icon="mail"></i>Email</span>
+                    </div>
                 </div>
-                <div>
-                    <label class="field-label" for="login-pass">Access code</label>
-                    <input class="input" type="password" id="login-pass" required placeholder="Enter recruiter access code">
+            </div>
+            <p class="mini-caption">Interface preview with placeholder content.</p>
+        </aside>
+
+        <section class="auth-panel">
+            <div class="auth-panel-top">
+                <span></span>
+                <a class="btn btn-ghost btn-sm" href="index.html"><i class="i" data-icon="arrow-left"></i>Back to home</a>
+            </div>
+            <section class="auth-card" aria-labelledby="recruiter-login-title">
+                <span class="eyebrow">Recruiters</span>
+                <h1 class="auth-title" id="recruiter-login-title">Recruiter access</h1>
+                <p class="auth-sub">Sign in to manage job postings, applicants and candidate search.</p>
+
+                <form id="recruiter-login-form" class="auth-form" onsubmit="handleLogin(event)" data-validate novalidate>
+                    <div id="login-alert" hidden></div>
+                    <div class="field">
+                        <label class="field-label" for="login-email">Corporate email</label>
+                        <input class="input" type="email" id="login-email" autocomplete="email" required placeholder="hr@company.com">
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="login-pass">Access code</label>
+                        <div class="input-wrap">
+                            <input class="input" type="password" id="login-pass" autocomplete="current-password" required placeholder="Enter recruiter access code">
+                            <button type="button" class="btn btn-icon btn-sm input-action" data-toggle-password aria-controls="login-pass" aria-pressed="false" aria-label="Show access code"><i class="i" data-icon="eye"></i></button>
+                        </div>
+                    </div>
+                    <button type="submit" id="login-btn" class="btn btn-primary btn-block btn-lg">Sign in</button>
+                </form>
+
+                <p class="note" style="margin-top: 24px;">Access codes are issued by the placement office. If you need access, contact the placement office administrator.</p>
+
+                <div class="auth-divider">Other workspaces</div>
+                <div class="auth-alt">
+                    <a class="btn btn-secondary" href="login.html"><i class="i" data-icon="cap"></i>Student</a>
+                    <a class="btn btn-secondary" href="admin.html"><i class="i" data-icon="shield"></i>Placement office</a>
                 </div>
-                <button type="submit" id="login-btn" class="button" style="width: 100%;">Sign in</button>
-            </form>
-            <p class="muted" style="margin-top: 18px;">If you need access, contact the placement office administrator.</p>
+            </section>
+            <p class="auth-legal">Hirely · Campus Placement Portal</p>
         </section>
     </div>
 
+    <!-- Workspace -->
     <div id="dashboard-screen" class="hidden">
-        <div class="page-shell">
-            <header class="topbar">
-                <div class="brand" style="color: var(--text-dark);">
-                    <span class="brand-mark">CP</span>
-                    <span id="company-display">Recruiter Workspace</span>
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div class="app">
+            <aside class="sidebar">
+                <a class="brand" href="index.html">
+                    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8M9 12h6"/><path d="M4.5 8.5V6A1.5 1.5 0 0 1 6 4.5h2.5M15.5 4.5H18A1.5 1.5 0 0 1 19.5 6v2.5M19.5 15.5V18a1.5 1.5 0 0 1-1.5 1.5h-2.5M8.5 19.5H6A1.5 1.5 0 0 1 4.5 18v-2.5"/></svg>
+                    <span>Hirely</span>
+                </a>
+                <p class="side-label">Recruiter</p>
+                <nav class="side-nav" aria-label="Recruiter workspace">
+                    <a class="nav-item" href="#overview" data-view-link="overview"><i class="i" data-icon="grid"></i>Overview</a>
+                    <a class="nav-item" href="#jobs" data-view-link="jobs"><i class="i" data-icon="briefcase"></i>Jobs<span class="nav-count" id="nav-jobs-count"></span></a>
+                    <a class="nav-item" href="#applicants" data-view-link="applicants"><i class="i" data-icon="inbox"></i>Applicants<span class="nav-count" id="nav-applicants-count"></span></a>
+                    <a class="nav-item" href="#candidates" data-view-link="candidates"><i class="i" data-icon="users"></i>Candidates</a>
+                </nav>
+                <div class="sidebar-foot">
+                    <div class="account">
+                        <span class="avatar" id="company-avatar" aria-hidden="true">–</span>
+                        <div class="account-text">
+                            <span class="account-name" id="company-display">Recruiter Workspace</span>
+                            <span class="account-role" id="company-email">Recruiter</span>
+                        </div>
+                    </div>
+                    <button type="button" onclick="logoutRecruiter()" class="nav-item"><i class="i" data-icon="logout"></i><span class="label-text">Sign out</span></button>
                 </div>
-                <div class="action-row">
-                    <button onclick="toggleJobForm()" class="button">Post New Role</button>
-                    <button onclick="logoutRecruiter()" class="danger-button">Sign out</button>
-                </div>
-            </header>
+            </aside>
 
-            <section class="surface-card section-block">
-                <div class="split-layout">
-                    <div class="portal-header" style="margin-bottom: 0;">
-                        <div class="portal-title">
-                            <span class="eyebrow">Recruiter Portal</span>
-                            <h1 style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: var(--text);">Recruitment management.</h1>
-                            <p>Create job postings, review applicants, and search active student profiles.</p>
-                        </div>
-                    </div>
-                    <div class="visual-frame">
-                        <img src="assets/recruiter-operations-visual.jpg" alt="Recruitment operations dashboard review" loading="lazy" decoding="async">
-                    </div>
-                </div>
-            </section>
+            <main class="main" id="main">
+                <div class="main-inner">
 
-            <section id="job-form-section" class="form-panel section-block hidden">
-                <div class="portal-header">
-                    <div class="portal-title">
-                        <h2>New job posting</h2>
-                        <p>Create and publish a role for student applications.</p>
-                    </div>
-                    <button onclick="toggleJobForm()" class="ghost-button" style="color: var(--text-dark);">Close</button>
-                </div>
-                <form id="post-job-form" onsubmit="submitJobPosting(event)" style="display: grid; gap: 18px;">
-                    <div class="field-grid">
-                        <div>
-                            <label class="field-label" for="job-title">Job title</label>
-                            <input class="input" type="text" id="job-title" required>
-                        </div>
-                        <div>
-                            <label class="field-label" for="job-company">Company name</label>
-                            <input class="input" type="text" id="job-company" readonly>
-                        </div>
-                    </div>
-                    <div class="field-grid thirds">
-                        <div>
-                            <label class="field-label" for="job-salary">Salary / CTC</label>
-                            <input class="input" type="text" id="job-salary" required>
-                        </div>
-                        <div>
-                            <label class="field-label" for="job-exp">Required experience</label>
-                            <input class="input" type="number" step="0.5" id="job-exp" required>
-                        </div>
-                        <div>
-                            <label class="field-label" for="job-location">Location</label>
-                            <input class="input" type="text" id="job-location" required>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="field-label" for="job-desc">Job description</label>
-                        <textarea class="textarea" id="job-desc" required></textarea>
-                    </div>
-                    <button type="submit" id="submit-job-btn" class="button">Publish role</button>
-                </form>
-            </section>
+                    <!-- Overview -->
+                    <section class="view" data-view="overview" aria-labelledby="overview-title">
+                        <header class="page-head">
+                            <div>
+                                <span class="eyebrow">Recruiter workspace</span>
+                                <h1 class="page-title" id="overview-title">Recruitment overview</h1>
+                                <p class="page-sub" id="rec-sub">Applications, published roles and the candidate pool.</p>
+                            </div>
+                            <div class="page-actions">
+                                <a class="btn btn-secondary" href="#candidates" data-view-link="candidates"><i class="i" data-icon="search"></i>Search candidates</a>
+                                <button type="button" class="btn btn-primary" onclick="openJobForm()"><i class="i" data-icon="plus"></i>Post a role</button>
+                            </div>
+                        </header>
 
-            <section id="inbox-container" class="table-panel section-block hidden">
-                <div class="table-header">
-                    <div>
-                        <strong class="section-title">Applicant inbox</strong>
-                        <p class="muted" style="margin: 6px 0 0;">Submitted applications for your published roles.</p>
-                    </div>
-                    <button onclick="downloadCSV()" class="button">Export applicants</button>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Applied on</th>
-                                <th>Role</th>
-                                <th>Candidate</th>
-                                <th>CGPA</th>
-                                <th>Top skills</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inbox-table-body"></tbody>
-                    </table>
-                </div>
-            </section>
+                        <div class="stack">
+                            <div class="metrics" aria-label="Recruitment figures">
+                                <div class="metric">
+                                    <span class="metric-value is-loading" id="m-applications">—</span>
+                                    <span class="metric-label">Applications received <i class="i" data-icon="inbox"></i></span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value is-loading" id="m-roles">—</span>
+                                    <span class="metric-label">Roles published <i class="i" data-icon="briefcase"></i></span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value is-loading" id="m-active-roles">—</span>
+                                    <span class="metric-label">Roles with applicants <i class="i" data-icon="layers"></i></span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value is-loading" id="m-pool">—</span>
+                                    <span class="metric-label">Active candidates <i class="i" data-icon="users"></i></span>
+                                </div>
+                            </div>
 
-            <section class="surface-card section-block">
-                <div class="portal-header">
-                    <div class="portal-title">
-                        <h2>Candidate search</h2>
-                        <p>Filter active candidates by skill set and view relevant profiles.</p>
+                            <div class="grid-main-side">
+                                <section class="panel" aria-labelledby="recent-title">
+                                    <div class="panel-head">
+                                        <div>
+                                            <h2 class="panel-title" id="recent-title">Latest applications</h2>
+                                            <p class="panel-sub">The newest applications to your published roles.</p>
+                                        </div>
+                                        <a class="btn btn-ghost btn-sm" href="#applicants" data-view-link="applicants">Open inbox <i class="i arrow" data-icon="arrow-right"></i></a>
+                                    </div>
+                                    <div class="table-wrap">
+                                        <table class="table table--stack">
+                                            <thead>
+                                                <tr><th scope="col">Candidate</th><th scope="col">Role</th><th scope="col">CGPA</th><th scope="col">Skills</th><th scope="col">Applied</th></tr>
+                                            </thead>
+                                            <tbody id="recent-table-body"></tbody>
+                                        </table>
+                                    </div>
+                                </section>
+
+                                <section class="panel" aria-labelledby="skills-title">
+                                    <div class="panel-head">
+                                        <div>
+                                            <h2 class="panel-title" id="skills-title">Skills among applicants</h2>
+                                            <p class="panel-sub">Applications listing each skill.</p>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body" id="applicant-skills"></div>
+                                </section>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Jobs -->
+                    <section class="view" data-view="jobs" aria-labelledby="jobs-title" hidden>
+                        <header class="page-head">
+                            <div>
+                                <span class="eyebrow">Roles</span>
+                                <h1 class="page-title" id="jobs-title">Jobs</h1>
+                                <p class="page-sub">Create and publish roles for student applications.</p>
+                            </div>
+                            <div class="page-actions">
+                                <button type="button" onclick="toggleJobForm()" class="btn btn-primary" id="create-job-btn" aria-controls="job-form-section" aria-expanded="false"><i class="i" data-icon="plus"></i>Create job</button>
+                            </div>
+                        </header>
+
+                        <div class="stack">
+                            <section id="job-form-section" class="panel collapsible hidden" aria-labelledby="job-form-title">
+                                <div class="panel-head">
+                                    <div>
+                                        <h2 class="panel-title" id="job-form-title">New job posting</h2>
+                                        <p class="panel-sub">Create and publish a role for student applications.</p>
+                                    </div>
+                                    <button type="button" onclick="toggleJobForm()" class="btn btn-icon" aria-label="Close job form"><i class="i" data-icon="x"></i></button>
+                                </div>
+                                <form id="post-job-form" onsubmit="submitJobPosting(event)" data-validate novalidate>
+                                    <div class="panel-body stack">
+                                        <div id="job-form-alert" hidden></div>
+                                        <div class="field-grid">
+                                            <div class="field">
+                                                <label class="field-label" for="job-title">Job title</label>
+                                                <input class="input" type="text" id="job-title" placeholder="e.g. Backend Engineer" required>
+                                            </div>
+                                            <div class="field">
+                                                <label class="field-label" for="job-company">Company name</label>
+                                                <input class="input" type="text" id="job-company" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="field-grid thirds">
+                                            <div class="field">
+                                                <label class="field-label" for="job-salary">Salary / CTC</label>
+                                                <input class="input" type="text" id="job-salary" placeholder="e.g. 12 LPA" required>
+                                            </div>
+                                            <div class="field">
+                                                <label class="field-label" for="job-exp">Required experience <span class="optional">Years</span></label>
+                                                <input class="input" type="number" step="0.5" id="job-exp" inputmode="decimal" placeholder="0" required>
+                                            </div>
+                                            <div class="field">
+                                                <label class="field-label" for="job-location">Location</label>
+                                                <input class="input" type="text" id="job-location" placeholder="e.g. Pune or Remote" required>
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label class="field-label" for="job-desc">Job description</label>
+                                            <textarea class="textarea" id="job-desc" placeholder="Responsibilities, skills you’re looking for, and anything students should know." required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="panel-foot form-actions" style="justify-content: flex-end;">
+                                        <button type="button" class="btn btn-secondary" onclick="toggleJobForm()">Cancel</button>
+                                        <button type="submit" id="submit-job-btn" class="btn btn-primary">Publish role</button>
+                                    </div>
+                                </form>
+                            </section>
+
+                            <section class="panel" aria-labelledby="my-jobs-title">
+                                <div class="panel-head">
+                                    <div>
+                                        <h2 class="panel-title" id="my-jobs-title">Your published roles</h2>
+                                        <p class="panel-sub">Applicant counts are matched to roles by job title.</p>
+                                    </div>
+                                    <button type="button" class="btn btn-ghost btn-sm" onclick="loadMyJobs()"><i class="i" data-icon="refresh"></i>Refresh</button>
+                                </div>
+                                <div class="table-wrap">
+                                    <table class="table table--stack">
+                                        <thead>
+                                            <tr><th scope="col">Role</th><th scope="col">Location</th><th scope="col">Experience</th><th scope="col">Compensation</th><th scope="col">Applicants</th><th scope="col"><span class="sr-only">Actions</span></th></tr>
+                                        </thead>
+                                        <tbody id="jobs-table-body"></tbody>
+                                    </table>
+                                </div>
+                            </section>
+                        </div>
+                    </section>
+
+                    <!-- Applicants -->
+                    <section class="view" data-view="applicants" aria-labelledby="applicants-title" hidden>
+                        <header class="page-head">
+                            <div>
+                                <span class="eyebrow">Applications</span>
+                                <h1 class="page-title" id="applicants-title">Applicant inbox</h1>
+                                <p class="page-sub">Submitted applications for your published roles.</p>
+                            </div>
+                            <div class="page-actions">
+                                <div class="segmented" role="group" aria-label="Layout">
+                                    <button type="button" aria-pressed="true" data-applicant-view="table"><i class="i" data-icon="list"></i>Table</button>
+                                    <button type="button" aria-pressed="false" data-applicant-view="board"><i class="i" data-icon="board"></i>By role</button>
+                                </div>
+                                <button type="button" onclick="downloadCSV()" class="btn btn-secondary"><i class="i" data-icon="download"></i>Export applicants</button>
+                            </div>
+                        </header>
+
+                        <section id="inbox-container" class="panel" aria-label="Applicants">
+                            <div class="toolbar">
+                                <div class="input-wrap grow">
+                                    <i class="i" data-icon="search"></i>
+                                    <input class="input input-sm" type="search" id="applicant-search" placeholder="Search by name, email or skill" aria-label="Search applicants">
+                                </div>
+                                <select class="select select-sm" id="applicant-role" aria-label="Filter by role" style="width: auto; min-width: 180px;">
+                                    <option value="">All roles</option>
+                                </select>
+                                <span class="toolbar-count" id="applicant-count" aria-live="polite"></span>
+                            </div>
+                            <div class="table-wrap" id="inbox-table-wrap">
+                                <table class="table table--stack">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Candidate</th>
+                                            <th scope="col">Role</th>
+                                            <th scope="col">CGPA</th>
+                                            <th scope="col">Top skills</th>
+                                            <th scope="col">Applied on</th>
+                                            <th scope="col"><span class="sr-only">Action</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="inbox-table-body"></tbody>
+                                </table>
+                            </div>
+                            <div id="applicants-board" class="board" hidden></div>
+                        </section>
+                    </section>
+
+                    <!-- Candidates -->
+                    <section class="view" data-view="candidates" aria-labelledby="candidates-title" hidden>
+                        <header class="page-head">
+                            <div>
+                                <span class="eyebrow">Candidate search</span>
+                                <h1 class="page-title" id="candidates-title">Candidates</h1>
+                                <p class="page-sub">Filter active candidates by skill set and view relevant profiles.</p>
+                            </div>
+                        </header>
+
+                        <section class="panel" aria-label="Candidate results">
+                            <form class="toolbar search-form" role="search" onsubmit="event.preventDefault(); searchCandidates();" style="border-bottom: 0;">
+                                <div class="input-wrap grow">
+                                    <i class="i" data-icon="search"></i>
+                                    <input class="input" type="text" id="search-input" placeholder="Python, React, SQL, Data Analysis" aria-label="Skills to search for">
+                                </div>
+                                <button type="submit" id="search-btn" class="btn btn-primary">Search candidates</button>
+                                <select class="select" id="candidate-sort" aria-label="Sort results" style="width: auto; min-width: 160px;">
+                                    <option value="match">Best match</option>
+                                    <option value="cgpa">CGPA, high to low</option>
+                                    <option value="name">Name, A to Z</option>
+                                </select>
+                            </form>
+                            <p class="search-hint"><span id="candidate-count" aria-live="polite"></span> Separate skills with commas. With a search, results are ranked by skill-match score, then CGPA.</p>
+                            <div id="results-grid" class="table-wrap"></div>
+                        </section>
+                    </section>
+                </div>
+            </main>
+        </div>
+
+        <!-- Candidate detail -->
+        <div id="candidate-drawer" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="drawer-name" aria-hidden="true">
+            <div class="overlay-backdrop" data-overlay-close></div>
+            <aside class="drawer-panel">
+                <div class="drawer-head">
+                    <span class="avatar avatar--lg" id="drawer-avatar" aria-hidden="true"></span>
+                    <div style="min-width: 0;">
+                        <h2 class="drawer-title" id="drawer-name"></h2>
+                        <p class="person-sub" id="drawer-email"></p>
                     </div>
+                    <button type="button" class="btn btn-icon" data-overlay-close data-autofocus aria-label="Close candidate details"><i class="i" data-icon="x"></i></button>
                 </div>
-                <div class="action-row" style="align-items: stretch;">
-                    <input class="input" type="text" id="search-input" placeholder="Python, React, SQL, Data Analysis" style="flex: 1 1 320px;">
-                    <button onclick="searchCandidates()" class="button">Search candidates</button>
-                </div>
-                <div id="results-grid" class="results-grid" style="margin-top: 24px;"></div>
-            </section>
+                <div class="drawer-body" id="drawer-body"></div>
+            </aside>
         </div>
     </div>
 
+    <script src="assets/js/hirely.js?v=hirely-2"></script>
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
         let currentRecruiter = null;
         let currentApplicantsList = [];
+        let applicantsState = "loading";
+        let myJobs = [];
+        let jobsState = "loading";
+        let candidateResults = [];
+        let candidateQuery = "";
+        let candidatesState = "loading";
+        let poolSize = null;
+        let views = null;
 
-        window.onload = () => {
+        (function restoreSession() {
             const session = localStorage.getItem("recruiterSession");
             if (session) {
-                currentRecruiter = JSON.parse(session);
-                showDashboard();
+                try {
+                    currentRecruiter = JSON.parse(session);
+                } catch (error) {
+                    currentRecruiter = null;
+                }
+                if (currentRecruiter) {
+                    showDashboard();
+                    return;
+                }
             }
-        };
+            document.documentElement.classList.remove("has-session");
+        })();
 
         async function handleLogin(event) {
             event.preventDefault();
             const button = document.getElementById("login-btn");
-            button.innerText = "Signing in...";
-            button.disabled = true;
+            Hirely.clearAlert("login-alert");
+            Hirely.busy(button, "Signing in...");
 
             const email = document.getElementById("login-email").value;
             const code = document.getElementById("login-pass").value;
@@ -181,23 +466,32 @@
                     localStorage.setItem("recruiterSession", JSON.stringify(currentRecruiter));
                     showDashboard();
                 } else {
-                    alert(result.message || "Unable to sign in. Please verify your access details.");
+                    Hirely.showAlert("login-alert", result.message || "Unable to sign in. Please verify your access details.");
                 }
             } catch (error) {
-                alert("The recruiter service is currently unavailable. Please try again shortly.");
+                Hirely.showAlert("login-alert", "The recruiter service is currently unavailable. Please try again shortly.");
             } finally {
-                button.innerText = "Sign in";
-                button.disabled = false;
+                Hirely.idle(button);
             }
         }
 
         function showDashboard() {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("dashboard-screen").classList.remove("hidden");
+            document.documentElement.classList.remove("has-session");
             document.getElementById("company-display").innerText = currentRecruiter.company_name || "Recruiter Workspace";
             document.getElementById("job-company").value = currentRecruiter.company_name || "";
+
+            const company = currentRecruiter.company_name || "your company";
+            const words = (currentRecruiter.company_name || "").trim().split(/\s+/);
+            document.getElementById("company-avatar").innerText = Hirely.initials(words[0], words[1]);
+            document.getElementById("company-email").innerText = currentRecruiter.email || "Recruiter";
+            document.getElementById("rec-sub").innerText = `Applications, published roles and the candidate pool for ${company}.`;
+
+            if (!views) views = Hirely.initViews();
             loadInbox();
             searchCandidates();
+            loadMyJobs();
         }
 
         function logoutRecruiter() {
@@ -205,57 +499,326 @@
             location.reload();
         }
 
-        function toggleJobForm() {
-            document.getElementById("job-form-section").classList.toggle("hidden");
+        /* ---------- Jobs ---------- */
+
+        function toggleJobForm(forceOpen) {
+            const section = document.getElementById("job-form-section");
+            const open = typeof forceOpen === "boolean" ? forceOpen : section.classList.contains("hidden");
+            section.classList.toggle("hidden", !open);
+            document.getElementById("create-job-btn").setAttribute("aria-expanded", String(open));
+            if (open) {
+                section.style.animation = "none";
+                void section.offsetWidth;
+                section.style.animation = "";
+                setTimeout(() => document.getElementById("job-title").focus(), 60);
+            } else {
+                Hirely.clearAlert("job-form-alert");
+            }
         }
 
+        function openJobForm() {
+            views.show("jobs");
+            toggleJobForm(true);
+        }
+
+        async function loadMyJobs() {
+            const tbody = document.getElementById("jobs-table-body");
+            if (jobsState !== "ready") tbody.innerHTML = Hirely.skeletonRows(6, 3);
+            else tbody.classList.add("is-refreshing");
+
+            try {
+                const response = await fetch(`${API_BASE}/jobs`);
+                const jobs = await response.json();
+                if (!Array.isArray(jobs)) throw new Error("Unexpected response for /jobs");
+                const myId = String(currentRecruiter.recruiter_id);
+                myJobs = jobs.filter((job) => (job.recruiter_id !== undefined && job.recruiter_id !== null)
+                    ? String(job.recruiter_id) === myId
+                    : job.company_name === currentRecruiter.company_name);
+                jobsState = "ready";
+            } catch (error) {
+                jobsState = "error";
+                console.error(error);
+            }
+
+            tbody.classList.remove("is-refreshing");
+            renderJobsTable();
+            renderOverview();
+        }
+
+        function applicantCountForTitle(title) {
+            const sameTitle = myJobs.filter((job) => job.job_title === title).length;
+            if (applicantsState !== "ready" || sameTitle > 1) return null;
+            return currentApplicantsList.filter((application) => application.job_title === title).length;
+        }
+
+        function renderJobsTable() {
+            const tbody = document.getElementById("jobs-table-body");
+            if (jobsState === "loading") return;
+            if (jobsState === "error") {
+                tbody.innerHTML = Hirely.tableState(6, {
+                    tone: "error",
+                    title: "Roles unavailable",
+                    text: "We could not load your published roles.",
+                    action: '<button type="button" class="btn btn-secondary btn-sm" onclick="loadMyJobs()">Try again</button>'
+                });
+                return;
+            }
+            if (!myJobs.length) {
+                tbody.innerHTML = Hirely.tableState(6, {
+                    icon: "briefcase",
+                    title: "No roles published yet",
+                    text: "Publish your first role and it will appear to students straight away.",
+                    action: '<button type="button" class="btn btn-primary btn-sm" onclick="toggleJobForm(true)">Create job</button>'
+                });
+                return;
+            }
+            tbody.innerHTML = myJobs.map((job) => {
+                const count = applicantCountForTitle(job.job_title);
+                const experience = Number(job.required_exp) > 0 ? `${job.required_exp} yrs` : "Entry level";
+                const countCell = count === null
+                    ? `<span class="subtle" data-tip="Shown when each role title is unique">—</span>`
+                    : `<span class="cell-num">${count}</span>`;
+                return `
+                    <tr>
+                        <td class="cell-primary" data-label="">
+                            <div class="person-text">
+                                <span class="person-name">${Hirely.esc(job.job_title)}</span>
+                                <span class="person-sub">Job #${Hirely.esc(job.job_id)}</span>
+                            </div>
+                        </td>
+                        <td data-label="Location">${Hirely.esc(job.location || "Not listed")}</td>
+                        <td data-label="Experience">${Hirely.esc(experience)}</td>
+                        <td data-label="Compensation">${Hirely.esc(job.salary || "Not listed")}</td>
+                        <td data-label="Applicants">${countCell}</td>
+                        <td class="cell-actions" data-label="">
+                            <button type="button" class="btn btn-ghost btn-sm" data-role-title="${Hirely.esc(job.job_title)}" onclick="showApplicantsForRole(this.dataset.roleTitle)">View applicants ${Hirely.icon("arrow-right", "arrow")}</button>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        async function submitJobPosting(event) {
+            event.preventDefault();
+            const button = document.getElementById("submit-job-btn");
+            Hirely.clearAlert("job-form-alert");
+            Hirely.busy(button, "Publishing...");
+
+            const jobData = {
+                job_title: document.getElementById("job-title").value,
+                company_name: currentRecruiter.company_name,
+                salary: document.getElementById("job-salary").value,
+                required_exp: parseFloat(document.getElementById("job-exp").value),
+                location: document.getElementById("job-location").value,
+                job_description: document.getElementById("job-desc").value,
+                recruiter_id: currentRecruiter.recruiter_id
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/recruiter/jobs`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(jobData)
+                });
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    Hirely.toast("Role published successfully.", "success");
+                    document.getElementById("post-job-form").reset();
+                    document.getElementById("job-company").value = currentRecruiter.company_name;
+                    toggleJobForm(false);
+                    loadMyJobs();
+                } else {
+                    Hirely.showAlert("job-form-alert", result.message || "We could not publish the role.");
+                }
+            } catch (error) {
+                Hirely.showAlert("job-form-alert", "The publishing service is currently unavailable. Please try again shortly.");
+            } finally {
+                Hirely.idle(button);
+            }
+        }
+
+        /* ---------- Applicants ---------- */
+
         async function loadInbox() {
-            const container = document.getElementById("inbox-container");
             const tbody = document.getElementById("inbox-table-body");
 
             if (!currentRecruiter || !currentRecruiter.recruiter_id) {
                 return;
             }
 
+            if (applicantsState !== "ready") {
+                tbody.innerHTML = Hirely.skeletonRows(6, 4);
+                document.getElementById("recent-table-body").innerHTML = Hirely.skeletonRows(5, 3);
+            }
+
             try {
                 const response = await fetch(`${API_BASE}/recruiter/applicants?recruiter_id=${currentRecruiter.recruiter_id}`);
                 const applicants = await response.json();
-
-                if (!Array.isArray(applicants) || applicants.length === 0) {
-                    container.classList.add("hidden");
-                    return;
-                }
-
+                if (!Array.isArray(applicants)) throw new Error("Unexpected response for /recruiter/applicants");
                 currentApplicantsList = applicants;
-                container.classList.remove("hidden");
-                tbody.innerHTML = "";
-
-                applicants.forEach((application) => {
-                    const emailSubject = encodeURIComponent(`Regarding your application for ${application.job_title} at ${currentRecruiter.company_name}`);
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${application.apply_date}</td>
-                            <td><strong>${application.job_title}</strong></td>
-                            <td><strong>${application.first_name} ${application.last_name || ""}</strong><br><span class="muted">${application.email}</span></td>
-                            <td>${application.cgpa}</td>
-                            <td>
-                                <div class="badge-row">
-                                    ${(application.skills || "").split(",").slice(0, 3).map((skill) => skill.trim() ? `<span class="chip">${skill.trim()}</span>` : "").join("") || '<span class="muted">No skills listed</span>'}
-                                </div>
-                            </td>
-                            <td><a class="button" href="mailto:${application.email}?subject=${emailSubject}">Email candidate</a></td>
-                        </tr>
-                    `;
-                });
+                applicantsState = "ready";
             } catch (error) {
-                container.classList.add("hidden");
+                applicantsState = "error";
                 console.error(error);
             }
+
+            renderApplicants();
+            renderOverview();
+            renderJobsTable();
+        }
+
+        function applicantName(application) {
+            return `${application.first_name || ""} ${application.last_name || ""}`.trim() || "Unnamed candidate";
+        }
+
+        function applicantMailto(application) {
+            const emailSubject = encodeURIComponent(`Regarding your application for ${application.job_title} at ${currentRecruiter.company_name}`);
+            return `mailto:${Hirely.esc(application.email)}?subject=${emailSubject}`;
+        }
+
+        function skillChips(skills, limit, highlight) {
+            const list = Hirely.splitSkills(skills);
+            if (!list.length) return '<span class="subtle">No skills listed</span>';
+            const terms = highlight || [];
+            const shown = list.slice(0, limit || list.length).map((skill) => {
+                const hit = terms.indexOf(skill.toLowerCase()) > -1;
+                return `<span class="chip${hit ? " chip--match" : ""}">${Hirely.esc(skill)}</span>`;
+            });
+            if (limit && list.length > limit) shown.push(`<span class="chip chip--more">+${list.length - limit}</span>`);
+            return `<div class="chip-row">${shown.join("")}</div>`;
+        }
+
+        function personCell(first, last, sub) {
+            return `
+                <div class="person">
+                    <span class="avatar" aria-hidden="true">${Hirely.esc(Hirely.initials(first, last))}</span>
+                    <div class="person-text">
+                        <span class="person-name">${Hirely.esc(`${first || ""} ${last || ""}`.trim() || "Unnamed candidate")}</span>
+                        <span class="person-sub">${Hirely.esc(sub || "")}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function filteredApplicants() {
+            const query = document.getElementById("applicant-search").value.trim().toLowerCase();
+            const role = document.getElementById("applicant-role").value;
+            return currentApplicantsList.filter((application) => {
+                if (role && application.job_title !== role) return false;
+                if (!query) return true;
+                return [applicantName(application), application.email, application.skills, application.job_title].join(" ").toLowerCase().includes(query);
+            });
+        }
+
+        function syncRoleOptions() {
+            const select = document.getElementById("applicant-role");
+            const selected = select.value;
+            const titles = Array.from(new Set(currentApplicantsList.map((application) => application.job_title))).sort();
+            select.innerHTML = '<option value="">All roles</option>' + titles.map((title) => `<option value="${Hirely.esc(title)}">${Hirely.esc(title)}</option>`).join("");
+            select.value = titles.indexOf(selected) > -1 ? selected : "";
+        }
+
+        function renderApplicants() {
+            const tbody = document.getElementById("inbox-table-body");
+            const board = document.getElementById("applicants-board");
+            const count = document.getElementById("applicant-count");
+
+            if (applicantsState === "error") {
+                count.innerText = "";
+                const state = {
+                    tone: "error",
+                    title: "Applicants unavailable",
+                    text: "We could not load applications for your roles.",
+                    action: '<button type="button" class="btn btn-secondary btn-sm" onclick="loadInbox()">Try again</button>'
+                };
+                tbody.innerHTML = Hirely.tableState(6, state);
+                board.innerHTML = Hirely.emptyState(state);
+                return;
+            }
+
+            syncRoleOptions();
+            const list = filteredApplicants();
+            const total = currentApplicantsList.length;
+            count.innerText = list.length === total ? `${total} application${total === 1 ? "" : "s"}` : `${list.length} of ${total}`;
+
+            if (!total) {
+                const state = {
+                    icon: "inbox",
+                    title: "No applications yet",
+                    text: "Applications appear here as students apply to your published roles.",
+                    action: '<button type="button" class="btn btn-primary btn-sm" onclick="openJobForm()">Create a job</button>'
+                };
+                tbody.innerHTML = Hirely.tableState(6, state);
+                board.innerHTML = Hirely.emptyState(state);
+                return;
+            }
+
+            if (!list.length) {
+                const state = { icon: "search", title: "No matching applicants", text: "Try a different name, skill or role." };
+                tbody.innerHTML = Hirely.tableState(6, state);
+                board.innerHTML = Hirely.emptyState(state);
+                return;
+            }
+
+            tbody.innerHTML = list.map((application) => `
+                <tr>
+                    <td class="cell-primary" data-label="">${personCell(application.first_name, application.last_name, application.email)}</td>
+                    <td data-label="Role" class="cell-strong">${Hirely.esc(application.job_title)}</td>
+                    <td data-label="CGPA" class="cell-num">${Hirely.esc(application.cgpa)}</td>
+                    <td data-label="Top skills">${skillChips(application.skills, 3)}</td>
+                    <td data-label="Applied on" class="num" style="white-space: nowrap;">${Hirely.esc(application.apply_date)}</td>
+                    <td class="cell-actions" data-label=""><a class="btn btn-secondary btn-sm" href="${applicantMailto(application)}">${Hirely.icon("mail")}Email candidate</a></td>
+                </tr>
+            `).join("");
+
+            const groups = new Map();
+            list.forEach((application) => {
+                if (!groups.has(application.job_title)) groups.set(application.job_title, []);
+                groups.get(application.job_title).push(application);
+            });
+            board.innerHTML = Array.from(groups.entries()).map(([title, items], index) => `
+                <section class="board-col" style="animation-delay: ${index * 50}ms" aria-label="${Hirely.esc(title)}">
+                    <div class="board-col-head"><span>${Hirely.esc(title)}</span><span class="badge badge--count">${items.length}</span></div>
+                    <div class="board-cards">
+                        ${items.map((application) => `
+                            <article class="board-card">
+                                ${personCell(application.first_name, application.last_name, application.email)}
+                                <div class="board-card-meta"><span>CGPA <span class="text-ivory num">${Hirely.esc(application.cgpa)}</span></span><span>${Hirely.esc(application.apply_date)}</span></div>
+                                <a class="btn btn-secondary btn-sm" href="${applicantMailto(application)}">${Hirely.icon("mail")}Email candidate</a>
+                            </article>
+                        `).join("")}
+                    </div>
+                </section>
+            `).join("");
+        }
+
+        function setApplicantView(mode) {
+            document.querySelectorAll("[data-applicant-view]").forEach((button) => {
+                button.setAttribute("aria-pressed", String(button.dataset.applicantView === mode));
+            });
+            document.getElementById("inbox-table-wrap").hidden = mode !== "table";
+            document.getElementById("applicants-board").hidden = mode !== "board";
+        }
+
+        document.querySelectorAll("[data-applicant-view]").forEach((button) => {
+            button.addEventListener("click", () => setApplicantView(button.dataset.applicantView));
+        });
+        document.getElementById("applicant-search").addEventListener("input", renderApplicants);
+        document.getElementById("applicant-role").addEventListener("change", renderApplicants);
+
+        function showApplicantsForRole(title) {
+            views.show("applicants");
+            document.getElementById("applicant-search").value = "";
+            const select = document.getElementById("applicant-role");
+            syncRoleOptions();
+            select.value = Array.from(select.options).some((option) => option.value === title) ? title : "";
+            renderApplicants();
         }
 
         function downloadCSV() {
             if (currentApplicantsList.length === 0) {
-                alert("There are no applicants available for export.");
+                Hirely.toast("There are no applicants available for export.", "info");
                 return;
             }
 
@@ -282,94 +845,268 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            Hirely.toast(`Exported ${currentApplicantsList.length} application${currentApplicantsList.length === 1 ? "" : "s"} to CSV.`, "success");
         }
 
-        async function submitJobPosting(event) {
-            event.preventDefault();
-            const button = document.getElementById("submit-job-btn");
-            button.innerText = "Publishing...";
-            button.disabled = true;
+        /* ---------- Overview ---------- */
 
-            const jobData = {
-                job_title: document.getElementById("job-title").value,
-                company_name: currentRecruiter.company_name,
-                salary: document.getElementById("job-salary").value,
-                required_exp: parseFloat(document.getElementById("job-exp").value),
-                location: document.getElementById("job-location").value,
-                job_description: document.getElementById("job-desc").value,
-                recruiter_id: currentRecruiter.recruiter_id
-            };
+        function setMetric(id, value) {
+            const el = document.getElementById(id);
+            el.innerText = value === null || value === undefined ? "—" : Hirely.formatNumber(value);
+            el.classList.toggle("is-loading", value === null || value === undefined);
+        }
 
-            try {
-                const response = await fetch(`${API_BASE}/recruiter/jobs`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(jobData)
-                });
-                const result = await response.json();
+        function renderOverview() {
+            const ready = applicantsState === "ready";
+            const uniqueRoles = new Set(currentApplicantsList.map((application) => application.job_title)).size;
+            setMetric("m-applications", ready ? currentApplicantsList.length : null);
+            setMetric("m-active-roles", ready ? uniqueRoles : null);
+            setMetric("m-roles", jobsState === "ready" ? myJobs.length : null);
+            setMetric("m-pool", poolSize);
+            document.getElementById("nav-applicants-count").innerText = ready && currentApplicantsList.length ? currentApplicantsList.length : "";
+            document.getElementById("nav-jobs-count").innerText = jobsState === "ready" && myJobs.length ? myJobs.length : "";
 
-                if (result.status === "success") {
-                    alert("Role published successfully.");
-                    document.getElementById("post-job-form").reset();
-                    document.getElementById("job-company").value = currentRecruiter.company_name;
-                    toggleJobForm();
-                } else {
-                    alert(result.message || "We could not publish the role.");
-                }
-            } catch (error) {
-                alert("The publishing service is currently unavailable. Please try again shortly.");
-            } finally {
-                button.innerText = "Publish role";
-                button.disabled = false;
+            const recent = document.getElementById("recent-table-body");
+            const skills = document.getElementById("applicant-skills");
+            if (applicantsState === "loading") return;
+            if (applicantsState === "error") {
+                recent.innerHTML = Hirely.tableState(5, { tone: "error", compact: true, title: "Couldn’t load applications", action: '<button type="button" class="btn btn-secondary btn-sm" onclick="loadInbox()">Try again</button>' });
+                skills.innerHTML = Hirely.emptyState({ tone: "error", compact: true, title: "Unavailable" });
+                return;
             }
+            if (!currentApplicantsList.length) {
+                recent.innerHTML = Hirely.tableState(5, { compact: true, icon: "inbox", title: "No applications yet", text: "They’ll appear here as students apply to your roles." });
+            } else {
+                recent.innerHTML = currentApplicantsList.slice(0, 6).map((application) => `
+                    <tr>
+                        <td class="cell-primary" data-label="">${personCell(application.first_name, application.last_name, application.email)}</td>
+                        <td data-label="Role" class="cell-strong">${Hirely.esc(application.job_title)}</td>
+                        <td data-label="CGPA" class="cell-num">${Hirely.esc(application.cgpa)}</td>
+                        <td data-label="Skills">${skillChips(application.skills, 2)}</td>
+                        <td data-label="Applied" class="num" style="white-space: nowrap;">${Hirely.esc(application.apply_date)}</td>
+                    </tr>
+                `).join("");
+            }
+            skills.innerHTML = Hirely.barList(Hirely.skillFrequency(currentApplicantsList, 8), {
+                unit: "applications",
+                emptyTitle: "No skills to show yet",
+                emptyText: "Skill counts appear once students apply."
+            });
+        }
+
+        /* ---------- Candidates ---------- */
+
+        function queryTerms() {
+            return Hirely.splitSkills(candidateQuery).map((term) => term.toLowerCase());
+        }
+
+        function matchedTerms(candidate) {
+            const listed = Hirely.splitSkills(candidate.skills).map((skill) => skill.toLowerCase());
+            const terms = queryTerms();
+            return {
+                found: terms.filter((term) => listed.indexOf(term) > -1),
+                missing: terms.filter((term) => listed.indexOf(term) === -1)
+            };
+        }
+
+        function formatScore(score) {
+            const n = Number(score);
+            if (!Number.isFinite(n)) return Hirely.esc(score);
+            return Number.isInteger(n) ? String(n) : n.toFixed(1);
+        }
+
+        function sortedCandidates() {
+            const mode = document.getElementById("candidate-sort").value;
+            const list = candidateResults.map((candidate, index) => ({ candidate, index }));
+            if (mode === "cgpa") list.sort((a, b) => (Number(b.candidate.cgpa) || 0) - (Number(a.candidate.cgpa) || 0));
+            if (mode === "name") list.sort((a, b) => `${a.candidate.first_name || ""} ${a.candidate.last_name || ""}`.localeCompare(`${b.candidate.first_name || ""} ${b.candidate.last_name || ""}`));
+            return list;
         }
 
         async function searchCandidates() {
-            const grid = document.getElementById("results-grid");
+            const container = document.getElementById("results-grid");
+            const button = document.getElementById("search-btn");
             const skill = document.getElementById("search-input").value;
-            grid.innerHTML = '<div class="empty-state">Searching candidate profiles...</div>';
+
+            if (candidatesState !== "ready") {
+                container.innerHTML = `<table class="table"><tbody>${Hirely.skeletonRows(5, 5)}</tbody></table>`;
+            } else {
+                container.classList.add("is-refreshing");
+            }
+            container.setAttribute("aria-busy", "true");
+            Hirely.busy(button, "Searching...");
 
             try {
                 const url = skill ? `${API_BASE}/recruiter/candidates?skills=${encodeURIComponent(skill)}` : `${API_BASE}/recruiter/candidates`;
                 const response = await fetch(url);
                 const candidates = await response.json();
-                grid.innerHTML = "";
-
-                if (!candidates.length) {
-                    grid.innerHTML = '<div class="empty-state">No candidates matched the current search.</div>';
-                    return;
-                }
-
-                candidates.forEach((student) => {
-                    const card = document.createElement("div");
-                    card.className = "candidate-card";
-                    const scoreBadge = student.match_score > 0 ? `<span class="status-pill">Profile fit ${student.match_score}</span>` : "";
-                    const outreachSubject = encodeURIComponent(`Opportunity from ${currentRecruiter ? currentRecruiter.company_name : "Recruitment Team"}`);
-
-                    card.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; gap: 16px; align-items: flex-start;">
-                            <div>
-                                <h3>${student.first_name || ""} ${student.last_name || ""}</h3>
-                                <p style="margin: 8px 0 0; color: var(--brand); font-weight: 700;">${student.email}</p>
-                            </div>
-                            <div style="display: grid; gap: 10px; justify-items: end;">
-                                <span class="mini-pill">CGPA ${student.cgpa}</span>
-                                ${scoreBadge}
-                            </div>
-                        </div>
-                        <div class="badge-row" style="margin: 18px 0;">
-                            ${(student.skills || "").split(",").map((skillLabel) => skillLabel.trim() ? `<span class="chip">${skillLabel.trim()}</span>` : "").join("")}
-                        </div>
-                        <div class="action-row">
-                            <a href="${student.github || "#"}" target="_blank" rel="noreferrer" class="ghost-button" style="color: var(--text-dark);">GitHub profile</a>
-                            <a href="mailto:${student.email}?subject=${outreachSubject}" class="button">Email candidate</a>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
+                if (!Array.isArray(candidates)) throw new Error("Unexpected response for /recruiter/candidates");
+                candidateResults = candidates;
+                candidateQuery = skill;
+                candidatesState = "ready";
+                if (!skill) poolSize = candidates.length;
             } catch (error) {
-                grid.innerHTML = '<div class="empty-state">We could not load candidate results. Please try again later.</div>';
+                candidatesState = "error";
+                console.error(error);
             }
+
+            Hirely.idle(button);
+            container.classList.remove("is-refreshing");
+            container.removeAttribute("aria-busy");
+            renderCandidates();
+            renderOverview();
+        }
+
+        function renderCandidates() {
+            const container = document.getElementById("results-grid");
+            const count = document.getElementById("candidate-count");
+
+            if (candidatesState === "error") {
+                count.innerText = "";
+                container.innerHTML = Hirely.emptyState({
+                    tone: "error",
+                    title: "Results unavailable",
+                    text: "We could not load candidate results. Please try again later.",
+                    action: '<button type="button" class="btn btn-secondary btn-sm" onclick="searchCandidates()">Try again</button>'
+                });
+                return;
+            }
+
+            const total = candidateResults.length;
+            count.innerText = candidateQuery
+                ? `${total} match${total === 1 ? "" : "es"} for “${candidateQuery}”.`
+                : `${total} active candidate${total === 1 ? "" : "s"}.`;
+
+            if (!total) {
+                container.innerHTML = Hirely.emptyState({
+                    icon: "users",
+                    title: candidateQuery ? "No candidates matched" : "No active candidates",
+                    text: candidateQuery ? "No candidates matched the current search. Try fewer or broader skills." : "Active student profiles will appear here."
+                });
+                return;
+            }
+
+            const terms = queryTerms();
+            const rows = sortedCandidates().map(({ candidate, index }) => {
+                const match = matchedTerms(candidate);
+                const github = Hirely.safeUrl(candidate.github);
+                const outreachSubject = encodeURIComponent(`Opportunity from ${currentRecruiter ? currentRecruiter.company_name : "Recruitment Team"}`);
+                const name = `${candidate.first_name || ""} ${candidate.last_name || ""}`.trim() || "Unnamed candidate";
+                const score = candidateQuery && Number(candidate.match_score) > 0
+                    ? `<div class="score"><span class="score-value">${formatScore(candidate.match_score)}</span><span class="score-sub">${match.found.length} of ${terms.length} listed</span></div>`
+                    : '<span class="subtle">—</span>';
+                return `
+                    <tr class="is-clickable" data-index="${index}">
+                        <td class="cell-primary" data-label="">
+                            <div class="person">
+                                <span class="avatar" aria-hidden="true">${Hirely.esc(Hirely.initials(candidate.first_name, candidate.last_name))}</span>
+                                <div class="person-text">
+                                    <button type="button" class="link-btn person-name" onclick="openCandidate(${index})">${Hirely.esc(name)}</button>
+                                    <span class="person-sub">${Hirely.esc(candidate.email)}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td data-label="CGPA" class="cell-num">${Hirely.esc(candidate.cgpa)}</td>
+                        <td data-label="Skills">${skillChips(candidate.skills, 5, terms)}</td>
+                        <td data-label="Match">${score}</td>
+                        <td class="cell-actions" data-label="">
+                            ${github
+                                ? `<a class="btn btn-icon btn-sm" href="${Hirely.esc(github)}" target="_blank" rel="noreferrer" aria-label="GitHub profile of ${Hirely.esc(name)}" data-tip="GitHub profile">${Hirely.icon("branch")}</a>`
+                                : `<span class="btn btn-icon btn-sm" aria-disabled="true" data-tip="No GitHub link" style="opacity: .35;">${Hirely.icon("branch")}</span>`}
+                            <a class="btn btn-icon btn-sm" href="mailto:${Hirely.esc(candidate.email)}?subject=${outreachSubject}" aria-label="Email ${Hirely.esc(name)}" data-tip="Email candidate">${Hirely.icon("mail")}</a>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+
+            container.innerHTML = `
+                <table class="table table--stack">
+                    <thead>
+                        <tr>
+                            <th scope="col">Candidate</th>
+                            <th scope="col">CGPA</th>
+                            <th scope="col">Skills</th>
+                            <th scope="col"><span data-tip="Score returned by Hirely’s skill matching for your search">Match</span></th>
+                            <th scope="col"><span class="sr-only">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+        }
+
+        document.getElementById("candidate-sort").addEventListener("change", renderCandidates);
+        document.getElementById("results-grid").addEventListener("click", (event) => {
+            if (event.target.closest("a, button")) return;
+            const row = event.target.closest("tr[data-index]");
+            if (row) openCandidate(Number(row.dataset.index));
+        });
+
+        function openCandidate(index) {
+            const candidate = candidateResults[index];
+            if (!candidate) return;
+            const name = `${candidate.first_name || ""} ${candidate.last_name || ""}`.trim() || "Unnamed candidate";
+            const github = Hirely.safeUrl(candidate.github);
+            const outreachSubject = encodeURIComponent(`Opportunity from ${currentRecruiter ? currentRecruiter.company_name : "Recruitment Team"}`);
+            const skills = Hirely.splitSkills(candidate.skills);
+            const match = matchedTerms(candidate);
+            const hasQuery = Boolean(candidateQuery) && queryTerms().length > 0;
+
+            document.getElementById("drawer-avatar").innerText = Hirely.initials(candidate.first_name, candidate.last_name);
+            document.getElementById("drawer-name").innerText = name;
+            document.getElementById("drawer-email").innerText = candidate.email || "";
+
+            document.getElementById("drawer-body").innerHTML = `
+                <div class="drawer-actions">
+                    <a class="btn btn-primary" href="mailto:${Hirely.esc(candidate.email)}?subject=${outreachSubject}">${Hirely.icon("mail")}Email candidate</a>
+                    ${github
+                        ? `<a class="btn btn-secondary" href="${Hirely.esc(github)}" target="_blank" rel="noreferrer">${Hirely.icon("branch")}GitHub profile ${Hirely.icon("arrow-up-right")}</a>`
+                        : '<span class="btn btn-secondary" aria-disabled="true" style="opacity: .5;">No GitHub link</span>'}
+                </div>
+
+                <div class="metrics metrics--compact">
+                    <div class="metric"><span class="metric-value">${Hirely.esc(candidate.cgpa)}</span><span class="metric-label">CGPA</span></div>
+                    <div class="metric"><span class="metric-value">${skills.length}</span><span class="metric-label">Skills listed</span></div>
+                    ${hasQuery ? `<div class="metric"><span class="metric-value">${formatScore(candidate.match_score)}</span><span class="metric-label">Match score</span></div>` : ""}
+                </div>
+
+                ${hasQuery ? `
+                    <section>
+                        <h3 class="drawer-section-title">Skill match for “${Hirely.esc(candidateQuery)}”</h3>
+                        <div class="match-group">
+                            <p class="match-group-label">Listed on this profile</p>
+                            <div class="chip-row">${match.found.length ? match.found.map((term) => `<span class="chip chip--match">${Hirely.icon("check")}${Hirely.esc(term)}</span>`).join("") : '<span class="subtle small">None listed exactly as searched</span>'}</div>
+                        </div>
+                        <div class="match-group">
+                            <p class="match-group-label">Not listed</p>
+                            <div class="chip-row">${match.missing.length ? match.missing.map((term) => `<span class="chip chip--missing">${Hirely.esc(term)}</span>`).join("") : '<span class="subtle small">Every searched skill is listed</span>'}</div>
+                        </div>
+                        <p class="note" style="margin-top: 16px;">The match score comes from Hirely’s skill matching on the server and compares only the skills you searched for with the skills on this profile. Highlighted skills are exact name matches. It is not an assessment of the candidate.</p>
+                    </section>
+                ` : ""}
+
+                <section>
+                    <h3 class="drawer-section-title">Listed skills</h3>
+                    ${skillChips(candidate.skills, 0, queryTerms())}
+                </section>
+
+                ${candidate.bio ? `
+                    <section>
+                        <h3 class="drawer-section-title">Summary</h3>
+                        <p class="muted" style="white-space: pre-line; overflow-wrap: anywhere;">${Hirely.esc(candidate.bio)}</p>
+                    </section>
+                ` : ""}
+
+                <section>
+                    <h3 class="drawer-section-title">Contact</h3>
+                    <div class="kv">
+                        <div class="kv-row"><span class="kv-key">Email</span><span class="kv-val">${Hirely.esc(candidate.email || "Not provided")}</span></div>
+                        <div class="kv-row"><span class="kv-key">GitHub</span><span class="kv-val">${github ? Hirely.esc(candidate.github) : "Not provided"}</span></div>
+                    </div>
+                    <p class="field-hint" style="margin-top: 12px;">CGPA, skills and links are entered by the student on their profile.</p>
+                </section>
+            `;
+            Hirely.openOverlay(document.getElementById("candidate-drawer"));
         }
     </script>
 </body>

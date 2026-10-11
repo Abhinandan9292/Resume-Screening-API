@@ -3,75 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Login | Campus Placement Portal</title>
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0b0d0d">
+    <title>Student sign in · Hirely</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260509c">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=hirely-2">
+    <link rel="stylesheet" href="assets/css/marketing.css?v=hirely-2">
 </head>
 <body>
-    <div class="page-shell">
-        <div class="login-layout">
-            <section class="login-hero">
-                <span class="eyebrow">Student Sign-In</span>
-                <h1 style="font-size: clamp(2.6rem, 5vw, 4.5rem); margin: 18px 0 14px;">Student account access.</h1>
-                <p class="muted">Sign in to review your profile, manage applications, and track current opportunities.</p>
-                <div class="visual-frame">
-                    <img src="assets/student-workspace-visual.jpg" alt="Student reviewing a placement profile on a laptop" loading="eager" decoding="async">
-                </div>
-                <div class="stack-list" style="margin-top: 28px;">
-                    <div class="stack-item">
-                        <strong>Profile Management</strong>
-                        <p class="muted">Maintain academic details, skills, project links, and your professional summary.</p>
-                    </div>
-                    <div class="stack-item">
-                        <strong>Applications</strong>
-                        <p class="muted">View open roles and submit applications from a single dashboard.</p>
-                    </div>
-                    <div class="stack-item">
-                        <strong>Status Tracking</strong>
-                        <p class="muted">Monitor your placement status and keep your record current.</p>
-                    </div>
-                </div>
-            </section>
+    <a class="skip-link" href="#loginForm">Skip to sign in</a>
 
-            <section class="login-card">
-                <div class="brand" style="color: var(--text-dark); margin-bottom: 18px;">
-                    <span class="brand-mark">CP</span>
-                    <span>Campus Placement Portal</span>
+    <main class="auth">
+        <aside class="auth-aside">
+            <a class="brand" href="index.html">
+                <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8M9 12h6"/><path d="M4.5 8.5V6A1.5 1.5 0 0 1 6 4.5h2.5M15.5 4.5H18A1.5 1.5 0 0 1 19.5 6v2.5M19.5 15.5V18a1.5 1.5 0 0 1-1.5 1.5h-2.5M8.5 19.5H6A1.5 1.5 0 0 1 4.5 18v-2.5"/></svg>
+                <span>Hirely</span>
+            </a>
+            <div class="auth-aside-body">
+                <span class="eyebrow eyebrow--dot">Student workspace</span>
+                <p class="auth-aside-title">Keep your placement profile current and apply to roles as they open.</p>
+                <ul class="auth-points">
+                    <li><i class="i" data-icon="check"></i>Update your CGPA and skills whenever they change</li>
+                    <li><i class="i" data-icon="check"></i>Browse open roles and apply in one step</li>
+                    <li><i class="i" data-icon="check"></i>See whether you are recorded as placed</li>
+                </ul>
+                <div class="mini-preview" aria-hidden="true">
+                    <div class="mini-head"><span>Open roles</span><span class="frame-tag">Preview</span></div>
+                    <div class="mini-row">
+                        <span class="frame-lines"><span class="ph ph--strong" style="width: 64%"></span><span class="ph" style="width: 40%"></span></span>
+                        <span class="ph" style="width: 70%"></span>
+                        <span class="btn btn-primary">Apply for role</span>
+                    </div>
+                    <div class="mini-row">
+                        <span class="frame-lines"><span class="ph ph--strong" style="width: 52%"></span><span class="ph" style="width: 46%"></span></span>
+                        <span class="ph" style="width: 56%"></span>
+                        <span class="btn btn-primary">Apply for role</span>
+                    </div>
+                    <div class="mini-row">
+                        <span class="frame-lines"><span class="ph ph--strong" style="width: 70%"></span><span class="ph" style="width: 34%"></span></span>
+                        <span class="ph" style="width: 62%"></span>
+                        <span class="btn btn-secondary"><i class="i" data-icon="check"></i>Application submitted</span>
+                    </div>
                 </div>
-                <h2>Student sign in</h2>
-                <p class="muted">Use your registered email address and password to continue.</p>
+            </div>
+            <p class="mini-caption">Interface preview with placeholder content.</p>
+        </aside>
 
-                <form id="loginForm" style="display: grid; gap: 16px; margin-top: 26px;">
-                    <div>
-                        <label class="field-label" for="email">Email address</label>
-                        <input class="input" type="email" id="email" required>
+        <section class="auth-panel">
+            <div class="auth-panel-top">
+                <span></span>
+                <a class="btn btn-ghost btn-sm" href="index.html"><i class="i" data-icon="arrow-left"></i>Back to home</a>
+            </div>
+
+            <div class="auth-card">
+                <span class="eyebrow">Students</span>
+                <h1 class="auth-title">Sign in</h1>
+                <p class="auth-sub">Use the email address and password you registered with.</p>
+
+                <form id="loginForm" class="auth-form" data-validate novalidate>
+                    <div id="login-alert" hidden></div>
+
+                    <div class="field">
+                        <label class="field-label" for="email">Email</label>
+                        <input class="input" type="email" id="email" autocomplete="email" placeholder="you@college.edu" required>
                     </div>
 
-                    <div>
+                    <div class="field">
                         <label class="field-label" for="password">Password</label>
-                        <input class="input" type="password" id="password" required>
+                        <div class="input-wrap">
+                            <input class="input" type="password" id="password" autocomplete="current-password" required>
+                            <button type="button" class="btn btn-icon btn-sm input-action" data-toggle-password aria-controls="password" aria-pressed="false" aria-label="Show password"><i class="i" data-icon="eye"></i></button>
+                        </div>
                     </div>
 
-                    <button type="submit" class="button" style="width: 100%; margin-top: 8px;">Sign in</button>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">Sign in</button>
                 </form>
 
-                <p class="muted" style="margin-top: 22px;">
-                    Need an account? <a href="student.html" class="text-link">Create your student profile</a>
-                </p>
-            </section>
-        </div>
-    </div>
+                <div class="auth-divider">Other workspaces</div>
+                <div class="auth-alt">
+                    <a class="btn btn-secondary" href="recruiter.html"><i class="i" data-icon="building"></i>Recruiter</a>
+                    <a class="btn btn-secondary" href="admin.html"><i class="i" data-icon="shield"></i>Placement office</a>
+                </div>
 
+                <p class="auth-foot">
+                    New to Hirely? <a href="student.html" class="text-link">Create a student profile</a>
+                </p>
+            </div>
+
+            <p class="auth-legal">Hirely · Campus Placement Portal</p>
+        </section>
+    </main>
+
+    <script src="assets/js/hirely.js?v=hirely-2"></script>
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
         document.getElementById("loginForm").addEventListener("submit", async function(event) {
             event.preventDefault();
-            const submitBtn = event.target.querySelector("button");
-            submitBtn.innerText = "Signing in...";
-            submitBtn.disabled = true;
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            Hirely.clearAlert("login-alert");
+            Hirely.busy(submitBtn, "Signing in...");
 
             const loginData = {
                 email: document.getElementById("email").value,
@@ -89,17 +123,19 @@
 
                 if (result.status === "success") {
                     localStorage.setItem("studentSession", JSON.stringify(result.user));
+                    Hirely.busy(submitBtn, "Opening your workspace...");
                     window.location.href = "dashboard.html";
+                    return;
                 } else {
-                    alert(result.message || "Unable to sign in. Please verify your credentials.");
+                    Hirely.showAlert("login-alert", result.message || "Unable to sign in. Please verify your credentials.");
+                    document.getElementById("password").select();
                 }
             } catch (error) {
-                alert("The sign-in service is currently unavailable. Please try again shortly.");
+                Hirely.showAlert("login-alert", "The sign-in service is currently unavailable. Please try again shortly.");
                 console.error(error);
-            } finally {
-                submitBtn.innerText = "Sign in";
-                submitBtn.disabled = false;
             }
+
+            Hirely.idle(submitBtn);
         });
     </script>
 </body>
