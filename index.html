@@ -3,90 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMTc1Y2QzIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjN2Y1NmQ5Ii8+CjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxNCIgZmlsbD0idXJsKCNnKSIvPgo8cGF0aCBkPSJNMzIgMTQgMTAgMjVsMjIgMTEgMTctOC41VjM4aDRWMjVMMzIgMTRaIiBmaWxsPSIjZmZmIi8+CjxwYXRoIGQ9Ik0xOCAzMC44djguNkwzMiA0NmwxNC02LjZ2LTguNmwtMTQgNi42LTE0LTYuNloiIGZpbGw9IiNmZmYiLz4KPC9zdmc+">
-    <meta name="theme-color" content="#175cd3">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0b0d0d">
+    <meta name="description" content="Hirely turns PDF resumes into structured student profiles, lets recruiters search candidates by skill, and keeps one record of roles, applications and placements.">
+    <title>Hirely · Resume screening and campus placement</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <title>Campus Placement Portal</title>
-    <link rel="stylesheet" href="styles.css?v=20260815">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=hirely-2">
+    <link rel="stylesheet" href="assets/css/marketing.css?v=hirely-2">
+    <script>document.documentElement.classList.add("js");</script>
 </head>
 <body>
-    <div class="page-shell">
-        <header class="topbar">
-            <a class="brand" href="index.html" aria-label="Campus Placement Portal home"><span class="brand-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 1 8l11 6 9-4.9V15h2V8L12 2Z" fill="currentColor"/><path d="M5 12.6v3.9L12 20l7-3.5v-3.9l-7 3.5-7-3.5Z" fill="currentColor"/></svg></span>
-                <span>Campus Placement Portal</span>
-            </a>
-            <div class="action-row">
-                <a class="text-button" href="recruiter.html">Recruiter access</a>
-                <a class="button" href="login.html">Student sign in</a>
-            </div>
-        </header>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-        <main>
-            <section class="hero-split" aria-labelledby="page-title">
-                <div class="app-intro" style="padding: 0;">
-                    <span class="eyebrow">Placement management</span>
-                    <h1 id="page-title">The right workspace for every part of campus hiring.</h1>
-                    <p class="lead">Create a student profile, manage recruiting activity, or oversee placement operations from one shared portal.</p>
-                    <div class="hero-actions">
-                        <a class="button" href="student.html">Create student profile</a>
-                        <a class="ghost-button" href="recruiter.html">Recruiter access</a>
+    <header class="site-nav" data-sticky-nav>
+        <a class="brand" href="index.html" aria-label="Hirely home">
+            <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8M9 12h6"/><path d="M4.5 8.5V6A1.5 1.5 0 0 1 6 4.5h2.5M15.5 4.5H18A1.5 1.5 0 0 1 19.5 6v2.5M19.5 15.5V18a1.5 1.5 0 0 1-1.5 1.5h-2.5M8.5 19.5H6A1.5 1.5 0 0 1 4.5 18v-2.5"/></svg>
+            <span>Hirely</span>
+        </a>
+        <nav class="site-links" aria-label="Sections">
+            <a href="#workflow">Workflow</a>
+            <a href="#features">Features</a>
+            <a href="#access">Access</a>
+        </nav>
+        <div class="site-actions">
+            <a class="btn btn-ghost btn-sm" href="login.html">Student sign in</a>
+            <a class="btn btn-primary btn-sm" href="student.html">Create profile</a>
+        </div>
+    </header>
+
+    <main id="main">
+        <!-- First screen: what it is, who it is for, what to do next -->
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-grid">
+                <div class="hero-copy">
+                    <span class="eyebrow eyebrow--dot" data-enter>Resume screening &amp; campus placement</span>
+                    <h1 class="hero-title" id="hero-title" data-enter style="--d: 80ms">Every resume, role and placement in one record.</h1>
+                    <p class="hero-lede" data-enter style="--d: 160ms">
+                        Hirely reads PDF resumes into structured student profiles, helps recruiters find candidates by skill, and gives the placement office a single view of roles, applications and outcomes.
+                    </p>
+                    <div class="hero-ctas" data-enter style="--d: 240ms">
+                        <a class="btn btn-primary btn-lg" href="student.html">Create a student profile <i class="i arrow" data-icon="arrow-right"></i></a>
+                        <a class="btn btn-secondary btn-lg" href="recruiter.html">Recruiter sign in</a>
                     </div>
+                    <p class="hero-note" data-enter style="--d: 300ms">Recruiter and placement office access is issued by your institution.</p>
                 </div>
-                <div class="hero-visual">
-                    <div class="hero-glow one" aria-hidden="true"></div>
-                    <div class="hero-glow two" aria-hidden="true"></div>
-                    <div class="hero-visual-card">
-                        <img src="assets/campus-operations-hero.jpg" alt="Students and recruiters collaborating in a campus placement workspace" loading="eager" decoding="async">
-                        <div class="hero-badge-float">
-                            <span class="hero-badge-dot" aria-hidden="true"></span>
-                            <div>
-                                <strong>Live placement activity</strong>
-                                <span>Student, recruiter and office workspaces in sync</span>
+
+                <figure class="product-shot" data-enter style="--d: 220ms">
+                    <div class="product-frame" aria-hidden="true">
+                        <div class="frame-bar">
+                            <span class="frame-bar-title"><i class="i" data-icon="lock"></i>Recruiter workspace</span>
+                            <span class="frame-tag">Preview</span>
+                        </div>
+                        <div class="frame-body">
+                            <div class="frame-side">
+                                <span class="brand">
+                                    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8v8M15 8v8M9 12h6"/><path d="M4.5 8.5V6A1.5 1.5 0 0 1 6 4.5h2.5M15.5 4.5H18A1.5 1.5 0 0 1 19.5 6v2.5M19.5 15.5V18a1.5 1.5 0 0 1-1.5 1.5h-2.5M8.5 19.5H6A1.5 1.5 0 0 1 4.5 18v-2.5"/></svg>
+                                    Hirely
+                                </span>
+                                <span class="nav-item"><i class="i" data-icon="grid"></i>Overview</span>
+                                <span class="nav-item"><i class="i" data-icon="briefcase"></i>Jobs</span>
+                                <span class="nav-item"><i class="i" data-icon="inbox"></i>Applicants</span>
+                                <span class="nav-item is-active"><i class="i" data-icon="users"></i>Candidates</span>
+                                <span class="frame-side-foot"><span class="avatar"></span><span class="ph" style="width: 64%"></span></span>
+                            </div>
+                            <div class="frame-main">
+                                <span class="eyebrow">Candidate search</span>
+                                <span class="frame-title">Candidates</span>
+                                <div class="frame-toolbar">
+                                    <span class="frame-input"><i class="i" data-icon="search"></i>python, sql</span>
+                                    <span class="btn btn-primary btn-sm">Search</span>
+                                    <span class="frame-select"><i class="i" data-icon="sort"></i>Best match</span>
+                                </div>
+                                <div class="frame-table">
+                                    <div class="frame-row is-head"><span>Candidate</span><span>CGPA</span><span>Skills</span><span>Match</span></div>
+                                    <div class="frame-row">
+                                        <span class="frame-person"><span class="avatar"></span><span class="frame-lines"><span class="ph ph--strong" style="width: 66%"></span><span class="ph" style="width: 84%"></span></span></span>
+                                        <span class="ph" style="width: 70%"></span>
+                                        <span class="chip-row"><span class="chip chip--match">python</span><span class="chip chip--match">sql</span><span class="chip-ph"></span></span>
+                                        <span class="frame-lines"><span class="ph ph--strong" style="width: 40%"></span><span class="ph" style="width: 70%"></span></span>
+                                    </div>
+                                    <div class="frame-row">
+                                        <span class="frame-person"><span class="avatar"></span><span class="frame-lines"><span class="ph ph--strong" style="width: 52%"></span><span class="ph" style="width: 76%"></span></span></span>
+                                        <span class="ph" style="width: 60%"></span>
+                                        <span class="chip-row"><span class="chip chip--match">python</span><span class="chip-ph"></span><span class="chip-ph"></span></span>
+                                        <span class="frame-lines"><span class="ph ph--strong" style="width: 34%"></span><span class="ph" style="width: 70%"></span></span>
+                                    </div>
+                                    <div class="frame-row">
+                                        <span class="frame-person"><span class="avatar"></span><span class="frame-lines"><span class="ph ph--strong" style="width: 72%"></span><span class="ph" style="width: 58%"></span></span></span>
+                                        <span class="ph" style="width: 66%"></span>
+                                        <span class="chip-row"><span class="chip chip--match">sql</span><span class="chip-ph"></span></span>
+                                        <span class="frame-lines"><span class="ph ph--strong" style="width: 30%"></span><span class="ph" style="width: 70%"></span></span>
+                                    </div>
+                                    <div class="frame-row">
+                                        <span class="frame-person"><span class="avatar"></span><span class="frame-lines"><span class="ph ph--strong" style="width: 48%"></span><span class="ph" style="width: 70%"></span></span></span>
+                                        <span class="ph" style="width: 56%"></span>
+                                        <span class="chip-row"><span class="chip chip--match">python</span><span class="chip-ph"></span></span>
+                                        <span class="frame-lines"><span class="ph ph--strong" style="width: 28%"></span><span class="ph" style="width: 70%"></span></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="product-callout" aria-hidden="true">
+                        <p class="callout-title">Skill match for “python, sql”</p>
+                        <p class="callout-label">Listed on this profile</p>
+                        <div class="chip-row"><span class="chip chip--match"><i class="i" data-icon="check"></i>python</span></div>
+                        <p class="callout-label">Not listed</p>
+                        <div class="chip-row"><span class="chip chip--missing">sql</span></div>
+                        <p class="callout-note">Compares searched skills with the skills on the profile — nothing else.</p>
+                    </div>
+
+                    <figcaption class="product-caption">The recruiter candidate search, shown with placeholder bars in place of student data.</figcaption>
+                </figure>
+            </div>
+
+            <div class="audience" aria-label="Who uses Hirely">
+                <div class="audience-item" data-enter style="--d: 340ms">
+                    <p class="audience-role"><span class="audience-icon"><i class="i" data-icon="cap"></i></span>Students</p>
+                    <p>Create a profile from your PDF resume, keep your CGPA and skills current, and apply to open roles.</p>
+                    <div class="audience-links">
+                        <a class="text-link" href="student.html">Create profile</a>
+                        <a class="text-link" href="login.html">Sign in</a>
+                    </div>
                 </div>
-            </section>
-
-            <section class="portal-grid" aria-label="Choose a workspace">
-                <a class="portal-card" href="student.html">
-                    <div>
-                        <div class="portal-card-header">
-                            <h2>Student</h2>
-                            <span class="portal-card-number">01</span>
-                        </div>
-                        <p>Register your profile, keep it current, and apply to open roles.</p>
+                <div class="audience-item" data-enter style="--d: 400ms">
+                    <p class="audience-role"><span class="audience-icon"><i class="i" data-icon="building"></i></span>Recruiters</p>
+                    <p>Publish roles, review applications for each posting, and search active candidates by skill.</p>
+                    <div class="audience-links">
+                        <a class="text-link" href="recruiter.html">Recruiter sign in</a>
                     </div>
-                    <span class="text-button">Create student profile</span>
-                </a>
-
-                <a class="portal-card" href="recruiter.html">
-                    <div>
-                        <div class="portal-card-header">
-                            <h2>Recruiter</h2>
-                            <span class="portal-card-number">02</span>
-                        </div>
-                        <p>Post roles, search candidate profiles, and review applicants.</p>
+                </div>
+                <div class="audience-item" data-enter style="--d: 460ms">
+                    <p class="audience-role"><span class="audience-icon"><i class="i" data-icon="shield"></i></span>Placement office</p>
+                    <p>Issue recruiter access, record placements, and review recent activity in the audit log.</p>
+                    <div class="audience-links">
+                        <a class="text-link" href="admin.html">Office sign in</a>
                     </div>
-                    <span class="text-button">Open recruiter workspace</span>
-                </a>
+                </div>
+            </div>
+        </section>
 
-                <a class="portal-card" href="admin.html">
+        <!-- Workflow -->
+        <section class="section" id="workflow" aria-labelledby="workflow-title">
+            <div class="section-inner">
+                <div class="section-head" data-reveal>
                     <div>
-                        <div class="portal-card-header">
-                            <h2>Placement office</h2>
-                            <span class="portal-card-number">03</span>
-                        </div>
-                        <p>Manage recruiter accounts, student records, and placement outcomes.</p>
+                        <span class="eyebrow eyebrow--dot">Workflow</span>
+                        <h2 class="section-title" id="workflow-title">How a candidate moves through Hirely.</h2>
                     </div>
-                    <span class="text-button">Open placement office</span>
-                </a>
-            </section>
-        </main>
+                    <p class="section-lede">Three steps, each handled by the person responsible for it, all writing to the same student record.</p>
+                </div>
 
-        <footer class="home-footer">Campus Placement Portal</footer>
-    </div>
+                <ol class="flow">
+                    <li class="flow-step" data-reveal>
+                        <div class="flow-visual" aria-hidden="true">
+                            <div class="file-item">
+                                <span class="file-icon">PDF</span>
+                                <span class="frame-lines"><span class="ph ph--strong" style="width: 70%"></span><span class="ph" style="width: 36%"></span></span>
+                                <span class="badge badge--positive">Processed</span>
+                            </div>
+                            <div class="flow-visual-row"><span class="flow-visual-label">Detected skills</span><span class="chip-row"><span class="chip">python</span><span class="chip">sql</span><span class="chip-ph"></span></span></div>
+                        </div>
+                        <div class="flow-text">
+                            <span class="flow-num">01 · Student</span>
+                            <h3 class="flow-title">Upload a resume</h3>
+                            <p>Hirely extracts the PDF’s text, suggests skills from a defined keyword list and drafts a summary. The student edits both before saving the profile.</p>
+                        </div>
+                    </li>
+                    <li class="flow-step" data-reveal style="--reveal-delay: 70ms">
+                        <div class="flow-visual" aria-hidden="true">
+                            <span class="frame-input"><i class="i" data-icon="search"></i>python, sql</span>
+                            <div class="flow-result">
+                                <span class="frame-person"><span class="avatar"></span><span class="frame-lines"><span class="ph ph--strong" style="width: 60%"></span><span class="ph" style="width: 80%"></span></span></span>
+                                <span class="chip-row"><span class="chip chip--match">python</span><span class="chip chip--missing">sql</span></span>
+                            </div>
+                        </div>
+                        <div class="flow-text">
+                            <span class="flow-num">02 · Recruiter</span>
+                            <h3 class="flow-title">Search by skill</h3>
+                            <p>Results are ranked by skill-match score, then CGPA. Each profile shows which of the searched skills it lists, so a shortlist is easy to explain.</p>
+                        </div>
+                    </li>
+                    <li class="flow-step" data-reveal style="--reveal-delay: 140ms">
+                        <div class="flow-visual" aria-hidden="true">
+                            <div class="flow-status"><span class="frame-lines"><span class="ph ph--strong" style="width: 56%"></span></span><span class="badge">Seeking</span></div>
+                            <div class="flow-status"><span class="frame-lines"><span class="ph ph--strong" style="width: 64%"></span></span><span class="badge badge--positive">Placed</span></div>
+                            <div class="flow-status is-log"><i class="i" data-icon="activity"></i><span>Added to the audit log</span></div>
+                        </div>
+                        <div class="flow-text">
+                            <span class="flow-num">03 · Placement office</span>
+                            <h3 class="flow-title">Record the outcome</h3>
+                            <p>Applications reach the recruiter’s inbox for each posting. The placement office marks students as placed and reviews recent activity.</p>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section" id="features" aria-labelledby="features-title">
+            <div class="section-inner">
+                <div class="section-head" data-reveal>
+                    <div>
+                        <span class="eyebrow eyebrow--dot">Features</span>
+                        <h2 class="section-title" id="features-title">What each workspace includes.</h2>
+                    </div>
+                    <p class="section-lede">Everything below is part of the product today. Nothing is scored or ranked without showing you what it was based on.</p>
+                </div>
+
+                <div class="feature-grid">
+                    <article class="feature" data-reveal>
+                        <div class="feature-icon"><i class="i" data-icon="file"></i></div>
+                        <h3 class="feature-title">PDF resume parsing</h3>
+                        <p>Pre-fills skills and a profile summary from an uploaded resume.</p>
+                    </article>
+                    <article class="feature" data-reveal style="--reveal-delay: 60ms">
+                        <div class="feature-icon"><i class="i" data-icon="user"></i></div>
+                        <h3 class="feature-title">Editable student profiles</h3>
+                        <p>CGPA, skills, GitHub link and summary, kept current by the student.</p>
+                    </article>
+                    <article class="feature" data-reveal style="--reveal-delay: 120ms">
+                        <div class="feature-icon"><i class="i" data-icon="briefcase"></i></div>
+                        <h3 class="feature-title">Role publishing</h3>
+                        <p>Recruiters post roles with location, experience and compensation.</p>
+                    </article>
+                    <article class="feature" data-reveal>
+                        <div class="feature-icon"><i class="i" data-icon="inbox"></i></div>
+                        <h3 class="feature-title">Applicant inbox</h3>
+                        <p>Every application to a recruiter’s roles, filterable by role and exportable to CSV.</p>
+                    </article>
+                    <article class="feature" data-reveal style="--reveal-delay: 60ms">
+                        <div class="feature-icon"><i class="i" data-icon="target"></i></div>
+                        <h3 class="feature-title">Skill-based search</h3>
+                        <p>Find active candidates by one or more skills, with matched skills highlighted.</p>
+                    </article>
+                    <article class="feature" data-reveal style="--reveal-delay: 120ms">
+                        <div class="feature-icon"><i class="i" data-icon="shield"></i></div>
+                        <h3 class="feature-title">Placement records</h3>
+                        <p>Recruiter onboarding, placement status and an audit log for the office.</p>
+                    </article>
+                </div>
+
+                <aside class="method-note" data-reveal>
+                    <i class="i" data-icon="info"></i>
+                    <p><strong>About match scores.</strong> A match score compares the skills a recruiter searches for with the skills listed on a student’s profile. It doesn’t evaluate experience, projects or anything else in the resume, and Hirely presents it as a search aid, not a judgement of the candidate.</p>
+                </aside>
+            </div>
+        </section>
+
+        <!-- Access -->
+        <section class="section section--tight" id="access" aria-labelledby="access-title">
+            <div class="section-inner access">
+                <div data-reveal>
+                    <span class="eyebrow eyebrow--dot">Access</span>
+                    <h2 class="section-title" id="access-title">Choose how you use Hirely.</h2>
+                </div>
+                <div class="access-list">
+                    <div class="access-row" data-reveal>
+                        <div>
+                            <p class="access-role">Student</p>
+                            <p>Register with your email address. Uploading a resume is optional.</p>
+                        </div>
+                        <div class="access-actions">
+                            <a class="btn btn-secondary" href="login.html">Sign in</a>
+                            <a class="btn btn-primary" href="student.html">Create profile <i class="i arrow" data-icon="arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="access-row" data-reveal style="--reveal-delay: 60ms">
+                        <div>
+                            <p class="access-role">Recruiter</p>
+                            <p>Sign in with the corporate email and access code from the placement office.</p>
+                        </div>
+                        <div class="access-actions">
+                            <a class="btn btn-secondary" href="recruiter.html">Recruiter sign in <i class="i arrow" data-icon="arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="access-row" data-reveal style="--reveal-delay: 120ms">
+                        <div>
+                            <p class="access-role">Placement office</p>
+                            <p>Sign in with the office PIN to manage recruiters and student records.</p>
+                        </div>
+                        <div class="access-actions">
+                            <a class="btn btn-secondary" href="admin.html">Office sign in <i class="i arrow" data-icon="arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a class="brand" href="index.html">
+                    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8M9 12h6"/><path d="M4.5 8.5V6A1.5 1.5 0 0 1 6 4.5h2.5M15.5 4.5H18A1.5 1.5 0 0 1 19.5 6v2.5M19.5 15.5V18a1.5 1.5 0 0 1-1.5 1.5h-2.5M8.5 19.5H6A1.5 1.5 0 0 1 4.5 18v-2.5"/></svg>
+                    <span>Hirely</span>
+                </a>
+                <p class="footer-blurb">Resume screening and placement management for students, recruiters and placement offices.</p>
+            </div>
+            <div class="footer-col">
+                <h2>Students</h2>
+                <ul>
+                    <li><a href="student.html">Create a profile</a></li>
+                    <li><a href="login.html">Student sign in</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h2>Recruiters</h2>
+                <ul>
+                    <li><a href="recruiter.html">Recruiter sign in</a></li>
+                    <li><a href="#workflow">How search works</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h2>Placement office</h2>
+                <ul>
+                    <li><a href="admin.html">Office sign in</a></li>
+                    <li><a href="#features">Features</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-base">
+            <span>© <span data-year>2026</span> Hirely · Campus Placement Portal</span>
+            <a class="text-link" href="#main">Back to top</a>
+        </div>
+    </footer>
+
+    <script src="assets/js/hirely.js?v=hirely-2"></script>
 </body>
 </html>
