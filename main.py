@@ -7,7 +7,6 @@ from passlib.context import CryptContext
 from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from resume_parser import parse_resume_text
 
 app = FastAPI()
 
@@ -95,25 +94,11 @@ class RecruiterCreate(BaseModel):
 @app.post("/ai_parse")
 async def ai_parse(file: UploadFile = File(...)):
     contents = await file.read()
-    try:
-        doc = fitz.open(stream=contents, filetype="pdf")
-        text = "".join([page.get_text() for page in doc])
-    except Exception:
-        raise HTTPException(status_code=400, detail="The file could not be read as a PDF.")
-    parsed = parse_resume_text(text)
-    return {
-        # Original fields, kept for existing clients
-        "suggested_skills": ", ".join(parsed["skills"]),
-        "bio_preview": text[:300],
-        # Structured fields used to pre-fill the registration form
-        "name": parsed["name"],
-        "first_name": parsed["first_name"],
-        "last_name": parsed["last_name"],
-        "email": parsed["email"],
-        "github": parsed["github"],
-        "summary": parsed["summary"],
-        "summary_source": parsed["summary_source"],
-    }
+    doc = fitz.open(stream=contents, filetype="pdf")
+    text = "".join([page.get_text() for page in doc])
+    keywords = ["python", "cpp", "java", "sql", "react", "ml", "ai", "dsa", "javascript"]
+    found = [k for k in keywords if k in text.lower()]
+    return {"suggested_skills": ", ".join(found), "bio_preview": text[:300]}
 
 @app.post("/register_student")
 def register(s: StudentData):

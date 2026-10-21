@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light">
-    <meta name="theme-color" content="#f2ede3">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0b0d0d">
     <title>Create your profile · Hirely</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=register-1">
-    <link rel="stylesheet" href="assets/css/marketing.css?v=register-1">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=hirely-2">
+    <link rel="stylesheet" href="assets/css/marketing.css?v=hirely-2">
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -34,7 +34,7 @@
                 <span class="eyebrow eyebrow--dot">Student registration</span>
                 <h1 class="reg-title">Create your profile.</h1>
             </div>
-            <p data-enter style="--d: 120ms">Start from your resume: Hirely reads the PDF and fills in your name, email, GitHub, skills and summary. You review every field before anything is saved.</p>
+            <p data-enter style="--d: 120ms">Start from your resume: Hirely reads the PDF and pre-fills your skills and a summary. You review every field before anything is saved.</p>
         </section>
 
         <div class="reg-grid">
@@ -43,7 +43,7 @@
                     <div class="panel-head">
                         <div>
                             <h2 class="panel-title" id="resume-title">Resume</h2>
-                            <p class="panel-sub">Optional — use it to fill in your details.</p>
+                            <p class="panel-sub">Optional — use it to pre-fill skills and summary.</p>
                         </div>
                         <span class="badge badge--plain">PDF</span>
                     </div>
@@ -52,7 +52,7 @@
                             <input class="sr-only" type="file" id="resumeUpload" accept=".pdf,application/pdf" tabindex="-1" aria-hidden="true">
                             <div class="dropzone-icon"><i class="i" data-icon="upload"></i></div>
                             <p class="dropzone-title">Add your resume</p>
-                            <p class="dropzone-hint">Drag a PDF into this area or choose one from your device. It is read on the server to fill in your details.</p>
+                            <p class="dropzone-hint">Drag a PDF into this area or choose one from your device. It is read on the server to suggest skills and a summary.</p>
                             <button type="button" class="btn btn-primary btn-sm" id="selectResume" aria-describedby="resumeStatus">Choose PDF</button>
                         </div>
                         <div id="resumeFile" class="reg-status" hidden></div>
@@ -64,29 +64,21 @@
                     <div class="panel-head">
                         <div>
                             <h2 class="panel-title" id="results-title">Extracted from your resume</h2>
-                            <p class="panel-sub">Added to empty fields in the form — edit freely.</p>
+                            <p class="panel-sub">Copied into the form on the right — edit freely.</p>
                         </div>
                         <span class="badge badge--positive">Processed</span>
                     </div>
                     <div class="panel-body">
                         <div class="result-block">
-                            <p class="section-label">Details found</p>
-                            <div class="kv" id="parsedDetails"></div>
-                        </div>
-                        <div class="result-block">
                             <p class="section-label">Detected skills</p>
                             <div id="parsedSkills" class="chip-row"></div>
                         </div>
                         <div class="result-block">
-                            <p class="section-label">Professional summary</p>
-                            <p class="muted small" id="parsedSummaryNote"></p>
-                        </div>
-                        <div class="result-block">
                             <p class="section-label">Text preview</p>
                             <div class="doc-preview" id="parsedText" tabindex="0" aria-label="Text read from your resume"></div>
-                            <p class="field-hint" style="margin-top: 10px;">The opening text Hirely read from your PDF.</p>
+                            <p class="field-hint" style="margin-top: 10px;">The opening text of your resume, used as a starting point for your professional summary.</p>
                         </div>
-                        <p class="note" style="margin-top: 22px;">Fields you had already filled in are left unchanged. Skills are detected from a list of common technical skills and from your resume’s Skills section, so check the list and add anything that was missed.</p>
+                        <p class="note" style="margin-top: 22px;">Skills are detected by matching your resume’s text against a fixed keyword list, so some may be missed. Add anything that isn’t listed.</p>
                     </div>
                 </section>
             </aside>
@@ -175,7 +167,7 @@
         </div>
     </main>
 
-    <script src="assets/js/hirely.js?v=register-1"></script>
+    <script src="assets/js/hirely.js?v=hirely-2"></script>
     <script>
         const API_BASE = "https://resume-screening-api-vqq8.onrender.com";
 
@@ -228,102 +220,11 @@
             }, 1000);
         }
 
-        // Older API versions return only suggested_skills and bio_preview. Read what
-        // is safe from the opening text rather than copying it into the summary.
-        function resumeDraft(data) {
-            if (typeof data.first_name === "string") {
-                return {
-                    firstName: data.first_name,
-                    lastName: data.last_name,
-                    email: data.email,
-                    github: data.github,
-                    skills: data.suggested_skills,
-                    summary: data.summary,
-                    summarySource: data.summary_source
-                };
-            }
-            const text = data.bio_preview || "";
-            const email = (text.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/) || [""])[0].toLowerCase();
-            const githubUser = (text.match(/github\.com\/([A-Za-z0-9-]+)/i) || [])[1];
-            const nameLine = text.split(/\r?\n/).map((line) => line.trim())
-                .find((line) => /^[A-Za-z][A-Za-z.'-]*(?: [A-Za-z][A-Za-z.'-]*){1,3}$/.test(line)) || "";
-            const [firstName = "", ...rest] = nameLine.split(" ");
-            return {
-                firstName,
-                lastName: rest.join(" "),
-                email,
-                github: githubUser ? `https://github.com/${githubUser}` : "",
-                skills: data.suggested_skills,
-                summary: "",
-                summarySource: ""
-            };
-        }
-
-        function fillIfEmpty(id, value) {
-            const field = document.getElementById(id);
-            if (!value) return "missing";
-            if (field.value.trim()) return "kept";
-            field.value = value;
-            field.dispatchEvent(new Event("input", { bubbles: true }));
-            return "filled";
-        }
-
-        function mergeSkills(value) {
-            const field = document.getElementById("skills");
-            const existing = Hirely.splitSkills(field.value);
-            const seen = new Set(existing.map((skill) => skill.toLowerCase()));
-            const added = Hirely.splitSkills(value).filter((skill) => !seen.has(skill.toLowerCase()));
-            if (!added.length) return existing.length ? "kept" : "missing";
-            field.value = existing.concat(added).join(", ");
-            field.dispatchEvent(new Event("input", { bubbles: true }));
-            return "filled";
-        }
-
-        function applyDraft(draft) {
-            // Fill the name only as a pair, so a typed first name is never joined to another surname
-            const typedName = document.getElementById("first_name").value.trim() || document.getElementById("last_name").value.trim();
-            let name = draft.firstName ? "filled" : "missing";
-            if (draft.firstName && typedName) {
-                name = "kept";
-            } else if (draft.firstName) {
-                fillIfEmpty("first_name", draft.firstName);
-                fillIfEmpty("last_name", draft.lastName);
-            }
-            return {
-                name,
-                email: fillIfEmpty("email", draft.email),
-                github: fillIfEmpty("github", draft.github),
-                skills: mergeSkills(draft.skills),
-                summary: fillIfEmpty("bio", draft.summary)
-            };
-        }
-
-        function showParseResults(data, draft, status) {
-            const statusText = { filled: "Added to the form", kept: "Kept your entry", missing: "" };
-            const detail = (label, value, state) => `
-                <div class="kv-row">
-                    <span class="kv-key">${label}</span>
-                    <span class="kv-val">${value ? Hirely.esc(value) : '<span class="subtle">Not found</span>'}${value && statusText[state] ? `<br><span class="subtle small">${statusText[state]}</span>` : ""}</span>
-                </div>`;
-            document.getElementById("parsedDetails").innerHTML =
-                detail("Name", [draft.firstName, draft.lastName].filter(Boolean).join(" "), status.name) +
-                detail("Email", draft.email, status.email) +
-                detail("GitHub", draft.github, status.github);
-
-            const skills = Hirely.splitSkills(draft.skills);
+        function showParseResults(data) {
+            const skills = Hirely.splitSkills(data.suggested_skills);
             document.getElementById("parsedSkills").innerHTML = skills.length
                 ? skills.map((skill) => `<span class="chip chip--match">${Hirely.esc(skill)}</span>`).join("")
-                : '<p class="muted small">No skills were detected. Add yours in the form.</p>';
-
-            const summaryNotes = {
-                summary: "Taken from the summary section of your resume.",
-                education: "Your resume has no summary section, so a starting line was built from your education details. Expand it in the form.",
-                none: "No summary section was found. Write a short summary in the form."
-            };
-            let summaryNote = summaryNotes[draft.summarySource] || summaryNotes.none;
-            if (status.summary === "kept") summaryNote = "Your existing summary was kept.";
-            document.getElementById("parsedSummaryNote").textContent = summaryNote;
-
+                : '<p class="muted small">No skills from the keyword list were found. Add yours in the form.</p>';
             document.getElementById("parsedText").textContent = data.bio_preview || "No text could be read from this PDF. Scanned or image-only documents can’t be parsed.";
             const panel = document.getElementById("parseResults");
             panel.hidden = false;
@@ -359,14 +260,11 @@
                 if (!response.ok) throw new Error(`Resume parsing failed with status ${response.status}`);
                 const data = await response.json();
                 if (run !== parseRun) return;
-                const draft = resumeDraft(data);
-                const status = applyDraft(draft);
-                const filled = Object.values(status).filter((state) => state === "filled").length;
-                resumeStatus.innerText = filled
-                    ? `Resume processed successfully. ${filled} field${filled === 1 ? "" : "s"} filled — review them before creating your profile.`
-                    : "Resume processed successfully. No new details were found to fill in.";
+                document.getElementById("skills").value = data.suggested_skills || "";
+                document.getElementById("bio").value = data.bio_preview || "";
+                resumeStatus.innerText = "Resume processed successfully.";
                 renderResumeFile(file, "done");
-                showParseResults(data, draft, status);
+                showParseResults(data);
                 renderSkillPreview();
             } catch (error) {
                 if (run !== parseRun) return;
